@@ -10,11 +10,15 @@ const styles = StyleSheet.create({
         gap: 30
     }
 })
+interface IProps {
+    title: string
+}
 
-const SocicalButton = () => {
+const SocicalButton = (props: IProps) => {
+    const { title } = props;
     return (
         <View style={styles.welcomeBnt}>
-            <TextBetweenLine title="Login with" />
+            <TextBetweenLine title={title} />
             <View style={{
                 flexDirection: "row",
                 justifyContent: "center",
@@ -23,7 +27,7 @@ const SocicalButton = () => {
                 <ShareButton
                     title="facebook"
                     onPress={() => alert("me")}
-                    textStye={{ textTransform: "uppercase" }}
+                    textStyle={{ textTransform: "uppercase" }}
                     btnStyle={{
                         justifyContent: "center",
                         borderRadius: 30,
@@ -37,7 +41,7 @@ const SocicalButton = () => {
                 <ShareButton
                     title="google"
                     onPress={() => alert("me")}
-                    textStye={{ textTransform: "uppercase" }}
+                    textStyle={{ textTransform: "uppercase" }}
 
                     btnStyle={{
                         justifyContent: "center",

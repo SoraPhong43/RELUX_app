@@ -1,14 +1,30 @@
+import AppProvider from "@/context/app.context";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Slot, Stack } from "expo-router";
-import { Text, View } from "react-native"
+import {  StyleSheet, Text, View } from "react-native"
+import { RootSiblingParent } from "react-native-root-siblings";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const styles=StyleSheet.create({
+    container:{
+        flex:1,
+    }
+})
 
 const RootLayout = () => {
-    return (
-        // <View style={{ padding: 50 }}>
-        //     <Text>header</Text>
-        //     <Slot />
-        //     <Text>footer</Text>
+    const navTheme={
+        ...DefaultTheme,
+        colors:{
+            ...DefaultTheme.colors,
+            background:'transparent',
+        },
+    };
 
-        // </View>
+    return (
+        <RootSiblingParent>
+            <AppProvider>
+        {/* <SafeAreaView  style={styles.container} > */}
+            <ThemeProvider value={navTheme}>
         <Stack
             screenOptions={{
                 headerStyle: {
@@ -25,20 +41,31 @@ const RootLayout = () => {
                 options={{ headerShown: false }}
             />
             <Stack.Screen
+                name="(auth)/welcome"
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
                 name="(auth)/signup"
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="(tabs)"
-                options={{ headerTitle: "Trang chủ" }}
+                name="(auth)/verify"
+                options={{ headerShown: false }}
             />
-
-
             <Stack.Screen
                 name="(auth)/login"
-                options={{ headerTitle: "Đăng nhập" }}
+                options={{ headerShown: false }}
             />
+            <Stack.Screen
+                name="(tabs)"
+                options={{ headerShown: false }}
+            />
+
         </Stack>
+        </ThemeProvider>
+        {/* </SafeAreaView> */}
+        </AppProvider>
+        </RootSiblingParent>
     )
 }
 

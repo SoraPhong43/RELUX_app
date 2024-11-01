@@ -1,19 +1,96 @@
 import { Tabs } from "expo-router";
+import Entypo from '@expo/vector-icons/Entypo';
+import { APP_COLOR } from "../utils/constant";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Route } from "expo-router/build/Route";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { Image } from "react-native";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
+import spa from "@/assets/icons/makeanapointment.png";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 
 const TabLayout = () => {
+
+    const getIcons=(routeName:string,focused:boolean,size:number)=>{
+        if(routeName == "index"){
+            return ( 
+                <Entypo name="home" size={size} color={focused ? APP_COLOR.vang:APP_COLOR.darkGray} />
+            )
+        }
+
+        if(routeName=="makeanapointment"){
+            return(
+                <FontAwesome5 name="spa" size={size} color={focused?APP_COLOR.vang:APP_COLOR.darkGray} />
+            )
+        }
+
+        if(routeName =="favories"){
+            return( focused?
+                <AntDesign
+                 name="heart" 
+                 size={size}
+                  color={APP_COLOR.vang} 
+                  />
+                :
+                <AntDesign 
+                name="hearto"
+                 size={size} 
+                 color={APP_COLOR.darkGray}/>
+            )
+        }
+
+        if(routeName == "location"){
+            return(
+                <Entypo name="location" size={size} color={focused?APP_COLOR.vang:APP_COLOR.darkGray} />
+            )
+        }
+        
+        if(routeName == "profile"){
+            return(
+                <Entypo name="user" size={size} color={focused?APP_COLOR.vang:APP_COLOR.darkGray} />
+            )
+        }
+        return(<></>)
+    }
+
     return (
+        <SafeAreaView style={{flex:1}}>
         <Tabs
-            screenOptions={{ headerShown: false }}
+        screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+                return getIcons(route.name, focused, size);
+            },
+            headerShown: false,
+            tabBarLabelStyle: { paddingBottom: 3 },
+            tabBarActiveTintColor: APP_COLOR.vang,
+        })}
+
         >
             <Tabs.Screen
                 name="index"
+                options={{title:"Home"}}
             />
-
             <Tabs.Screen
-                name="setting"
+                name="makeanapointment"
+                options={{title:"Spa Now"}}
+            />
+            <Tabs.Screen
+                name="favories"
+                options={{title:"Favories"}}
+            />
+            <Tabs.Screen
+                name="location"
+                options={{title:"Location"}}
+            />
+            <Tabs.Screen
+                name="profile"
+                options={{title:"Profile"}}
             />
 
         </Tabs>
+        </SafeAreaView>
     )
 }
 
