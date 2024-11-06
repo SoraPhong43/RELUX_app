@@ -15,18 +15,19 @@ const data=[
     key:1,
     name:"Top service Rating 5* this week",
     description:"Gợi ý dịch vụ được đánh giá 5 sao",
-    ref:""
+    refAPI:"service5star"
   },
   {
     key:2,
     name:"New services:",
     description:"dịch vụ mới",
-    ref:""},
+    refAPI:"sericediscount"
+  },
   {
     key:3,
     name:"Discover Massage Deals",
     description:"Gợi ý các ưu đãi massage",
-    ref:""},
+    refAPI:"newservice"},
 ]
 
 const HomeTab=()=> {
@@ -35,7 +36,12 @@ const HomeTab=()=> {
       <CustomFlatList
         data={data}
         style={styles.list}
-        renderItem={({item}) => <CollectionHome name={item.name} description={item.description}/>}
+        renderItem={({item}) => (
+        <CollectionHome 
+        name={item.name} 
+        description={item.description}
+        refAPI={item.refAPI}
+        />)}
         HeaderComponent={<HeaderHome/>}
         StickyElementComponent={<SearchHome/>}
         // TopListElementComponent={<View style={styles.topList} />}

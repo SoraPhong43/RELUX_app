@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import Entypo from '@expo/vector-icons/Entypo';
 import { APP_COLOR } from "../utils/constant";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -9,10 +9,21 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 import spa from "@/assets/icons/makeanapointment.png";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCurrentApp } from "@/context/app.context";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const TabLayout = () => {
-
+    const { appState } = useCurrentApp();
+    useEffect(() => {
+        const checkAuth = async () => {
+            const token = await AsyncStorage.getItem("access_token");
+            if (!token || !appState) {
+                router.replace("/(auth)/welcome");
+            }
+        };checkAuth();
+    }, [appState]);
     const getIcons=(routeName:string,focused:boolean,size:number)=>{
         if(routeName == "index"){
             return ( 
@@ -65,6 +76,7 @@ const TabLayout = () => {
             headerShown: false,
             tabBarLabelStyle: { paddingBottom: 3 },
             tabBarActiveTintColor: APP_COLOR.vang,
+            
         })}
 
         >
@@ -84,10 +96,10 @@ const TabLayout = () => {
                 name="location"
                 options={{title:"Location"}}
             />
-            <Tabs.Screen
+            {/* <Tabs.Screen
                 name="profile"
                 options={{title:"Profile"}}
-            />
+            /> */}
 
         </Tabs>
         </SafeAreaView>

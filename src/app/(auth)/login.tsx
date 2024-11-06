@@ -24,19 +24,22 @@ const styles = StyleSheet.create({
 
 const LoginPage = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const{setAppState} =useCurrentApp();
+    const { setAppState } = useCurrentApp();
+    
     const handleLogin = async (email: string, password: string) => {
         try {
-            setLoading(true)
+            setLoading(true);
             const res = await loginAPI(email, password);
-            setLoading(false)
-            if (res.data) {
+            setLoading(false);
+            
+            if (res.data && res.data.access_token) {  // Validate access_token exists
                 await AsyncStorage.setItem("access_token", res.data.access_token);
                 setAppState(res.data);
                 router.replace("/(tabs)");
             } else {
                 const m = Array.isArray(res.message)
-                    ? res.message[0] : res.message;
+                    ? res.message[0] 
+                    : res.message || 'Login failed';  // Add fallback message
 
                 Toast.show(m, {
                     duration: Toast.durations.LONG,
@@ -49,11 +52,20 @@ const LoginPage = () => {
                     router.replace({
                         pathname: "/(auth)/verify",
                         params: { email: email, isLogin: 1 }
-                    })
+                    });
                 }
             }
         } catch (error) {
-            console.log(">>> check error: ", error)
+            setLoading(false);  // Make sure to reset loading state on error
+            console.log(">>> check error: ", error);
+            Toast.show('An error occurred during login', {
+                duration: Toast.durations.LONG,
+                textColor: "white",
+                backgroundColor: APP_COLOR.vang,
+                opacity: 1
+            });
+        }finally {
+            setLoading(false);
         }
     }
 

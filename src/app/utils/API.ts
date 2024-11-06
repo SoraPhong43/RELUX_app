@@ -1,5 +1,6 @@
 import axios from "@/app/utils/axios.customize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
 export const registerAPI = (email: string, password: string, name: string) => {
    const url = `/api/v1/auth/register`;
@@ -20,13 +21,36 @@ export const resendCodeAPI = (email: string) => {
 
 export const loginAPI = (email: string, password: string) => {
     const url = `/api/v1/auth/login`;
-    return axios.post<IBackendRes<IUserLogin>>(url, { username: email, password });
+    return axios.post<IBackendRes<IUserLogin>>(url, { email: email, password });
 }
 
 export const getAccountAPI = () => {
     const url = `/api/v1/auth/account`;
     return axios.get<IBackendRes<IUserLogin>>(url);
 }
+
+export const getTopService = (ref:string) => {
+    const url = `/api/v1/services/${ref}`;
+    console.log(">>check:",url);
+    return axios.post<IBackendRes<ITopService[]>>(url);
+}
+
+export const getURLBaseBackend = () => {
+    const backend = Platform.OS === "android"
+        ? process.env.EXPO_PUBLIC_ANDROID_API_URL
+        : process.env.EXPO_PUBLIC_IOS_API_URL;
+
+    return backend;
+}
+
+export const getServiceByIdAPI = (id:string) => {
+    const url = `/api/v1/services/${id}`;
+    return axios.get<IBackendRes<IService>>(url,{
+        headers:{delay:6000}
+    });
+}
+
+
 
 export const printAsyncStorage = () => {
     AsyncStorage.getAllKeys((err, keys) => {
@@ -39,4 +63,35 @@ export const printAsyncStorage = () => {
         });
     });
 };
+
+export const processDataServiceMenu=(service:IService | null)=>{
+    if(!service) return[];
+    return service?.menu?.map((menu,index)=>{
+        return{
+            index,
+            key:menu.id,
+            title:menu.name,
+            data:menu.menuItems
+        }
+    })
+}
+
+export const currencyFormatter = (value: any) => {
+    const options = {
+        significantDigits: 0,
+        thousandsSeparator: '.',
+        decimalSeparator: ',',
+        symbol: 'đ'
+    }
+
+    if (typeof value !== 'number') value = 0.0
+    value = value.toFixed(options.significantDigits)
+
+    const [currency, decimal] = value.split('.')
+    return `${currency.replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        options.thousandsSeparator
+    )} ${options.symbol}`
+}
+
 

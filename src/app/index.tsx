@@ -1,5 +1,5 @@
 
-import {  router } from "expo-router";
+import {  Redirect, router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from "react";
 import { getAccountAPI} from "./utils/API";
@@ -9,54 +9,41 @@ import * as SplashScren from 'expo-splash-screen'
 SplashScren.preventAutoHideAsync();
 
 const RootPage = () => {
-    const{setAppState} =useCurrentApp();
+  const { setAppState } = useCurrentApp();
 
-    useEffect(()=>{
-        const fetchAccount=async()=>{
-            
-        }
-        fetchAccount()
-    })
-      
-    
-    useEffect(() => {
-        async function prepare() {
+  useEffect(() => {
+      async function prepare() {
           try {
-            // Pre-load fonts, make any API calls you need to do here
-            const res = await getAccountAPI();
-            console.log(">>> check res: ",res)
-            if(res.data){
-                //succes 
-                setAppState({
-                    user:res.data.user,
-                    access_token:await AsyncStorage.getItem("access_token")
-                })
-                router.replace("/(tabs)")
-                await AsyncStorage.removeItem("access_token")
-            }else{
-                //error
-                router.replace("/(auth)/welcome")
-            }
+              const token = await AsyncStorage.getItem("access_token");
+              if (!token) {
+                  router.replace("/(auth)/welcome");
+                  return;
+              }
+
+              const res = await getAccountAPI();
+              if (res.data) {
+                  setAppState({
+                      user: res.data.user,
+                      access_token: token
+                  });
+                  router.replace("/(tabs)");
+              } else {
+                  await AsyncStorage.removeItem("access_token");
+                  router.replace("/(auth)/welcome");
+              }
           } catch (e) {
-            console.warn(e);
+              console.warn(e);
+              await AsyncStorage.removeItem("access_token");
+              router.replace("/(auth)/welcome");
           } finally {
-            // Tell the application to render
-            await SplashScren.hideAsync();
+              await SplashScren.hideAsync();
           }
-        }
-    
-        prepare();
-      }, []);
-    // if (true) {
-    //     return (
-    //         <Redirect href={"/(tabs)"} />
-    //     )
-    // }
-    return (
-        <>
-       
-        </>
-    )
+      }
+
+      prepare();
+  }, []);
+
+  return <></>;
 }
 
 export default RootPage;

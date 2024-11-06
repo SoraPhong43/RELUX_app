@@ -19,7 +19,8 @@ const styles=StyleSheet.create({
 
 const HeaderHome = () => {
     const{theme, appState}= useCurrentApp();
-
+    console.log("App State:", appState);
+    console.log("User Data:", appState?.user);
     const backend=Platform.OS === "android"
     ? process.env.EXPO_PUBLIC_ANDROID_API_URL
     : process.env.EXPO_PUBLIC_IOS_API_URL;
@@ -28,16 +29,16 @@ const HeaderHome = () => {
     return (
         <View style={styles.container}>
             <View style={{paddingRight:20, flexDirection:"row",alignItems:"center",display:"flex",justifyContent:"space-between"}}>
-            <View style={{paddingLeft:5, flexDirection:"row",alignItems:"center",display:"flex"}}>
-                <Image
-                style={{height:50,width:50}}
-                source={{uri:`${baseImage}/${appState?.user.avatar}`}}
-                />
-                <View style={{paddingLeft:10}}>
-                    <Text style={{color:APP_COLOR.vang, fontSize:20}}>happy new day,</Text>
-                    <Text>{appState?.user.name}</Text>
-                </View>
-            </View>
+            <View style={{ paddingLeft: 5, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+        <Image
+             style={{ height: 50, width: 50 }}
+            source={{ uri: `${baseImage}/${appState?.user.avatar}` }}
+            />
+          <View style={{ paddingLeft: 10 }}>
+             <Text style={{ color: APP_COLOR.vang, fontSize: 20 }}>happy new day,</Text>
+            <Text>{appState?.user.username || "Tên không có sẵn"}</Text>
+        </View>
+        </View>
             <MaterialCommunityIcons name="bell-ring-outline" size={24} color="black" />
             </View>
             <View style={styles.location}>
