@@ -31,7 +31,7 @@ export const getAccountAPI = () => {
 
 export const getTopService = (ref:string) => {
     const url = `/api/v1/services/${ref}`;
-    console.log(">>check:",url);
+   // console.log(">>check:",url);
     return axios.post<IBackendRes<ITopService[]>>(url);
 }
 
@@ -50,7 +50,10 @@ export const getServiceByIdAPI = (id:string) => {
     });
 }
 
-
+export const getAllLocations = ()=>{
+    const url = `/api/v1/location`;
+    return axios.get<IBackendRes<ILocation>>(url);
+}
 
 export const printAsyncStorage = () => {
     AsyncStorage.getAllKeys((err, keys) => {
@@ -78,7 +81,7 @@ export const processDataServiceMenu=(service:IService | null)=>{
 
 export const currencyFormatter = (value: any) => {
     const options = {
-        significantDigits: 0,
+        significantDigits: 2,
         thousandsSeparator: '.',
         decimalSeparator: ',',
         symbol: 'đ'

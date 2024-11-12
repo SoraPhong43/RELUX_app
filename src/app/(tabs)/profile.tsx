@@ -43,7 +43,7 @@ const ProfileTab = () => {
       : process.env.EXPO_PUBLIC_IOS_API_URL;
 
   const baseImage = `${backend}/images/avatar`;
-  console.log("Avatar URL:", `${baseImage}/${appState?.user.avatar}`);
+  //console.log("Avatar URL:", `${baseImage}/${appState?.user.avatar}`);
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center", gap: 5 }}>

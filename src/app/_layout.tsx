@@ -4,6 +4,7 @@ import { Slot, Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { APP_COLOR } from "./utils/constant";
 
 const styles = StyleSheet.create({
   container: {
@@ -16,7 +17,7 @@ const RootLayout = () => {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      background: "transparent",
+      background: "white",
     },
   };
 
@@ -27,15 +28,10 @@ const RootLayout = () => {
         <ThemeProvider value={navTheme}>
           <Stack
             screenOptions={{
-              headerStyle: {
-                backgroundColor: "#f4511e",
-              },
-              headerTintColor: "#fff",
+              headerTintColor: APP_COLOR.vang,
               headerTitleStyle: {
-                fontWeight: "bold",
+                color: "black",
               },
-              headerShown: false,
-              gestureEnabled: false,
             }}
           >
             <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -60,6 +56,29 @@ const RootLayout = () => {
               name="product/[id]"
               options={{ headerShown: false }}
               // options={{ headerTitle: "Services" }}
+            />
+            <Stack.Screen
+              name="product/create.modal"
+              options={{
+                headerShown: false,
+                animation: "fade",
+                presentation: "transparentModal",
+              }}
+            />
+            <Stack.Screen
+              name="product/update.modal"
+              options={{
+                headerShown: false,
+                animation: "fade",
+                presentation: "transparentModal",
+              }}
+            />
+            <Stack.Screen
+              name="product/booking"
+              options={{ headerTitle: "Book apointment" }}
+              // options={{
+              //   headerShown: false,
+              // }}
             />
           </Stack>
         </ThemeProvider>

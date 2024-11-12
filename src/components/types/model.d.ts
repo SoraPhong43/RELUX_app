@@ -46,6 +46,7 @@ declare global {
         image: string,
         rating: number,
         discount: string,
+        
         menu: IMenu[]
     }
     interface IMenu{
@@ -54,14 +55,65 @@ declare global {
         id: string,
         name: string,
         description: string,
+
         menuItems: IMenuItem[]
     }
     interface IMenuItem{
         menuItem: string,
         id: string,
         name: string,
-        price: string,
-        description: string
+        price: number,
+        description: string,
+        options:{
+            id: string;
+         title: string;
+        description: string;
+        additionalPrice: number
+        }[],
+        details:Idetails[],
+        createdAt: string;
+        updatedAt: string;
+        
+    }
+
+    interface Idetails{
+        name:string,
+            time:string,
+            itemDetails:string
+    }
+   
+    interface ICart{
+        [key:string]:{
+            sum:number;
+            quantity:number
+            items:{
+                [key:string]:{
+                    quantity:number;
+                    data:IMenuItem;
+                    extra?:{
+                        [key:string]:number
+                    }
+                }
+            }
+        }
+    }
+    interface ILocation{
+        locationID: string,
+        locationName: string,
+        Address: string
     }
 }
+
+// cart:{
+//     "id của dịch vụ":{
+//         sum: tổng tiền dịch vụ chọn mua hết bao nhiêu,
+//         quantity: số lượng,
+//         items:{
+//             "sản phẩm 1":{
+//                 quantity:số lượng bao nhiêu ,
+//                 data: sản phẩm
+//             }
+//         }
+//     }
+// }
 

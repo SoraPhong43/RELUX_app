@@ -29,6 +29,9 @@ import {
   processDataServiceMenu,
 } from "@/app/utils/API";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import ItemQuantity from "./booking/item.quantity";
+import StickyFooter from "./booking/sticky.footer";
+import { useCurrentApp } from "@/context/app.context";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
@@ -38,11 +41,8 @@ const HEADER_HEIGHT = 120;
 const IMAGE_HEIGHT = 220;
 const INFO_HEIGHT = 250;
 const SLIDE_MENU_HEIGHT = 50;
-interface IProps {
-  service: IService | null;
-}
-const RMain = (props: IProps) => {
-  const { service } = props;
+const RMain = () => {
+  const { service } = useCurrentApp();
 
   const scrollY = useSharedValue(0);
 
@@ -165,7 +165,7 @@ const RMain = (props: IProps) => {
   console.log(processDataServiceMenu(service));
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <StickyHeader
         headerHeight={HEADER_HEIGHT}
         imageHeight={IMAGE_HEIGHT}
@@ -244,7 +244,7 @@ const RMain = (props: IProps) => {
         stickySectionHeadersEnabled={false}
         contentContainerStyle={{
           paddingTop: IMAGE_HEIGHT + INFO_HEIGHT + SLIDE_MENU_HEIGHT,
-          paddingBottom: 30,
+          paddingBottom: 50,
         }}
         sections={processDataServiceMenu(service)}
         renderItem={({ item, index }: { item: any; index: any }) => {
@@ -257,39 +257,11 @@ const RMain = (props: IProps) => {
             //     </View>
             //   </View>
             // </TouchableOpacity>
-            <View
-              style={{
-                backgroundColor: "white",
-                gap: 10,
-                flexDirection: "row",
-                padding: 10,
-              }}
-            >
-              <View>{/* Image */}</View>
-              <View style={{ flex: 1, gap: 10 }}>
-                <View>
-                  <Text> {menuItem.name}</Text>
-                </View>
-                <View>
-                  <Text> {menuItem.description}</Text>
-                </View>
-                <View
-                  style={{
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                  }}
-                >
-                  <Text style={{ color: APP_COLOR.vang }}>
-                    {currencyFormatter(menuItem.price)}
-                  </Text>
-                  <AntDesign
-                    name="plussquare"
-                    size={24}
-                    color={APP_COLOR.vang}
-                  />
-                </View>
-              </View>
-            </View>
+            <ItemQuantity
+              service={service}
+              menuItem={menuItem}
+              isModel={false}
+            />
           );
         }}
         renderSectionHeader={({ section }: { section: any }) => (
@@ -323,6 +295,7 @@ const RMain = (props: IProps) => {
         onViewableItemsChanged={onViewableItemsChanged}
         onMomentumScrollEnd={() => (blockUpdateRef.current = false)}
       />
+      <StickyFooter service={service} />
     </View>
   );
 };

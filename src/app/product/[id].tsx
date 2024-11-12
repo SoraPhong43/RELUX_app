@@ -4,28 +4,30 @@ import { useEffect, useState } from "react";
 import { Dimensions, Text, View } from "react-native";
 import { getServiceByIdAPI } from "../utils/API";
 import ContentLoader, { Rect, Circle, Path } from "react-content-loader/native";
+import { useCurrentApp } from "@/context/app.context";
 const { height: sHeight, width: sWidth } = Dimensions.get("window");
 const ProductPage = () => {
   const { id } = useLocalSearchParams();
-  const [service, setService] = useState<IService | null>(null);
   const [loading, setLoading] = useState(true);
+  const { service, setService } = useCurrentApp();
+
   useEffect(() => {
     const fetchService = async () => {
       setLoading(true);
       const res = await getServiceByIdAPI(id as string);
       if (res.data) {
-        console.log(res.data);
+        //console.log(res.data);
         setService(res.data);
       }
       setLoading(false);
     };
     fetchService();
   }, []);
-  console.log(service?.id);
+  //console.log(service?.id);
   return (
     <View style={{ flex: 1 }}>
       {loading === false ? (
-        <RMain service={service} />
+        <RMain />
       ) : (
         <ContentLoader
           speed={2}

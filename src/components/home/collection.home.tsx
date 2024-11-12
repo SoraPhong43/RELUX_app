@@ -24,9 +24,6 @@ interface IProps {
 const styes = StyleSheet.create({
   container: {
     borderColor: "green",
-
-    // flexDirection: "row",
-    // justifyContent:"space-between",
   },
 });
 const CollectionHome = (props: IProps) => {
