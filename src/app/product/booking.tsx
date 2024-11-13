@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { APP_COLOR } from "../utils/constant";
 import { currencyFormatter } from "../utils/API";
-import ChooseTime from "@/components/InfoBooking/choose.time";
 import SelectSpa from "@/components/InfoBooking/select.spa";
+import DropDownFacility from "@/components/InfoBooking/choose.time";
 
 interface IBookingItem {
   title: string;
@@ -62,7 +62,7 @@ const Booking = () => {
         }}
       >
         <HeaderHome />
-        <ChooseTime />
+        <DropDownFacility />
         <SelectSpa />
       </View>
       <View style={{ padding: 10 }}>

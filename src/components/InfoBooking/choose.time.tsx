@@ -9,7 +9,7 @@ import {
 import moment from "moment";
 import { useEffect, useState } from "react";
 
-const ChooseTime = () => {
+const DropDownFacility = () => {
   const [next7Days, setNext7Days] = useState<
     { date: moment.Moment; day: string; formattedDate: string }[]
   >([]);
@@ -125,7 +125,7 @@ const ChooseTime = () => {
   );
 };
 
-export default ChooseTime;
+export default DropDownFacility;
 
 const styles = StyleSheet.create({
   container: {

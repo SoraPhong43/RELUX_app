@@ -98,9 +98,21 @@ declare global {
         }
     }
     interface ILocation{
-        locationID: string,
-        locationName: string,
-        Address: string
+        id: number,
+        name: string,
+        address: string,
+        employees:IEmployee[]
+    }
+    interface IEmployee{
+        id: number,
+        name: string,
+        description: string,
+        phone: number,
+        email: string | null,
+        specialtyType: string | null,
+        status: string | null,
+        hiredate: string | null,
+        avatar: string | null
     }
 }
 

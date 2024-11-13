@@ -51,7 +51,7 @@ export const getServiceByIdAPI = (id:string) => {
 }
 
 export const getAllLocations = ()=>{
-    const url = `/api/v1/location`;
+    const url = `/api/v1/location/geteinspa`;
     return axios.get<IBackendRes<ILocation>>(url);
 }
 

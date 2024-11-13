@@ -5,27 +5,78 @@ import { countries } from "@/app/utils/textdl";
 import { useEffect, useState } from "react";
 import { getAllLocations, getServiceByIdAPI } from "@/app/utils/API";
 
-const formattedCountries = countries.map((c) => ({
-  value: c.label,
-  label: `${c.value}`,
-}));
-const [location, setLocation] = useState<ILocation[]>([]);
+interface OptionItem {
+  value: string;
+  label: string;
+}
+const SelectSpa = () => {
+  const [locations, setLocations] = useState<ILocation[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<ILocation | null>(
+    null
+  );
+  const [selectedEmployee, setSelectedEmployee] = useState<IEmployee | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
 
-useEffect(() => {
-  const getLocations = async () => {
-    const res = await getAllLocations();
-    console.log("check:", res);
-    if (res.data) {
-      setLocation(res.data);
+  useEffect(() => {
+    const fetchFacility = async () => {
+      try {
+        setIsLoading(true);
+        const res = await getAllLocations();
+        console.log("API Response:", res);
+        if (Array.isArray(res.data)) {
+          setLocations(res.data as ILocation[]);
+        }
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchFacility();
+  }, []);
+
+  // Map locations to dropdown format
+  const formattedLocations = locations.map((location) => ({
+    value: location.name,
+    label: location.name,
+  }));
+
+  console.log("Formatted Locations:", formattedLocations);
+
+  const handleLocationChange = (item: OptionItem) => {
+    const selected = locations.find((location) => location.name === item.value);
+    if (selected) {
+      setSelectedLocation(selected); // Set selected location
+      setSelectedEmployee(null); // Reset selected employee
     } else {
-      //error
+      console.warn(`No location found for id: ${item.value}`);
     }
+    console.log("Selected Location:", selected);
   };
 
-  getLocations();
-}, []);
+  // Map employees to dropdown format if a location is selected
+  const formattedEmployee: OptionItem[] = selectedLocation
+    ? selectedLocation.employees.map((employee) => ({
+        value: employee.name,
+        label: employee.name,
+      }))
+    : [];
 
-const SelectSpa = () => {
+  console.log("Formatted Employees:", formattedEmployee);
+
+  const handleEmployeeChange = (item: OptionItem) => {
+    const selected = selectedLocation?.employees.find(
+      (employee) => employee.name === item.value
+    );
+    if (selected) {
+      setSelectedEmployee(selected);
+    } else {
+      console.log(`No employee found for id: ${item.value}`);
+      setSelectedEmployee(null);
+    }
+  };
   return (
     <View>
       <StatusBar style="auto" />
@@ -50,11 +101,36 @@ const SelectSpa = () => {
         }}
       >
         <DropDown
-          data={formattedCountries}
-          onChange={console.log}
+          data={formattedLocations}
+          onChange={handleLocationChange}
           placeholder="Choose a spa facility"
         />
       </View>
+      {formattedEmployee.length > 0 ? (
+        <>
+          <Text style={{ fontSize: 18, fontWeight: "500", paddingLeft: 20 }}>
+            {" "}
+            Choose Employee
+          </Text>
+          <View
+            style={{
+              paddingTop: 10,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: 20,
+              gap: 10,
+            }}
+          >
+            <DropDown
+              data={formattedEmployee}
+              onChange={handleEmployeeChange}
+              placeholder="Choose employee"
+            />
+          </View>
+        </>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
