@@ -4,6 +4,7 @@ import DropDown from "../button/drop.down";
 import { countries } from "@/app/utils/textdl";
 import { useEffect, useState } from "react";
 import { getAllLocations, getServiceByIdAPI } from "@/app/utils/API";
+import { useCurrentApp } from "@/context/app.context";
 
 interface OptionItem {
   value: string;
@@ -11,12 +12,12 @@ interface OptionItem {
 }
 const SelectSpa = () => {
   const [locations, setLocations] = useState<ILocation[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<ILocation | null>(
-    null
-  );
-  const [selectedEmployee, setSelectedEmployee] = useState<IEmployee | null>(
-    null
-  );
+  const {
+    selectedEmployee,
+    setSelectedEmployee,
+    selectedLocation,
+    setSelectedLocation,
+  } = useCurrentApp();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

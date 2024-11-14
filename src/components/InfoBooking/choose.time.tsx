@@ -1,5 +1,6 @@
 import { APP_COLOR } from "@/app/utils/constant";
 import {
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -8,14 +9,15 @@ import {
 } from "react-native";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useCurrentApp } from "@/context/app.context";
 
-const DropDownFacility = () => {
+const DropDownFacility = ({}) => {
   const [next7Days, setNext7Days] = useState<
     { date: moment.Moment; day: string; formattedDate: string }[]
   >([]);
   const [timeList, setTimeList] = useState<{ time: string }[]>([]);
-  const [selectedDate, setSelectedDate] = useState<moment.Moment | undefined>();
-  const [selectedTime, setSelectedTime] = useState<string | undefined>();
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } =
+    useCurrentApp();
 
   useEffect(() => {
     getDay();

@@ -1,11 +1,19 @@
 import HeaderHome from "@/components/home/header.home";
 import { useCurrentApp } from "@/context/app.context";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { APP_COLOR } from "../utils/constant";
 import { currencyFormatter } from "../utils/API";
 import SelectSpa from "@/components/InfoBooking/select.spa";
 import DropDownFacility from "@/components/InfoBooking/choose.time";
+import { router, useNavigation } from "expo-router";
 
 interface IBookingItem {
   title: string;
@@ -14,8 +22,12 @@ interface IBookingItem {
   quantity: number;
 }
 const Booking = () => {
-  const { service, cart } = useCurrentApp();
+  const { service, cart, selectedDate, selectedTime } = useCurrentApp();
   const [orderItems, setOrderItems] = useState<IBookingItem[]>([]);
+
+  const [note, setNote] = useState("");
+  const navigation = useNavigation();
+
   useEffect(() => {
     if (cart && service && service.id) {
       const result = [];
@@ -49,8 +61,24 @@ const Booking = () => {
       }
     }
   }, [service]);
-  const handlePlaceBooking = () => {
-    alert("me");
+  const validateSelection = () => {
+    if (!selectedDate) {
+      Alert.alert("Chọn Ngày", "Vui lòng chọn ngày cho cuộc hẹn.");
+      return false;
+    }
+    if (!selectedTime) {
+      Alert.alert("Chọn Thời Gian", "Vui lòng chọn thời gian cho cuộc hẹn.");
+      return false;
+    }
+    return true;
+  };
+  const handleNextStep = () => {
+    if (validateSelection()) {
+      router.navigate({
+        pathname: "/product/confirm",
+        params: { note: note },
+      });
+    }
   };
   return (
     <View style={{ flex: 1 }}>
@@ -64,6 +92,28 @@ const Booking = () => {
         <HeaderHome />
         <DropDownFacility />
         <SelectSpa />
+        <View
+          style={{
+            justifyContent: "flex-start",
+            paddingHorizontal: 20,
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "500" }}>Note</Text>
+          <TextInput
+            numberOfLines={3}
+            value={note}
+            onChangeText={(text) => setNote(text)}
+            style={{
+              backgroundColor: APP_COLOR.vienInput,
+              padding: 10,
+              borderRadius: 10,
+              borderColor: "white",
+              borderWidth: 1,
+              textAlignVertical: "top",
+            }}
+            placeholder="write note here"
+          />
+        </View>
       </View>
       <View style={{ padding: 10 }}>
         <Text
@@ -170,7 +220,7 @@ const Booking = () => {
         </View>
         <View>
           <Pressable
-            onPress={handlePlaceBooking}
+            onPress={handleNextStep}
             style={({ pressed }) => ({
               opacity: pressed === true ? 0.5 : 1,
               padding: 10,

@@ -3,12 +3,27 @@ import { createContext, useContext, useState } from "react";
 interface AppContextType {
   theme: string;
   setTheme: (v: string) => void;
+
   appState: IUserLogin | null;
   setAppState: (v: any) => void;
+
   cart: ICart | Record<string, never>;
   setCart: (v: any) => void;
+
   service: IService | null;
   setService: (v: any) => void;
+
+  selectedDate: moment.Moment | null;
+  setSelectedDate: (v: moment.Moment) => void;
+
+  selectedTime: string | null;
+  setSelectedTime: (v: string) => void;
+
+  selectedLocation: ILocation | null;
+  setSelectedLocation: (v: any) => void;
+
+  selectedEmployee: IEmployee | null;
+  setSelectedEmployee: (v: any) => void;
 }
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -34,6 +49,16 @@ const AppProvider = (props: IProps) => {
 
   const [cart, setCart] = useState<ICart | Record<string, never>>({});
   const [service, setService] = useState<IService | null>(null);
+
+  const [selectedDate, setSelectedDate] = useState<moment.Moment | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+  const [selectedLocation, setSelectedLocation] = useState<ILocation | null>(
+    null
+  );
+  const [selectedEmployee, setSelectedEmployee] = useState<IEmployee | null>(
+    null
+  );
   return (
     <AppContext.Provider
       value={{
@@ -45,6 +70,14 @@ const AppProvider = (props: IProps) => {
         setCart,
         service,
         setService,
+        selectedDate,
+        setSelectedDate,
+        selectedTime,
+        setSelectedTime,
+        selectedLocation,
+        setSelectedLocation,
+        selectedEmployee,
+        setSelectedEmployee,
       }}
     >
       {props.children}

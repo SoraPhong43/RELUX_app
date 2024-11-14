@@ -80,6 +80,13 @@ const RootLayout = () => {
               //   headerShown: false,
               // }}
             />
+            <Stack.Screen
+              name="product/confirm"
+              options={{ headerTitle: "Confirm infomation" }}
+              // options={{
+              //   headerShown: false,
+              // }}
+            />
           </Stack>
         </ThemeProvider>
         {/* </SafeAreaView> */}
