@@ -24,6 +24,9 @@ interface AppContextType {
 
   selectedEmployee: IEmployee | null;
   setSelectedEmployee: (v: any) => void;
+
+  orderItems: IBookingItem | null;
+  setOrderItems: (v: any) => void;
 }
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -59,6 +62,8 @@ const AppProvider = (props: IProps) => {
   const [selectedEmployee, setSelectedEmployee] = useState<IEmployee | null>(
     null
   );
+  const [orderItems, setOrderItems] = useState<IBookingItem | null>(null);
+
   return (
     <AppContext.Provider
       value={{
@@ -78,6 +83,8 @@ const AppProvider = (props: IProps) => {
         setSelectedLocation,
         selectedEmployee,
         setSelectedEmployee,
+        orderItems,
+        setOrderItems,
       }}
     >
       {props.children}

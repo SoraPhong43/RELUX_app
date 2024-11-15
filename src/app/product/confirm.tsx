@@ -2,6 +2,10 @@ import { useCurrentApp } from "@/context/app.context";
 import { useRoute } from "@react-navigation/native";
 import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { APP_COLOR } from "@/app/utils/constant";
+import { useEffect, useState } from "react";
+import { currencyFormatter } from "../utils/API";
+import { formatDuration } from "../utils/format.duration";
+import moment from "moment";
 
 const ConfirmService = () => {
   const {
@@ -10,11 +14,37 @@ const ConfirmService = () => {
     selectedTime,
     selectedLocation,
     selectedEmployee,
+    service,
+    cart,
   } = useCurrentApp();
+  const [orderItems, setOrderItems] = useState<IBookingItem[]>([]);
+  const [totalDuration, setTotalDuration] = useState<number>(0);
+  const [updatedTime, setUpdatedTime] = useState<string | null>(null);
   const route = useRoute();
   // @ts-ignore
   const { note } = route.params || {};
 
+  useEffect(() => {
+    const params = route.params as {
+      orderItems?: string;
+      note?: string;
+      totalDuration?: number;
+    };
+    if (params?.orderItems) {
+      setOrderItems(JSON.parse(params.orderItems));
+    }
+    if (params?.totalDuration) {
+      setTotalDuration(params.totalDuration);
+    }
+  }, [route.params]);
+
+  useEffect(() => {
+    if (selectedTime && totalDuration) {
+      const time = moment(selectedTime, "h:mm A");
+      const newTime = time.add(totalDuration, "minutes").format("h:mm A");
+      setUpdatedTime(newTime);
+    }
+  }, [selectedTime, totalDuration]);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headerText}>Xác Nhận Dịch Vụ Spa</Text>
@@ -41,6 +71,11 @@ const ConfirmService = () => {
             {selectedDate ? selectedDate.format("Do MMM") : "Chưa chọn"}
           </Text>
           <Text style={styles.label}>Giờ</Text>
+          <Text style={styles.value}>
+            {selectedTime || "Chưa chọn"}{" "}
+            {updatedTime && `- Xong lúc: ${updatedTime}`}
+          </Text>
+          <Text style={styles.label}>Giờ</Text>
           <Text style={styles.value}>{selectedTime || "Chưa chọn"}</Text>
           <Text style={styles.label}>Địa Điểm</Text>
           <Text style={styles.value}>
@@ -50,6 +85,24 @@ const ConfirmService = () => {
           <Text style={styles.value}>
             {selectedEmployee?.name || "Chưa chọn"}
           </Text>
+          <Text style={styles.label}>Dịch vụ</Text>
+          {orderItems.map((item, index) => (
+            <View key={index}>
+              <Text style={styles.value}>
+                {item.title} - x{item.quantity}
+              </Text>
+            </View>
+          ))}
+          <View>
+            <Text style={styles.label}>Total duration</Text>
+            <Text style={styles.value}>{formatDuration(totalDuration)}</Text>
+          </View>
+          <View>
+            <Text style={styles.label}>Total price</Text>
+            <Text style={styles.value}>
+              {currencyFormatter(cart?.[service!.id].sum)}
+            </Text>
+          </View>
           <Text style={styles.label}>Ghi Chú</Text>
           <Text style={styles.value}>{note || "Không có ghi chú"}</Text>
         </View>

@@ -60,7 +60,6 @@ const DropDownFacility = ({}) => {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.headerText}>Book apointment</Text> */}
       <View style={styles.labelContainer}>
         <Text style={styles.labelText}>Day</Text>
       </View>
@@ -74,13 +73,13 @@ const DropDownFacility = ({}) => {
             onPress={() => setSelectedDate(item.date)}
             style={[
               styles.dayButton,
-              selectedDate === item.date && styles.selectedButton,
+              selectedDate?.isSame(item.date, "day") && styles.selectedButton,
             ]}
           >
             <Text
               style={[
                 styles.dayText,
-                selectedDate === item.date && styles.selectedText,
+                selectedDate?.isSame(item.date, "day") && styles.selectedText,
               ]}
             >
               {item.day}
@@ -88,7 +87,7 @@ const DropDownFacility = ({}) => {
             <Text
               style={[
                 styles.dateText,
-                selectedDate === item.date && styles.selectedText,
+                selectedDate?.isSame(item.date, "day") && styles.selectedText,
               ]}
             >
               {item.formattedDate}

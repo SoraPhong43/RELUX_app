@@ -64,6 +64,7 @@ declare global {
         name: string,
         price: number,
         description: string,
+        duration: number,
         options:{
             id: string;
          title: string;
@@ -114,6 +115,13 @@ declare global {
         hiredate: string | null,
         avatar: string | null
     }
+    interface IBookingItem {
+        title: string;
+        option: string;
+        price: number;
+        quantity: number;
+        duration?: number;
+      }
 }
 
 // cart:{

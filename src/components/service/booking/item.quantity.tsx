@@ -11,9 +11,9 @@ const ItemQuantity = (props: IProps) => {
   const { menuItem, service, isModel } = props;
   const { cart, setCart } = useCurrentApp();
 
-  const handlePressItem = (item: IMenuItem, action: "MINS" | "PLUS") => {
+  const handlePressItem = (item: IMenuItem, action: "MINUS" | "PLUS") => {
     if (item.details.length && isModel === false) {
-      //console.log(menuItem.name);
+      //console.log(menuItem.duration);
       console.log(item);
       router.navigate({
         pathname:
@@ -22,35 +22,44 @@ const ItemQuantity = (props: IProps) => {
       });
     } else {
       if (service?.id) {
-        const total = action === "MINS" ? -1 : 1;
+        const total = action === "MINUS" ? -1 : 1; // Sửa đúng hành động
+
         if (!cart[service?.id]) {
-          //chua ton tai dich vu => khoi tao cua hang
+          // Nếu dịch vụ chưa tồn tại trong giỏ hàng, khởi tạo dịch vụ trong giỏ hàng
           cart[service.id] = {
             sum: 0,
             quantity: 0,
             items: {},
           };
         }
-        // xu ly
+
+        // Xử lý cập nhật tổng giá và số lượng trong giỏ hàng
         cart[service.id].sum = cart[service.id].sum + total * item.price;
         cart[service.id].quantity = cart[service.id].quantity + total;
 
-        //check san pham da tung them vao chua
+        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng của dịch vụ chưa
         if (!cart[service.id].items[item.id]) {
           cart[service.id].items[item.id] = {
             data: menuItem,
             quantity: 0,
           };
         }
-        const currentQuality = cart[service.id].items[item.id].quantity + total;
+
+        // Cập nhật số lượng sản phẩm hiện tại
+        const currentQuantity =
+          cart[service.id].items[item.id].quantity + total;
         cart[service.id].items[item.id] = {
           data: menuItem,
-          quantity: currentQuality,
+          quantity: currentQuantity,
         };
-        if (currentQuality <= 0) {
+
+        // Nếu số lượng <= 0, xóa sản phẩm khỏi giỏ hàng
+        if (currentQuantity <= 0) {
           delete cart[service.id].items[item.id];
         }
-        setCart((prevState: any) => ({ ...prevState, ...cart })); //merge state
+
+        // Cập nhật giỏ hàng
+        setCart((prevState: any) => ({ ...prevState, ...cart }));
       }
     }
   };

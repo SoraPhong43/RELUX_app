@@ -14,23 +14,29 @@ import { currencyFormatter } from "../utils/API";
 import SelectSpa from "@/components/InfoBooking/select.spa";
 import DropDownFacility from "@/components/InfoBooking/choose.time";
 import { router, useNavigation } from "expo-router";
+import moment, { duration } from "moment";
+import { formatDuration } from "../utils/format.duration";
 
-interface IBookingItem {
-  title: string;
-  option: string;
-  price: number;
-  quantity: number;
-}
 const Booking = () => {
-  const { service, cart, selectedDate, selectedTime } = useCurrentApp();
+  const {
+    service,
+    cart,
+    selectedDate,
+    selectedTime,
+    selectedEmployee,
+    selectedLocation,
+  } = useCurrentApp();
   const [orderItems, setOrderItems] = useState<IBookingItem[]>([]);
 
   const [note, setNote] = useState("");
-  const navigation = useNavigation();
+  const [totalDuration, setTotalDuration] = useState(0);
 
   useEffect(() => {
     if (cart && service && service.id) {
       const result = [];
+      let totalDurationTemp = 0;
+
+      // Loop through cart items and calculate the total duration
       for (const [menuItemId, currentItems] of Object.entries(
         cart[service.id].items
       )) {
@@ -41,45 +47,84 @@ const Booking = () => {
             );
             const addPrice = option?.additionalPrice ?? 0;
             result.push({
-              // image: currentItems.data.image,
               title: currentItems.data.name,
               option: key,
               price: currentItems.data.price + addPrice,
               quantity: value,
+              duration: currentItems.data.duration, // Make sure duration is added here
             });
+
+            // Sum the durations
+            totalDurationTemp += currentItems.data.duration * value;
           }
         } else {
           result.push({
-            //image: currentItems.data.image,
             title: currentItems.data.name,
             option: "",
             price: currentItems.data.price,
             quantity: currentItems.quantity,
+            duration: currentItems.data.duration, // Make sure duration is added here
           });
+
+          // Sum the durations
+          totalDurationTemp +=
+            currentItems.data.duration * currentItems.quantity;
         }
-        setOrderItems(result);
       }
+
+      setOrderItems(result);
+      setTotalDuration(totalDurationTemp); // Update total duration state
     }
-  }, [service]);
-  const validateSelection = () => {
-    if (!selectedDate) {
-      Alert.alert("Chọn Ngày", "Vui lòng chọn ngày cho cuộc hẹn.");
-      return false;
-    }
+  }, [cart, service]);
+
+  const isTimeSelected = (selectedTime: string | null): boolean => {
     if (!selectedTime) {
       Alert.alert("Chọn Thời Gian", "Vui lòng chọn thời gian cho cuộc hẹn.");
       return false;
     }
     return true;
   };
+
+  const validateSelection = (): boolean => {
+    // Check if a date is selected
+    if (!selectedDate || !moment(selectedDate).isValid()) {
+      Alert.alert("Chọn Ngày", "Vui lòng chọn ngày cho cuộc hẹn.");
+      return false;
+    }
+
+    // Check if a time is selected
+    if (!isTimeSelected(selectedTime)) {
+      return false;
+    }
+
+    // Check if a facility (selectedLocation) is chosen
+    if (!selectedLocation) {
+      Alert.alert("Chọn Cơ Sở", "Vui lòng chọn cơ sở cho cuộc hẹn.");
+      return false;
+    }
+
+    // Check if an employee (selectedEmployee) is chosen
+    if (!selectedEmployee) {
+      Alert.alert("Chọn Nhân Viên", "Vui lòng chọn nhân viên cho cuộc hẹn.");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleNextStep = () => {
     if (validateSelection()) {
       router.navigate({
         pathname: "/product/confirm",
-        params: { note: note },
+        params: {
+          note: note,
+          orderItems: JSON.stringify(orderItems),
+          totalDuration: totalDuration,
+        },
       });
     }
   };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -146,7 +191,9 @@ const Booking = () => {
                 <Text style={{ fontWeight: "600" }}>{item.quantity} x</Text>
               </View>
               <View style={{ gap: 10 }}>
-                <Text>{item.title}</Text>
+                <Text>
+                  {item.title} - {item.duration} mins
+                </Text>
                 <Text style={{ fontSize: 12, color: APP_COLOR.GRAY }}>
                   {item.option}
                 </Text>
@@ -166,6 +213,16 @@ const Booking = () => {
                 Tổng cộng ({cart?.[service!.id].quantity} dịch vụ)
               </Text>
               <Text>{currencyFormatter(cart?.[service!.id].sum)}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingVertical: 10,
+              }}
+            >
+              <Text style={{ color: APP_COLOR.GRAY }}>Time</Text>
+              <Text>{formatDuration(totalDuration)}</Text>
             </View>
           </View>
         )}

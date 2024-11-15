@@ -27,8 +27,15 @@ const ItemSingle = (props: IProps) => {
                     source={{ uri: `${getURLBaseBackend()}/images/menu-item/${menuItem?.image}` }} /> */}
       </View>
       <View style={{ flex: 1, gap: 10 }}>
-        <View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: 260,
+          }}
+        >
           <Text>{menuItem?.name}</Text>
+          <Text>{menuItem?.duration} mins</Text>
         </View>
         <View>
           <Text>{menuItem?.description}</Text>
