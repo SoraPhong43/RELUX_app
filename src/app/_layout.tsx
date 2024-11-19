@@ -53,12 +53,12 @@ const RootLayout = () => {
             />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen
-              name="product/[id]"
+              name="(user)/product/[id]"
               options={{ headerShown: false }}
               // options={{ headerTitle: "Services" }}
             />
             <Stack.Screen
-              name="product/create.modal"
+              name="(user)/product/create.modal"
               options={{
                 headerShown: false,
                 animation: "fade",
@@ -66,7 +66,7 @@ const RootLayout = () => {
               }}
             />
             <Stack.Screen
-              name="product/update.modal"
+              name="(user)/product/update.modal"
               options={{
                 headerShown: false,
                 animation: "fade",
@@ -74,18 +74,22 @@ const RootLayout = () => {
               }}
             />
             <Stack.Screen
-              name="product/booking"
+              name="(user)/product/booking"
               options={{ headerTitle: "Book apointment" }}
               // options={{
               //   headerShown: false,
               // }}
             />
             <Stack.Screen
-              name="product/confirm"
+              name="(user)/product/confirm"
               options={{ headerTitle: "Confirm infomation" }}
               // options={{
               //   headerShown: false,
               // }}
+            />
+            <Stack.Screen
+              name="(user)/account/info"
+              options={{ headerTitle: "Update infomation" }}
             />
           </Stack>
         </ThemeProvider>

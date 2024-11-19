@@ -12,8 +12,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { useCurrentApp } from "@/context/app.context";
 import { useEffect, useState } from "react";
-import { APP_COLOR } from "../utils/constant";
-import { currencyFormatter } from "../utils/API";
+import { APP_COLOR } from "../../utils/constant";
+import { currencyFormatter } from "../../utils/API";
 
 interface IUpdatedItem {
   //image: string;

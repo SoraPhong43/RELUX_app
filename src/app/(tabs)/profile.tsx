@@ -1,16 +1,32 @@
 import { useCurrentApp } from "@/context/app.context";
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 import { APP_COLOR } from "../utils/constant";
 import { getURLBaseBackend } from "../utils/API";
-
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const AccountPage = () => {
   const { appState } = useCurrentApp();
   const baseImage = `${getURLBaseBackend()}/images/avatar`;
   const insets = useSafeAreaInsets();
 
+  const handleLogOut = async () => {
+    Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất người dùng", [
+      {
+        text: "hủy",
+        style: "cancel",
+      },
+      {
+        text: "Xác nhận",
+        onPress: async () => {
+          await AsyncStorage.removeItem("access_token");
+          router.replace("/(auth)/welcome");
+        },
+      },
+    ]);
+  };
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -36,6 +52,7 @@ const AccountPage = () => {
       </View>
 
       <Pressable
+        onPress={() => router.navigate("/(user)/account/info")}
         style={{
           paddingVertical: 15,
           paddingHorizontal: 10,
@@ -144,6 +161,7 @@ const AccountPage = () => {
         }}
       >
         <Pressable
+          onPress={handleLogOut}
           style={({ pressed }) => ({
             opacity: pressed === true ? 0.5 : 1,
             padding: 10,

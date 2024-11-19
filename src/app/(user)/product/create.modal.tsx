@@ -6,8 +6,8 @@ import { useCurrentApp } from "@/context/app.context";
 import { useEffect, useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import ItemSingle from "@/components/service/booking/item.single";
-import { APP_COLOR } from "../utils/constant";
-import { currencyFormatter } from "../utils/API";
+import { APP_COLOR } from "../../utils/constant";
+import { currencyFormatter } from "../../utils/API";
 
 const CreateModalPage = () => {
   const { service, cart, setCart } = useCurrentApp();
