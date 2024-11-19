@@ -5,6 +5,7 @@ declare global {
         error?: string | string[];
         message: string | string[];
         statusCode: number | string;
+        bookingId?:number;
         data?: T;
     }
   
@@ -16,7 +17,7 @@ declare global {
     interface IUserLogin{
         user:{
             email: string,
-            _id: string,
+            userId: string,
             fullname?: string,
             name?: string,
             username: string,
@@ -121,6 +122,23 @@ declare global {
         price: number;
         quantity: number;
         duration?: number;
+      }
+    interface IBooking{
+        bookingId: number,
+        name: string,
+        email: string,
+        phone: string,
+        bookingTime: string,
+        bookingnotes: string,
+        serviceId: number,
+        locationID: number,
+        userId: number,
+        status: string,
+        totalAmount: number,
+        createdAt: string,
+        updatedAt: string,
+        employeeId: number
+        serviceName:string,
       }
 }
 

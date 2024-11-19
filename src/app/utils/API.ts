@@ -32,7 +32,11 @@ export const getAccountAPI = () => {
 export const getTopService = (ref:string) => {
     const url = `/api/v1/services/${ref}`;
    // console.log(">>check:",url);
-    return axios.post<IBackendRes<ITopService[]>>(url);
+    return axios.post<IBackendRes<ITopService[]>>(url,{},{
+        headers:{
+            delay:3000
+        }
+    });
 }
 
 export const getURLBaseBackend = () => {
@@ -97,4 +101,13 @@ export const currencyFormatter = (value: any) => {
     )} ${options.symbol}`
 }
 
+export const placeBookingAPI=(data:any)=>{
+    const url = `/api/v1/bookings`;
+    return axios.post<IBackendRes<IUserLogin>>(url,{...data});
+}
+
+export const getBookingHistoryAPI = ()=>{
+    const url =`/api/v1/bookings/all`;
+    return axios.get<IBackendRes<IBooking[]>>(url)
+}
 

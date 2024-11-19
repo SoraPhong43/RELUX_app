@@ -63,7 +63,6 @@ const AppProvider = (props: IProps) => {
     null
   );
   const [orderItems, setOrderItems] = useState<IBookingItem | null>(null);
-
   return (
     <AppContext.Provider
       value={{

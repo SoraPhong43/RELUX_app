@@ -2,9 +2,9 @@ import RMain from "@/components/service/main";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Dimensions, Text, View } from "react-native";
-import { getServiceByIdAPI } from "../utils/API";
 import ContentLoader, { Rect, Circle, Path } from "react-content-loader/native";
 import { useCurrentApp } from "@/context/app.context";
+import { getServiceByIdAPI } from "../utils/API";
 const { height: sHeight, width: sWidth } = Dimensions.get("window");
 const ProductPage = () => {
   const { id } = useLocalSearchParams();

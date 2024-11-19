@@ -9,13 +9,14 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { APP_COLOR } from "../utils/constant";
-import { currencyFormatter } from "../utils/API";
+
 import SelectSpa from "@/components/InfoBooking/select.spa";
 import DropDownFacility from "@/components/InfoBooking/choose.time";
 import { router, useNavigation } from "expo-router";
 import moment, { duration } from "moment";
-import { formatDuration } from "../utils/format.duration";
+import { APP_COLOR } from "@/app/utils/constant";
+import { currencyFormatter } from "@/app/utils/API";
+import { formatDuration } from "@/app/utils/format.duration";
 
 const Booking = () => {
   const {
@@ -32,13 +33,13 @@ const Booking = () => {
   const [totalDuration, setTotalDuration] = useState(0);
 
   useEffect(() => {
-    if (cart && service && service.id) {
+    if (cart && service && service.id && cart[service.id]) {
       const result = [];
       let totalDurationTemp = 0;
 
       // Loop through cart items and calculate the total duration
       for (const [menuItemId, currentItems] of Object.entries(
-        cart[service.id].items
+        cart[service.id].items || {}
       )) {
         if (currentItems.extra) {
           for (const [key, value] of Object.entries(currentItems.extra)) {
@@ -51,7 +52,7 @@ const Booking = () => {
               option: key,
               price: currentItems.data.price + addPrice,
               quantity: value,
-              duration: currentItems.data.duration, // Make sure duration is added here
+              duration: currentItems.data.duration,
             });
 
             // Sum the durations
@@ -63,7 +64,7 @@ const Booking = () => {
             option: "",
             price: currentItems.data.price,
             quantity: currentItems.quantity,
-            duration: currentItems.data.duration, // Make sure duration is added here
+            duration: currentItems.data.duration,
           });
 
           // Sum the durations
@@ -73,7 +74,7 @@ const Booking = () => {
       }
 
       setOrderItems(result);
-      setTotalDuration(totalDurationTemp); // Update total duration state
+      setTotalDuration(totalDurationTemp);
     }
   }, [cart, service]);
 
@@ -210,9 +211,15 @@ const Booking = () => {
               }}
             >
               <Text style={{ color: APP_COLOR.GRAY }}>
-                Tổng cộng ({cart?.[service!.id].quantity} dịch vụ)
+                Tổng cộng (
+                {service && cart?.[service!.id] && cart?.[service!.id].quantity}{" "}
+                dịch vụ)
               </Text>
-              <Text>{currencyFormatter(cart?.[service!.id].sum)}</Text>
+              <Text>
+                {currencyFormatter(
+                  service && cart?.[service!.id] && cart?.[service!.id].sum
+                )}
+              </Text>
             </View>
             <View
               style={{
@@ -292,7 +299,12 @@ const Booking = () => {
               }}
             >
               Bước tiếp theo - {``}
-              {currencyFormatter(cart?.[service!.id].sum)}
+              {currencyFormatter(
+                cart &&
+                  service &&
+                  cart?.[service!.id] &&
+                  cart?.[service!.id].sum
+              )}
             </Text>
           </Pressable>
         </View>

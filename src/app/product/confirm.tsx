@@ -3,9 +3,13 @@ import { useRoute } from "@react-navigation/native";
 import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { APP_COLOR } from "@/app/utils/constant";
 import { useEffect, useState } from "react";
-import { currencyFormatter } from "../utils/API";
-import { formatDuration } from "../utils/format.duration";
+
 import moment from "moment";
+import { duration } from "moment";
+import Toast from "react-native-root-toast";
+import { router } from "expo-router";
+import { currencyFormatter, placeBookingAPI } from "@/app/utils/API";
+import { formatDuration } from "@/app/utils/format.duration";
 
 const ConfirmService = () => {
   const {
@@ -16,6 +20,7 @@ const ConfirmService = () => {
     selectedEmployee,
     service,
     cart,
+    setCart,
   } = useCurrentApp();
   const [orderItems, setOrderItems] = useState<IBookingItem[]>([]);
   const [totalDuration, setTotalDuration] = useState<number>(0);
@@ -45,6 +50,77 @@ const ConfirmService = () => {
       setUpdatedTime(newTime);
     }
   }, [selectedTime, totalDuration]);
+
+  const handleBooking = async () => {
+    // Tạo thời gian đặt lịch dạng YYYY-MM-DD HH:mm:ss
+    const bookingTime = `${selectedDate?.format("YYYY-MM-DD")} ${selectedTime}`;
+
+    const bookingData = {
+      name: appState?.user.username || "Guest",
+      email: appState?.user.email || "",
+      phone: appState?.user.phone || "",
+      bookingTime: moment(bookingTime, "YYYY-MM-DD h:mm A").format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+      bookingNotes: note || "Không có ghi chú",
+      serviceId: Number(service?.id) || 0,
+      serviceName: service?.name || "",
+      locationId: selectedLocation?.id || 0,
+      userId: appState?.user.userId ? Number(appState.user.userId) : undefined,
+      employeeId: Number(selectedEmployee?.id) || 0,
+      status: "Pending",
+      totalAmount: cart?.[service!.id]?.sum || 0,
+    };
+
+    console.log("Booking Data Sent to Backend:", bookingData);
+    const res = await placeBookingAPI(bookingData);
+    console.log("API Full Response:", res);
+    if (res && res.bookingId) {
+      console.log(">>> Booking Successful:", res);
+      Toast.show("Đặt lịch thành công!", {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: APP_COLOR.vang,
+        opacity: 1,
+      });
+      //clear data
+      if (service) {
+        delete cart[service.id];
+        setCart((prevCart: any) => ({ ...prevCart, ...cart }));
+      }
+      router.navigate("/");
+    } else {
+      console.log("Unexpected Response Format:", res);
+      const m = Array.isArray(res.message)
+        ? res.message[0]
+        : res.message || "tc"; // Add fallback message
+
+      Toast.show(m, {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: APP_COLOR.vang,
+        opacity: 1,
+      });
+    }
+
+    // succes
+
+    // try {
+    //   const response = await placeBookingAPI(bookingData);
+    //   console.log("Backend Response:", response.data);
+
+    //   if (response.data && response.data.bookingId) {
+    //     alert(`Đặt lịch thành công! Mã đặt lịch: ${response.data.bookingId}`);
+    //   } else {
+    //     console.log("Unexpected Response Format:", response.data);
+    //     alert("Đặt lịch thành công, nhưng không nhận được mã đặt lịch.");
+    //   }
+    // } catch (error) {
+    //   console.error("Error confirming booking:", error);
+    //   alert("Có lỗi xảy ra khi xác nhận đặt lịch. Vui lòng thử lại.");
+    // }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headerText}>Xác Nhận Dịch Vụ Spa</Text>
@@ -89,7 +165,7 @@ const ConfirmService = () => {
           {orderItems.map((item, index) => (
             <View key={index}>
               <Text style={styles.value}>
-                {item.title} - x{item.quantity}
+                {item.title}- {item.quantity}
               </Text>
             </View>
           ))}
@@ -100,9 +176,16 @@ const ConfirmService = () => {
           <View>
             <Text style={styles.label}>Total price</Text>
             <Text style={styles.value}>
-              {currencyFormatter(cart?.[service!.id].sum)}
+              {currencyFormatter(
+                service && cart?.[service.id] && cart?.[service!.id].sum
+              )}
             </Text>
           </View>
+          <Text style={{ color: APP_COLOR.GRAY }}>
+            Tổng cộng (
+            {service && cart?.[service!.id] && cart?.[service!.id].quantity}{" "}
+            dịch vụ)
+          </Text>
           <Text style={styles.label}>Ghi Chú</Text>
           <Text style={styles.value}>{note || "Không có ghi chú"}</Text>
         </View>
@@ -110,8 +193,21 @@ const ConfirmService = () => {
 
       {/* Nút xác nhận */}
       <Pressable
-        style={styles.confirmButton}
-        onPress={() => alert("Dịch vụ đã được xác nhận!")}
+        onPress={handleBooking}
+        style={({ pressed }) => ({
+          opacity: pressed ? 0.7 : 1,
+          paddingVertical: 12,
+          paddingHorizontal: 20,
+          backgroundColor: APP_COLOR.vang,
+          borderRadius: 30,
+          elevation: 5,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+          justifyContent: "center",
+          alignItems: "center",
+        })}
       >
         <Text style={styles.confirmButtonText}>Xác Nhận Dịch Vụ</Text>
       </Pressable>
@@ -183,5 +279,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
 });
