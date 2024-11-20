@@ -6,14 +6,34 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const styles = StyleSheet.create({
   container: {
-    gap: 3,
-    flex: 1,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    backgroundColor: "#FFF  ",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    // borderBottomLeftRadius: 25,
+    // borderBottomRightRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5,
   },
-  location: {
+  userName: {
+    flexDirection: "column",
+  },
+  greeting: {
+    color: APP_COLOR.vang,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  name: {
+    fontSize: 16,
+    color: "#333",
+  },
+  headerTop: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
   },
 });
 
@@ -56,11 +76,18 @@ const HeaderHome = () => {
   const { theme, appState } = useCurrentApp();
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <Text style={{ paddingLeft: 5, fontSize: 15 }}>Happy new days,</Text>
-        <Text style={{ paddingLeft: 10 }}>
-          {appState?.user.username || "Tên không có sẵn"}
-        </Text>
+      <View style={styles.headerTop}>
+        <View style={styles.userName}>
+          <Text style={styles.greeting}>Happy new days,</Text>
+          <Text style={styles.name}>
+            {appState?.user.username || "Tên không có sẵn"}
+          </Text>
+        </View>
+        <MaterialCommunityIcons
+          name="bell-ring-outline"
+          size={24}
+          color={APP_COLOR.vang}
+        />
       </View>
       {/* <View style={styles.location}>
         <Entypo name="location-pin" size={20} color={APP_COLOR.vang} />

@@ -35,8 +35,10 @@ const VerifyPage = () => {
       setIsSubmit(true);
       const res = await verifyCodeAPI(email as string, code);
       setIsSubmit(false);
-      otpRef?.current?.clear();
+
+      // otpRef?.current?.clear();
       if (res.data) {
+        //success
         otpRef?.current?.clear();
         Toast.show("kich hoat tai khoan thanh cong", {
           duration: Toast.durations.LONG,

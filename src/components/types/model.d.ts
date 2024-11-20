@@ -103,6 +103,8 @@ declare global {
         id: number,
         name: string,
         address: string,
+        description: string,
+        image:string,
         employees:IEmployee[]
     }
     interface IEmployee{
@@ -140,6 +142,13 @@ declare global {
         employeeId: number
         serviceName:string,
       }
+    interface IAllLocation{
+        locationID: string,
+        locationName: string,
+        Address: string,
+        description: string,
+        image: string
+    }
 }
 
 // cart:{

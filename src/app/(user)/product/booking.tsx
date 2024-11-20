@@ -135,7 +135,6 @@ const Booking = () => {
           padding: 10,
         }}
       >
-        <HeaderHome />
         <DropDownFacility />
         <SelectSpa />
         <View

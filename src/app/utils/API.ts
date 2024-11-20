@@ -59,6 +59,11 @@ export const getAllLocations = ()=>{
     return axios.get<IBackendRes<ILocation>>(url);
 }
 
+export const getLocationSpa = ()=>{
+    const url = `/api/v1/location`;
+    return axios.get<IBackendRes<IAllLocation>>(url);
+}
+
 export const printAsyncStorage = () => {
     AsyncStorage.getAllKeys((err, keys) => {
         AsyncStorage.multiGet(keys!, (error, stores) => {

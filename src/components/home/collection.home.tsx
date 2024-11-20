@@ -27,6 +27,7 @@ interface IProps {
 
 const styes = StyleSheet.create({
   container: {
+    paddingLeft: 5,
     borderColor: "green",
   },
 });
@@ -66,21 +67,23 @@ const CollectionHome = (props: IProps) => {
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
+              alignItems: "center",
               paddingTop: 5,
             }}
           >
             <Text
               style={{
-                fontSize: 16,
-                fontWeight: "600",
+                fontSize: 20,
+                fontWeight: "bold",
                 color: APP_COLOR.vang,
-                paddingLeft: 5,
               }}
             >
               {name}
             </Text>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ color: "#5a5a5a", paddingRight: 5 }}>See all</Text>
+              <Text style={{ color: "#5a5a5a", paddingRight: 5, fontSize: 15 }}>
+                See all
+              </Text>
               <AntDesign
                 name="rightcircleo"
                 size={16}
@@ -148,7 +151,7 @@ const CollectionHome = (props: IProps) => {
                       </Text>
                     </View>
                   </Pressable>
-                  <View
+                  {/* <View
                     style={{
                       flexDirection: "row",
                       justifyContent: "space-between",
@@ -165,7 +168,7 @@ const CollectionHome = (props: IProps) => {
                       {currencyFormatter(item.price)}
                     </Text>
                     <FontAwesome name="cart-plus" size={24} color="#C3A74E" />
-                  </View>
+                  </View> */}
                 </View>
               );
             }}
