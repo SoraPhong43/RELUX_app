@@ -1,6 +1,7 @@
 import { getAllLocations, getLocationSpa } from "@/app/utils/API";
 import { APP_COLOR } from "@/app/utils/constant";
 import { useCurrentApp } from "@/context/app.context";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -37,6 +38,7 @@ const DisplayLocation = () => {
       // console.log("res data", res.data);
       if (res.data && Array.isArray(res.data)) {
         setLocation(res.data);
+        //console.log(res.data);
       } else {
         console.warn("Response does not contain 'data' as an array:", res);
         setLocation([]);
@@ -85,7 +87,14 @@ const DisplayLocation = () => {
                 marginBottom: 5,
               }}
             >
-              <Pressable onPress={() => alert("me")}>
+              <Pressable
+                onPress={() =>
+                  router.navigate({
+                    pathname: "/product/locationid",
+                    params: { locationID: item.locationID },
+                  })
+                }
+              >
                 <Image
                   style={{
                     height: 120,

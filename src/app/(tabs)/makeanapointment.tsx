@@ -33,8 +33,8 @@ const MakeAnAppointment = () => {
             indicatorStyle={{ backgroundColor: APP_COLOR.vang }}
             style={styles.tabBar}
             labelStyle={{ fontWeight: "bold" }}
-            activeColor={APP_COLOR.vang} // Màu chữ cho tab đang chọn
-            inactiveColor="gray" // Màu chữ cho tab không được chọn
+            activeColor={APP_COLOR.vang}
+            inactiveColor="gray"
           />
         )}
       />

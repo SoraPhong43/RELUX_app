@@ -88,8 +88,13 @@ const RootLayout = () => {
               // }}
             />
             <Stack.Screen
-              name="(user)/account/info"
-              options={{ headerTitle: "Update infomation" }}
+              name="(user)/product/locationid"
+              options={{
+                headerShown: false,
+                animation: "slide_from_bottom",
+                // animation: "slide_from_bottom",
+                presentation: "transparentModal",
+              }}
             />
           </Stack>
         </ThemeProvider>

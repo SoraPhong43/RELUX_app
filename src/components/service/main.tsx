@@ -163,7 +163,6 @@ const RMain = () => {
   ).current;
 
   console.log(processDataServiceMenu(service));
-
   return (
     <View style={{ flex: 1 }}>
       <StickyHeader
