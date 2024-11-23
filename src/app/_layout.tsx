@@ -96,6 +96,10 @@ const RootLayout = () => {
                 presentation: "transparentModal",
               }}
             />
+            <Stack.Screen
+              name="(user)/account/info"
+              options={{ headerTitle: "Cập nhật thông tin" }}
+            />
           </Stack>
         </ThemeProvider>
         {/* </SafeAreaView> */}

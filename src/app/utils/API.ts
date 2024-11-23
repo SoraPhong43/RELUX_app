@@ -120,3 +120,7 @@ export const getBookingHistoryAPI = ()=>{
     return axios.get<IBackendRes<IBooking[]>>(url)
 }
 
+export const updateUserAPI = (userId: string, username: string, phone: string) => {
+    const url = `/api/v1/user/edituser`;
+    return axios.patch<IBackendRes<IUserLogin>>(url, { userId, username, phone });
+}

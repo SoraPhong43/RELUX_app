@@ -21,3 +21,10 @@ export const SignUpSchema = Yup.object().shape({
     name: Yup.string()
         .required('Name cannot be left blank'),
 });
+
+export const UpdateUserSchema = Yup.object().shape({
+    name: Yup.string()
+        .required('Họ tên không được để trống'),
+    phone: Yup.string()
+        .required('Số điện thoại không được để trống'),
+});
