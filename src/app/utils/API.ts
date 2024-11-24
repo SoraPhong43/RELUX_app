@@ -124,3 +124,11 @@ export const updateUserAPI = (userId: string, username: string, phone: string) =
     const url = `/api/v1/user/edituser`;
     return axios.patch<IBackendRes<IUserLogin>>(url, { userId, username, phone });
 }
+
+export const updateUserPasswordAPI =(
+    currentPassword:string,
+    newPassword:string,
+)=>{
+    const url=`/api/v1/users/password`;
+    return axios.post<IBackendRes<IUserLogin>>(url,{currentPassword,newPassword})
+}
