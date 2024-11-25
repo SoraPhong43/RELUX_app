@@ -56,6 +56,7 @@ declare global {
         id: string,
         name: string,
         description: string,
+        image:string,
 
         menuItems: IMenuItem[]
     }

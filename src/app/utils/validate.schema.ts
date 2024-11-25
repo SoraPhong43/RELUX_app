@@ -42,3 +42,21 @@ export const UpdateUserPasswordScheme= Yup.object().shape({
     .default('confirm password cannot be blank')
     .oneOf([Yup.ref('newPassword')],'Passwords must match')
 })
+
+export const RequestPasswordSchema = Yup.object().shape({
+    email: Yup.string()
+    .email('Invalid email format')
+    .required('Email cannot be blank')
+});
+
+export const ForgotPasswordSchema= Yup.object().shape({
+    password: Yup.string()
+    .min(6,'Password need 6 charactors')
+    .max(50,'Password maximum 50 charactors')
+    .required('Password cannot be blank'),
+    confirmPassword: Yup.string()
+    .required('Confirm Password cannot be blank')
+    .oneOf([Yup.ref('password')], 'Password must match'),
+    code: Yup.string()
+    .required('Code cannot be blank')
+})

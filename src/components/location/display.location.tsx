@@ -54,7 +54,7 @@ const DisplayLocation = () => {
       : process.env.EXPO_PUBLIC_IOS_API_URL;
 
   const baseImage = `${backend}/images/location`;
-  console.log("Base Image URL:", baseImage);
+  //console.log("Base Image URL:", baseImage);
 
   return (
     <View style={{ flex: 1, padding: 5 }}>

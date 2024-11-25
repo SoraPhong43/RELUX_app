@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Dimensions, StyleSheet } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
@@ -10,6 +10,7 @@ import BookingHistory from "../viewService/bookingHistory";
 
 const MakeAnAppointment = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [refreshing, setRefresing] = React.useState(false);
   const [routes] = useState([
     { key: "unused", title: "Tình trạng" },
     { key: "history", title: "History" },
@@ -20,6 +21,12 @@ const MakeAnAppointment = () => {
     history: BookingHistory, // Component cho tab Lịch Sử
   });
 
+  const onRefresh = React.useCallback(() => {
+    setRefresing(true);
+    setTimeout(() => {
+      setRefresing(false);
+    }, 2000);
+  }, []);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <TabView

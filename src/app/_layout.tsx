@@ -51,7 +51,16 @@ const RootLayout = () => {
               name="(auth)/login"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="(auth)/request.password"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(auth)/forgot.password"
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
             <Stack.Screen
               name="(user)/product/[id]"
               options={{ headerShown: false }}
@@ -103,6 +112,10 @@ const RootLayout = () => {
             <Stack.Screen
               name="(user)/account/password"
               options={{ headerTitle: "Cập nhật mật khẩu" }}
+            />
+            <Stack.Screen
+              name="(user)/product/menu.product"
+              options={{ headerShown: false }}
             />
           </Stack>
         </ThemeProvider>

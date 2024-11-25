@@ -132,3 +132,18 @@ export const updateUserPasswordAPI =(
     const url=`/api/v1/users/password`;
     return axios.post<IBackendRes<IUserLogin>>(url,{currentPassword,newPassword})
 }
+
+export const requestPasswordAPI = (email:string)=>{
+const url=`/api/v1/auth/retry-password`;
+return axios.post<IBackendRes<IUserLogin>>(url,{email})
+}
+
+export const forgotPasswordAPI = (code:string,email:string,password:string)=>{
+    const url=`/api/v1/auth/forgot-password`;
+    return axios.post<IBackendRes<IUserLogin>>(url,{code,email,password})
+}
+
+export const DisplayMenuAPI=()=>{
+    const url=`/api/v1/menu/allmenu`;
+    return axios.post<IBackendRes<IMenu>>(url)
+}

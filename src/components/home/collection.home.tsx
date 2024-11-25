@@ -57,7 +57,7 @@ const CollectionHome = (props: IProps) => {
       : process.env.EXPO_PUBLIC_IOS_API_URL;
 
   const baseImage = `${backend}/images/service`;
-  console.log("Base Image URL:", baseImage);
+  //console.log("Base Image URL:", baseImage);
   return (
     <>
       <View style={{ height: 10, backgroundColor: "#e9e9e9" }}></View>
