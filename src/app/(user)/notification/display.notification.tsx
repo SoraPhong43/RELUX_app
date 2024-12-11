@@ -1,66 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, FlatList, SafeAreaView, StyleSheet } from "react-native";
+import { Text, View, FlatList, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Entypo from "@expo/vector-icons/Entypo";
-import { APP_COLOR } from "@/app/utils/constant";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import * as Notifications from "expo-notifications";
+import { APP_COLOR } from "@/app/utils/constant";
+
 const NotificationList = () => {
   const [notifications, setNotifications] = useState<
     { message: string; time: Date }[]
   >([]);
 
-  /**
-   * Hàm tải thông báo từ AsyncStorage
-   */
-  const loadNotifications = async () => {
-    try {
-      const storedNotifications = await AsyncStorage.getItem("notifications");
-      console.log("Raw notifications from AsyncStorage:", storedNotifications);
-
-      if (storedNotifications) {
-        let parsedNotifications = [];
-        try {
-          parsedNotifications = JSON.parse(storedNotifications);
-
-          // Đảm bảo dữ liệu hợp lệ
-          if (!Array.isArray(parsedNotifications)) {
-            console.error("Parsed notifications is not an array, resetting.");
-            parsedNotifications = [];
-          }
-        } catch (error) {
-          console.error("Error parsing notifications:", error);
-          parsedNotifications = [];
-        }
-
-        console.log("Parsed notifications:", parsedNotifications);
-        setNotifications(parsedNotifications);
-      } else {
-        console.log("No notifications found, initializing empty state.");
-        setNotifications([]);
-      }
-    } catch (error) {
-      console.error("Error loading notifications:", error);
-    }
-  };
-
-  /**
-   * Hàm tính toán thời gian đã trôi qua
-   */
-  const timeAgo = (time: Date) => {
-    const diffInMs = new Date().getTime() - time.getTime();
-    const diffInMin = Math.floor(diffInMs / 60000); // Tính bằng phút
-
-    if (diffInMin < 1) return "Vừa xong";
-    if (diffInMin < 60) return `${diffInMin} phút trước`;
-    const diffInHour = Math.floor(diffInMin / 60);
-    if (diffInHour < 24) return `${diffInHour} giờ trước`;
-    const diffInDay = Math.floor(diffInHour / 24);
-    return `${diffInDay} ngày trước`;
-  };
-
-  /**
-   * Tải thông báo khi khởi động
-   */
   useEffect(() => {
     const initializeNotifications = async () => {
       try {
@@ -71,13 +21,83 @@ const NotificationList = () => {
     };
 
     initializeNotifications();
+
+    // Listener for received notifications
+    const notificationListener = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        const newMessage = {
+          message:
+            notification.request.content.body || "You have a new notification!",
+          time: new Date(),
+        };
+        saveNotification(newMessage);
+      }
+    );
+
+    return () => {
+      notificationListener.remove();
+    };
   }, []);
+
+  /**
+   * Load notifications from AsyncStorage
+   */
+  const loadNotifications = async () => {
+    try {
+      const storedNotifications = await AsyncStorage.getItem("notifications");
+      if (storedNotifications) {
+        const parsedNotifications = JSON.parse(storedNotifications);
+        setNotifications(
+          parsedNotifications.map((notif: any) => ({
+            ...notif,
+            time: new Date(notif.time),
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error loading notifications:", error);
+    }
+  };
+
+  /**
+   * Save a new notification to AsyncStorage
+   */
+  const saveNotification = async (newNotification: {
+    message: string;
+    time: Date;
+  }) => {
+    try {
+      const updatedNotifications = [newNotification, ...notifications];
+      setNotifications(updatedNotifications);
+      await AsyncStorage.setItem(
+        "notifications",
+        JSON.stringify(updatedNotifications)
+      );
+    } catch (error) {
+      console.error("Error saving notification:", error);
+    }
+  };
+
+  /**
+   * Calculate time elapsed since the notification
+   */
+  const timeAgo = (time: Date) => {
+    const diffInMs = new Date().getTime() - time.getTime();
+    const diffInMin = Math.floor(diffInMs / 60000);
+
+    if (diffInMin < 1) return "Just now";
+    if (diffInMin < 60) return `${diffInMin} minutes ago`;
+    const diffInHour = Math.floor(diffInMin / 60);
+    if (diffInHour < 24) return `${diffInHour} hours ago`;
+    const diffInDay = Math.floor(diffInHour / 24);
+    return `${diffInDay} days ago`;
+  };
 
   return (
     <View>
       <FlatList
         data={notifications}
-        initialNumToRender={10} // Hiển thị 10 thông báo đầu tiên
+        initialNumToRender={10}
         renderItem={({ item }) => (
           <View style={styles.notificationContainer}>
             <Entypo
@@ -94,48 +114,53 @@ const NotificationList = () => {
                   alignItems: "center",
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ fontWeight: 600 }}>You have apointment</Text>
-                  <Entypo name="dot-single" size={20} color="black" />
-                  <Text style={styles.time}>
-                    {timeAgo(
-                      typeof item.time === "string"
-                        ? new Date(item.time)
-                        : item.time
-                    )}
-                  </Text>
+                <View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        You have apointment
+                      </Text>
+                      <Entypo name="dot-single" size={24} color="black" />
+                      <Text style={styles.time}>{timeAgo(item.time)}</Text>
+                    </View>
+                    <AntDesign name="ellipsis1" size={20} color="black" />
+                  </View>
+                  <Text style={styles.message}>{item.message}</Text>
                 </View>
-                <AntDesign name="ellipsis1" size={30} color="black" />
               </View>
-              <Text style={styles.message}>{item.message}</Text>
             </View>
           </View>
         )}
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Không có thông báo</Text>
+          <Text style={styles.emptyText}>No notifications</Text>
         }
       />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   notificationContainer: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    // alignItems: "stretch",
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
-    padding: 5,
+    padding: 10,
   },
   icon: {
-    // width: 40,
-    // height: 40,
-    paddingTop: 8,
     marginRight: 10,
   },
   textContainer: {
     flex: 1,
-    width: 330,
   },
   message: {
     fontSize: 16,
@@ -153,4 +178,5 @@ const styles = StyleSheet.create({
     color: "gray",
   },
 });
+
 export default NotificationList;
