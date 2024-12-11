@@ -3,6 +3,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { APP_COLOR } from "@/app/utils/constant";
 import { useCurrentApp } from "@/context/app.context";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { router } from "expo-router";
 
 const styles = StyleSheet.create({
   container: {
@@ -87,6 +88,9 @@ const HeaderHome = () => {
           name="bell-ring-outline"
           size={24}
           color={APP_COLOR.vang}
+          onPress={() =>
+            router.navigate("/(user)/notification/display.notification")
+          }
         />
       </View>
       {/* <View style={styles.location}>

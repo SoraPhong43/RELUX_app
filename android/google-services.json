@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768060970670",
+    "project_id": "redux-2e650",
+    "storage_bucket": "redux-2e650.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768060970670:android:52f3e68366fe0bd2bfff3f",
+        "android_client_info": {
+          "package_name": "com.anonymous.RELUX_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQQcU6Hivir_EMpy7EsuZHm30KVhVVE9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

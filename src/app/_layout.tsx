@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { APP_COLOR } from "./utils/constant";
+import DisplayNotification from "./(user)/notification/notification";
 
 const styles = StyleSheet.create({
   container: {
@@ -26,6 +27,7 @@ const RootLayout = () => {
       <AppProvider>
         {/* <SafeAreaView  style={styles.container} > */}
         <ThemeProvider value={navTheme}>
+          <DisplayNotification />
           <Stack
             screenOptions={{
               headerTintColor: APP_COLOR.vang,
@@ -60,7 +62,10 @@ const RootLayout = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
+            <Stack.Screen
+              name="(user)/notification/display.notification"
+              options={{ headerTitle: "Notifications" }}
+            />
             <Stack.Screen
               name="(user)/product/[id]"
               options={{ headerShown: false }}
@@ -115,6 +120,10 @@ const RootLayout = () => {
             />
             <Stack.Screen
               name="(user)/product/menu.product"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(user)/product/per.menuItem"
               options={{ headerShown: false }}
             />
           </Stack>

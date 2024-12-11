@@ -76,7 +76,7 @@ declare global {
         details:Idetails[],
         createdAt: string;
         updatedAt: string;
-        
+        image:string
     }
 
     interface Idetails{
@@ -149,6 +149,10 @@ declare global {
         Address: string,
         description: string,
         image: string
+    }
+    interface INotification{
+        serviceName: string,
+        bookingTime: string 
     }
 }
 

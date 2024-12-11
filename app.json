@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "RELUX_app",
-    "slug": "RELUX_app",
+    "slug": "redux",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,21 +11,35 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "projectId": "edbf22f8-3887-4518-bec4-37d655dda1b6"  
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+         "foregroundImage": "../assets/icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "googleServiceFile":"./android/app/google-services.json",
+      "package": "com.anonymous.RELUX_app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "hoidanit-app",
+    "scheme": "redux-app",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

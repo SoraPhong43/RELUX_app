@@ -18,12 +18,14 @@ const DropDownFacility = ({}) => {
   const [timeList, setTimeList] = useState<{ time: string }[]>([]);
   const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } =
     useCurrentApp();
+  const [bookedDates, setBookedDates] = useState<moment.Moment[]>([]);
 
   useEffect(() => {
     getDay();
     getTime();
   }, []);
 
+  // Lấy các ngày trong tuần
   const getDay = () => {
     const nextSevenDays = [];
     for (let i = 0; i < 7; i++) {
@@ -37,25 +39,41 @@ const DropDownFacility = ({}) => {
     setNext7Days(nextSevenDays);
   };
 
+  // Lấy các thời gian có sẵn
   const getTime = () => {
     const timeList = [];
     for (let i = 8; i <= 12; i++) {
-      timeList.push({
-        time: `${i}:00 AM`,
-      });
-      timeList.push({
-        time: `${i}:30 AM`,
-      });
+      timeList.push({ time: `${i}:00 AM` });
+      timeList.push({ time: `${i}:30 AM` });
     }
     for (let i = 1; i <= 6; i++) {
-      timeList.push({
-        time: `${i}:00 PM`,
-      });
-      timeList.push({
-        time: `${i}:30 PM`,
-      });
+      timeList.push({ time: `${i}:00 PM` });
+      timeList.push({ time: `${i}:30 PM` });
     }
     setTimeList(timeList);
+  };
+
+  // Khi đặt lịch thành công
+  const handleBookingSuccess = (selectedDate: moment.Moment) => {
+    // Thêm ngày đã đặt vào danh sách
+    setBookedDates([...bookedDates, selectedDate]);
+  };
+
+  // Khi chọn ngày và thời gian, gọi handleBookingSuccess
+  const handleDaySelection = (item: {
+    date: moment.Moment;
+    day: string;
+    formattedDate: string;
+  }) => {
+    if (bookedDates.some((bookedDate) => bookedDate.isSame(item.date, "day"))) {
+      // Nếu ngày đã được đặt, hiển thị cảnh báo và không cho chọn
+      Alert.alert("Ngày đã được đặt", "Ngày này không thể chọn lại.");
+      return;
+    }
+
+    // Chọn ngày và gọi handleBookingSuccess để lưu ngày đã chọn
+    setSelectedDate(item.date);
+    handleBookingSuccess(item.date);
   };
 
   return (
@@ -70,11 +88,28 @@ const DropDownFacility = ({}) => {
         keyExtractor={(item) => item.date.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => setSelectedDate(item.date)}
+            onPress={() => {
+              if (
+                bookedDates.some((bookedDate) =>
+                  bookedDate.isSame(item.date, "day")
+                )
+              ) {
+                // Nếu ngày đã được đặt, hiển thị cảnh báo và không cho chọn
+                Alert.alert("Ngày đã được đặt", "Ngày này không thể chọn lại.");
+                return;
+              }
+              setSelectedDate(item.date); // Nếu chưa đặt, chọn ngày
+            }}
             style={[
               styles.dayButton,
               selectedDate?.isSame(item.date, "day") && styles.selectedButton,
+              bookedDates.some((bookedDate) =>
+                bookedDate.isSame(item.date, "day")
+              ) && styles.disabledButton, // Tô xám nếu ngày đã đặt
             ]}
+            disabled={bookedDates.some((bookedDate) =>
+              bookedDate.isSame(item.date, "day")
+            )} // Vô hiệu hóa nếu ngày đã đặt
           >
             <Text
               style={[
@@ -133,12 +168,6 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "white",
   },
-  headerText: {
-    fontSize: 18,
-    color: APP_COLOR.GRAY,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
   labelContainer: {
     marginBottom: 10,
     marginTop: 15,
@@ -183,5 +212,9 @@ const styles = StyleSheet.create({
   selectedText: {
     color: "white",
     fontWeight: "bold",
+  },
+  disabledButton: {
+    backgroundColor: "#f0f0f0", // Màu xám cho ngày đã đặt
+    borderColor: "#ccc", // Màu viền xám
   },
 });

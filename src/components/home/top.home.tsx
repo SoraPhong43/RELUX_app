@@ -103,7 +103,7 @@ const TopListHome = () => {
               onPress={() =>
                 router.navigate({
                   pathname: "/product/menu.product",
-                  params: { id: item.id },
+                  params: { menuId: item.id, menuName: item.name },
                 })
               }
               // Handle press event

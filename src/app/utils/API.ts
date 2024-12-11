@@ -147,3 +147,23 @@ export const DisplayMenuAPI=()=>{
     const url=`/api/v1/menu/allmenu`;
     return axios.post<IBackendRes<IMenu>>(url)
 }
+
+export const DisplayMenuItemByIdAPI=(menuId:string)=>{
+    const url=`/api/v1/menu/menuById/${menuId}`;
+    return axios.post<IBackendRes<IMenuItem>>(url,{menuId})
+}
+
+export const DisplayPerMenuItemAPI=(id:string)=>{
+const url=`/api/v1/menuitem/permenuitem/${id}`;
+return axios.post<IBackendRes<IMenuItem>>(url,{id})
+}
+
+export const SaveExpoPushTokenAPI=(data:any)=>{
+    const url = `/api/v1/save_token`;
+    return axios.post<IBackendRes<IUserLogin>>(url,{...data});
+}
+
+export const NotificationPushAPI=(userId:string)=>{
+    const url=`/api/v1/send-booking-notification`;
+    return axios.post<IBackendRes<INotification[]>>(url,{userId})
+}
