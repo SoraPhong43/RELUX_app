@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { APP_COLOR } from "../utils/constant";
 import { Link, router } from "expo-router";
 import SocicalButton from "@/components/button/socical.button";
-import { loginAPI } from "../utils/API";
+import { getProfileAPI, loginAPI } from "../utils/API";
 import Toast from "react-native-root-toast";
 import { Formik } from "formik";
 import { LoginSchema } from "../utils/validate.schema";
@@ -25,15 +25,23 @@ const LoginPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { setAppState } = useCurrentApp();
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (username: string, password: string) => {
     try {
       setLoading(true);
-      const res = await loginAPI(email, password);
+      console.log("Response from login API1:", username, password);
+      const res = await loginAPI(username, password);
+      console.log("Response from login API2:", res);
+
       setLoading(false);
 
       if (res.data) {
         // Validate access_token exists
-        await AsyncStorage.setItem("access_token", res.data.access_token);
+        await AsyncStorage.setItem("access_token", res.data.accessToken);
+        const profile = await getProfileAPI();
+        res.data.user = {
+          ...res.data.user,
+          ...profile.data,
+        };
         setAppState(res.data);
         router.replace("/(tabs)");
       } else {
@@ -50,7 +58,7 @@ const LoginPage = () => {
         if (res.statusCode === 400) {
           router.replace({
             pathname: "/(auth)/verify",
-            params: { email: email, isLogin: 1 },
+            params: { username: username, isLogin: 1 },
           });
         }
       }
@@ -70,8 +78,8 @@ const LoginPage = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <Formik
         validationSchema={LoginSchema}
-        initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => handleLogin(values.email, values.password)}
+        initialValues={{ username: "mrthinkj", password: "28122003" }}
+        onSubmit={(values) => handleLogin(values.username, values.password)}
       >
         {({
           handleChange,
@@ -95,13 +103,12 @@ const LoginPage = () => {
             </View>
 
             <ShareInput
-              title="Email"
-              keyboardType="email-address"
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-              error={errors.email}
-              touched={touched.email}
+              title="Username"
+              onChangeText={handleChange("username")}
+              onBlur={handleBlur("username")}
+              value={values.username}
+              error={errors.username}
+              touched={touched.username}
             />
 
             <ShareInput

@@ -22,11 +22,13 @@ const styles = StyleSheet.create({
 const SignUpPage = () => {
   const handleSignUp = async (
     email: string,
+    username: string,
     password: string,
-    name: string
+    fullName: string,
+    phone: string
   ) => {
     try {
-      const res = await registerAPI(email, password, name);
+      const res = await registerAPI(email, password, username, fullName, phone);
       console.log("API Response: ", res);
       if (res.data) {
         router.replace({
@@ -52,9 +54,9 @@ const SignUpPage = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <Formik
         validationSchema={SignUpSchema}
-        initialValues={{ email: "", password: "", name: "" }}
+        initialValues={{ email: "", username: "", password: "", fullName: "", phone: "" }}
         onSubmit={(values) =>
-          handleSignUp(values.email, values.password, values.name)
+          handleSignUp(values.email, values.username, values.password, values.fullName, values.phone)
         }
       >
         {({
@@ -79,11 +81,11 @@ const SignUpPage = () => {
             </View>
             <ShareInput
               title="Họ tên"
-              onChangeText={handleChange("name")}
-              onBlur={handleBlur("name")}
-              value={values.name}
-              error={errors.name}
-              touched={touched.name}
+              onChangeText={handleChange("fullName")}
+              onBlur={handleBlur("fullName")}
+              value={values.fullName}
+              error={errors.fullName}
+              touched={touched.fullName}
             />
 
             <ShareInput
@@ -95,6 +97,14 @@ const SignUpPage = () => {
               error={errors.email}
               touched={touched.email}
             />
+            <ShareInput
+              title="Username"
+              onChangeText={handleChange("username")}
+              onBlur={handleBlur("username")}
+              value={values.username}
+              error={errors.username}
+              touched={touched.username}
+            />
 
             <ShareInput
               title="Password"
@@ -105,7 +115,14 @@ const SignUpPage = () => {
               error={errors.password}
               touched={touched.password}
             />
-
+            <ShareInput
+              title="Phone"
+              onChangeText={handleChange("phone")}
+              onBlur={handleBlur("phone")}
+              value={values.phone}
+              error={errors.phone}
+              touched={touched.phone}
+            />
             <View style={{ marginVertical: 10 }}></View>
             <ShareButton
               title="Đăng Ký"

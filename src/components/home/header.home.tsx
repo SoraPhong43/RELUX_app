@@ -75,13 +75,15 @@ const styles = StyleSheet.create({
 // }
 const HeaderHome = () => {
   const { theme, appState } = useCurrentApp();
+  console.log("App State:", appState);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerTop}>
         <View style={styles.userName}>
           <Text style={styles.greeting}>Happy new days,</Text>
           <Text style={styles.name}>
-            {appState?.user.username || "Tên không có sẵn"}
+            {appState?.user?.username || "Tên không có sẵn"}
           </Text>
         </View>
         <MaterialCommunityIcons

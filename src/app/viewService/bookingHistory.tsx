@@ -7,49 +7,46 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { currencyFormatter, getBookingHistoryAPI } from "../utils/API";
+import { currencyFormatter, getBookingHistoryAPI, placeBookingByUserAPI } from "../utils/API";
 import moment from "moment";
 import { APP_COLOR } from "../utils/constant";
+import { useCurrentApp } from "@/context/app.context";
+import { useFocusEffect } from "@react-navigation/native";
 
 const BookingHistory = () => {
+  const {
+    appState,
+  } = useCurrentApp();
   const [bookingHistory, setBookingHistory] = useState<IBooking[]>([]);
 
   const formatDateTime = (dateTime: any) => {
     return moment(dateTime).format("HH:mm DD/MM/YYYY");
   };
 
-  useEffect(() => {
-    const fetchBookingHistory = async () => {
-      const res = await getBookingHistoryAPI();
-      if (res && Array.isArray(res)) {
-        setBookingHistory(res);
-      } else if (res && res.data && Array.isArray(res.data)) {
-        setBookingHistory(res.data);
-      }
-    };
-    fetchBookingHistory();
-  }, []);
 
-  // Lọc các mục có trạng thái `Confirmed`, `Completed`, hoặc `Cancelled`
-  const completedBookings = bookingHistory.filter(
-    (item) =>
-      item.status === "Confirmed" ||
-      item.status === "Completed" ||
-      item.status === "Cancelled"
+  const fetchBookingHistory = async () => {
+    const res = await placeBookingByUserAPI(appState?.user?.id);
+    console.log("Booking History:", res);
+
+    setBookingHistory(res.data);
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBookingHistory();
+    }, [])
   );
-
   return (
     <ScrollView style={styles.scrollView}>
-      {completedBookings.length === 0 ? (
+      {bookingHistory.length === 0 ? (
         <View>
           <Text>Không có lịch sử dịch vụ</Text>
         </View>
       ) : (
-        completedBookings.map((item, index) => (
+        bookingHistory.map((item, index) => (
           <View key={index} style={styles.bookingCard}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Dịch vụ: </Text>
-              <Text style={styles.serviceName}>{item.serviceName}</Text>
+              <Text style={styles.serviceName}>{item.services?.[0]?.name}</Text>
             </View>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontWeight: "bold" }}>Thời gian đặt lịch: </Text>
@@ -57,13 +54,13 @@ const BookingHistory = () => {
                 {formatDateTime(item.bookingTime)}
               </Text>
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Số tiền phải trả: </Text>
               <Text style={styles.totalAmount}>
                 {currencyFormatter(Number(item.totalAmount))}
               </Text>
-            </View>
-            <Text style={styles.status}>Tình trạng: {item.status}</Text>
+            </View> */}
+            {/* <Text style={styles.status}>Tình trạng: {item.status}</Text> */}
           </View>
         ))
       )}
@@ -74,7 +71,7 @@ const BookingHistory = () => {
 const styles = StyleSheet.create({
   scrollView: {
     paddingHorizontal: 15,
-    paddingTop: 10,
+    padding: 10,
   },
   bookingCard: {
     backgroundColor: "white",
