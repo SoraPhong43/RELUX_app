@@ -7,11 +7,15 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { currencyFormatter, getBookingHistoryAPI } from "../utils/API";
+import { currencyFormatter, getBookingHistoryAPI, placeBookingByUserAPI } from "../utils/API";
 import moment from "moment";
 import { APP_COLOR } from "../utils/constant";
+import { useCurrentApp } from "@/context/app.context";
 
 const UnusedServices = () => {
+  const {
+    appState,
+  } = useCurrentApp();
   const [bookingHistory, setBookingHistory] = useState<IBooking[]>([]);
 
   const formatDateTime = (dateTime: any) => {
@@ -20,12 +24,10 @@ const UnusedServices = () => {
 
   useEffect(() => {
     const fetchBookingHistory = async () => {
-      const res = await getBookingHistoryAPI();
-      if (res && Array.isArray(res)) {
-        setBookingHistory(res);
-      } else if (res && res.data && Array.isArray(res.data)) {
-        setBookingHistory(res.data);
-      }
+      const res = await placeBookingByUserAPI(appState?.user?.id);
+      console.log("Booking History:", res);
+
+      setBookingHistory(res.data);
     };
     fetchBookingHistory();
   }, []);

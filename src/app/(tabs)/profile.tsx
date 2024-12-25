@@ -42,11 +42,11 @@ const AccountPage = () => {
       >
         <Image
           style={{ height: 60, width: 60 }}
-          source={{ uri: `${baseImage}/${appState?.user.avatar}` }}
+          source={{ uri: `${baseImage}/${appState?.user?.avatar}` }}
         />
         <View>
           <Text style={{ color: "white", fontSize: 20 }}>
-            {appState?.user.username}
+            {appState?.user?.username}
           </Text>
         </View>
       </View>

@@ -12,13 +12,13 @@ const MakeAnAppointment = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [refreshing, setRefresing] = React.useState(false);
   const [routes] = useState([
-    { key: "unused", title: "Tình trạng" },
     { key: "history", title: "History" },
+    { key: "unused", title: "Tình trạng" },
   ]);
 
   const renderScene = SceneMap({
-    unused: unusedBookings, // Component cho tab Chưa Sử Dụng
     history: BookingHistory, // Component cho tab Lịch Sử
+    unused: unusedBookings, // Component cho tab Chưa Sử Dụng
   });
 
   const onRefresh = React.useCallback(() => {

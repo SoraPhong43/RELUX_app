@@ -28,6 +28,9 @@ interface AppContextType {
   orderItems: IBookingItem | null;
   setOrderItems: (v: any) => void;
 
+  booking: IBookingST;
+  setBooking: (v: React.SetStateAction<IBookingST>) => void;
+
   location: IAllLocation | null;
   setLocation: (v: any) => void;
 
@@ -69,6 +72,14 @@ const AppProvider = (props: IProps) => {
     null
   );
   const [orderItems, setOrderItems] = useState<IBookingItem | null>(null);
+  const [booking, setBooking] = useState<IBookingST>({
+    bookingTime: '',
+    bookingnotes: '',
+    serviceIds: [],
+    locationId: null,
+    employeeId: null,
+    customerId: null,
+  });
 
   const [location, setLocation] = useState<IAllLocation | null>(null);
 
@@ -98,6 +109,7 @@ const AppProvider = (props: IProps) => {
         setLocation,
         menu,
         setMenu,
+        booking, setBooking
       }}
     >
       {props.children}
