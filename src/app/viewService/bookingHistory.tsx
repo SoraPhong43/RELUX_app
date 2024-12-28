@@ -1,52 +1,61 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
-  Image,
+  ActivityIndicator,
 } from "react-native";
-import { currencyFormatter, getBookingHistoryAPI, placeBookingByUserAPI } from "../utils/API";
 import moment from "moment";
 import { APP_COLOR } from "../utils/constant";
 import { useCurrentApp } from "@/context/app.context";
 import { useFocusEffect } from "@react-navigation/native";
+import { placeBookingByUserAPI } from "../utils/API";
 
 const BookingHistory = () => {
-  const {
-    appState,
-  } = useCurrentApp();
+  const { appState } = useCurrentApp();
   const [bookingHistory, setBookingHistory] = useState<IBooking[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const formatDateTime = (dateTime: any) => {
     return moment(dateTime).format("HH:mm DD/MM/YYYY");
   };
 
-
   const fetchBookingHistory = async () => {
-    const res = await placeBookingByUserAPI(appState?.user?.id);
-    console.log("Booking History:", res);
-
-    setBookingHistory(res.data);
+    setLoading(true);
+    try {
+      const res = await placeBookingByUserAPI(appState?.user.id);
+      console.log("Booking History:", res);
+      setBookingHistory(res?.data || []); // Đặt giá trị mặc định nếu res.data là undefined
+    } catch (error) {
+      console.error("Failed to fetch booking history:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   useFocusEffect(
     React.useCallback(() => {
       fetchBookingHistory();
     }, [])
   );
+
   return (
     <ScrollView style={styles.scrollView}>
-      {bookingHistory.length === 0 ? (
-        <View>
-          <Text>Không có lịch sử dịch vụ</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color={APP_COLOR.vang} />
+      ) : bookingHistory.length === 0 ? (
+        <View style={styles.noHistoryContainer}>
+          <Text style={styles.noHistoryText}>Không có lịch sử dịch vụ</Text>
         </View>
       ) : (
         bookingHistory.map((item, index) => (
           <View key={index} style={styles.bookingCard}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Dịch vụ: </Text>
-              <Text style={styles.serviceName}>{item.services?.[0]?.name}</Text>
+              <Text style={styles.serviceName}>
+                {item.services?.[0]?.name || "Không xác định"}
+              </Text>
             </View>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontWeight: "bold" }}>Thời gian đặt lịch: </Text>
@@ -54,13 +63,6 @@ const BookingHistory = () => {
                 {formatDateTime(item.bookingTime)}
               </Text>
             </View>
-            {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ fontWeight: "bold" }}>Số tiền phải trả: </Text>
-              <Text style={styles.totalAmount}>
-                {currencyFormatter(Number(item.totalAmount))}
-              </Text>
-            </View> */}
-            {/* <Text style={styles.status}>Tình trạng: {item.status}</Text> */}
           </View>
         ))
       )}
@@ -84,11 +86,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  customerName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
   serviceName: {
     fontSize: 14,
     color: "#555",
@@ -98,15 +95,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#777",
   },
-  totalAmount: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: APP_COLOR.vang,
-    marginVertical: 5,
+  noHistoryContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
   },
-  status: {
-    fontSize: 14,
-    color: "green",
+  noHistoryText: {
+    fontSize: 16,
+    color: "#888",
   },
 });
 

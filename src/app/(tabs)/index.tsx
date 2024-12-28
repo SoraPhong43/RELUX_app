@@ -18,65 +18,57 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { APP_COLOR } from "../utils/constant";
 import { router } from "expo-router";
+import Latest from "@/components/filter/latest";
+import EmployeeDisplay from "@/components/filter/employee";
 
 //const data = Array(10).fill(1);
 
-const data = [
-  {
-    key: 1,
-    name: "Top service Rating 5* this week",
-    description: "Gợi ý dịch vụ được đánh giá 5 sao",
-    refAPI: "service5star",
-  },
-  {
-    key: 2,
-    name: "New services:",
-    description: "dịch vụ mới",
-    refAPI: "sericediscount",
-  },
-  {
-    key: 3,
-    name: "Discover Massage Deals",
-    description: "Gợi ý các ưu đãi massage",
-    refAPI: "newservice",
-  },
-];
-
 const HomeTab = () => {
   return (
-    <View style={{ flex: 1 }}>
-      <CustomFlatList
-        data={data}
-        style={styles.list}
-        renderItem={({ item }) => (
-          <CollectionHome
-            name={item.name}
-            description={item.description}
-            refAPI={item.refAPI}
-          />
-        )}
-        HeaderComponent={<HeaderHome />}
-        StickyElementComponent={<SearchHome />}
-        // TopListElementComponent={<View style={styles.topList} />}
-        TopListElementComponent={<TopListHome />}
-        ListFooterComponent={<DisplayLocation />}
-      />
-      <View>
-        <Pressable
-          onPress={() => router.push('/(user)/product/CpBooking')}
-          style={({ pressed }) => ({
-            opacity: pressed === true ? 0.5 : 1,
-            padding: 10,
-            backgroundColor: APP_COLOR.vang,
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 3,
-          })}
-        >
-          <Text style={{ fontSize: 16, fontWeight: "bold", color: "white", cursor: "pointer" }} >Booking now!</Text>
-        </Pressable>
-      </View>
-    </View>
+    // <View style={{ flex: 1 }}>
+    //   <CustomFlatList
+    //     data={data}
+    //     style={styles.list}
+    //     renderItem={({ item }) => (
+    //       <CollectionHome
+    //         name={item.name}
+    //         description={item.description}
+    //         refAPI={item.refAPI}
+    //       />
+
+    //     )}
+
+    //     HeaderComponent={<HeaderHome />}
+    //     StickyElementComponent={<SearchHome />}
+    //     // TopListElementComponent={<View style={styles.topList} />}
+    //     TopListElementComponent={<TopListHome />}
+    //     ListFooterComponent={<DisplayLocation />}
+    //   />
+    <ScrollView>
+      <HeaderHome />
+      <SearchHome />
+      <TopListHome />
+      <Latest />
+      <EmployeeDisplay />
+      <DisplayLocation />
+    </ScrollView>
+
+    //   {/* <View>
+    //     <Pressable
+    //       onPress={() => router.push('/(user)/product/CpBooking')}
+    //       style={({ pressed }) => ({
+    //         opacity: pressed === true ? 0.5 : 1,
+    //         padding: 10,
+    //         backgroundColor: APP_COLOR.vang,
+    //         alignItems: "center",
+    //         justifyContent: "center",
+    //         borderRadius: 3,
+    //       })}
+    //     >
+    //       <Text style={{ fontSize: 16, fontWeight: "bold", color: "white", cursor: "pointer" }} >Booking now!</Text>
+    //     </Pressable>
+    //   </View> */}
+    // // </View>
   );
 };
 

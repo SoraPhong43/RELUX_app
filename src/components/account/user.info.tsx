@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,17 +11,19 @@ import {
 } from "react-native";
 import ShareInput from "../input/share.input";
 import { Formik } from "formik";
-import { SignUpSchema, UpdateUserSchema } from "@/app/utils/validate.schema";
+import { UpdateUserSchema } from "@/app/utils/validate.schema";
 import { APP_COLOR } from "@/app/utils/constant";
 import Toast from "react-native-root-toast";
 import { updateUserAPI } from "@/app/utils/API";
 import { useEffect } from "react";
+
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
     paddingTop: 50,
   },
 });
+
 const UserInfo = () => {
   const { appState, setAppState } = useCurrentApp();
 
@@ -34,26 +35,33 @@ const UserInfo = () => {
   const baseImage = `${backend}/images/avatar`;
 
   const handleUpdateUser = async (
-    username: string,
+    fullName: string,
     phone: string,
     setValues: Function
   ) => {
-    if (appState?.user.userId) {
-      const res = await updateUserAPI(appState?.user.userId, username, phone);
-      if (res.data) {
+    try {
+      if (!appState?.user.id) {
+        throw new Error("User ID is missing. Please log in again.");
+      }
+
+      const res = await updateUserAPI(appState.user.id, phone, fullName);
+
+      if (res?.data) {
+        // Update app state
         setAppState((prevState: typeof appState) => ({
           ...prevState,
           user: {
-            ...prevState.user,
-            username: username,
-            phone: phone,
+            ...prevState,
+            fullName,
+            phone,
           },
         }));
 
+        // Update form values
         setValues({
-          name: username,
+          fullName,
           email: appState?.user.email,
-          phone: phone,
+          phone,
         });
 
         Toast.show("Cập nhật thông tin user thành công!", {
@@ -63,20 +71,24 @@ const UserInfo = () => {
           opacity: 1,
         });
       } else {
-        const m = Array.isArray(res.message) ? res.message[0] : res.message;
-        Toast.show(m, {
-          duration: Toast.durations.LONG,
-          textColor: "white",
-          backgroundColor: APP_COLOR.vang,
-          opacity: 1,
-        });
+        const errorMessage =
+          res?.message || "Cập nhật thông tin thất bại. Vui lòng thử lại.";
+        console.log(errorMessage);
       }
+    } catch (error: any) {
+      Toast.show(error?.message || "Đã xảy ra lỗi. Vui lòng thử lại.", {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: "red",
+        opacity: 1,
+      });
     }
   };
 
   useEffect(() => {
     console.log("AppState updated in UserInfo:", appState);
   }, [appState]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -95,16 +107,13 @@ const UserInfo = () => {
             validationSchema={UpdateUserSchema}
             enableReinitialize
             initialValues={{
-              name: appState?.user.username,
-              email: appState?.user.email,
-              phone: appState?.user.phone,
+              fullName: appState?.user.fullName || "",
+              email: appState?.user.email || "",
+              phone: appState?.user.phone || "",
+              username: appState?.user.fullName || "",
             }}
             onSubmit={(values, { setValues }) =>
-              handleUpdateUser(
-                values?.name ?? "",
-                values?.phone ?? "",
-                setValues
-              )
+              handleUpdateUser(values.fullName, values.phone, setValues)
             }
           >
             {({
@@ -119,18 +128,23 @@ const UserInfo = () => {
             }) => (
               <View style={{ marginTop: 20, gap: 20 }}>
                 <ShareInput
-                  title="Họ tên"
-                  onChangeText={handleChange("name")}
-                  onBlur={handleBlur("name")}
-                  value={values.name}
-                  error={errors.name}
-                  touched={touched.name}
+                  title="Username"
+                  value={values.username}
+                  editable={false}
+                />
+                <ShareInput
+                  title="Full Name"
+                  onChangeText={handleChange("fullName")}
+                  onBlur={handleBlur("fullName")}
+                  value={values.fullName}
+                  error={errors.fullName}
+                  touched={touched.fullName}
                 />
                 <ShareInput
                   editable={false}
                   title="Email"
                   keyboardType="email-address"
-                  value={appState?.user.email}
+                  value={values.email}
                 />
                 <ShareInput
                   title="Số điện thoại"
@@ -144,7 +158,7 @@ const UserInfo = () => {
                   disabled={!(isValid && dirty)}
                   onPress={handleSubmit as any}
                   style={({ pressed }) => ({
-                    opacity: pressed === true ? 0.5 : 1,
+                    opacity: pressed ? 0.5 : 1,
                     backgroundColor:
                       isValid && dirty ? APP_COLOR.vang : APP_COLOR.darkGray,
                     padding: 10,

@@ -34,8 +34,11 @@ interface AppContextType {
   location: IAllLocation | null;
   setLocation: (v: any) => void;
 
-  menu: IMenu | null;
-  setMenu: (v: any) => void;
+  cate: ICategoryBooking | null;
+  setCate: (v: any) => void;
+
+  employeeService: IEmployee | null;
+  setEmployeeService: (v: any) => void;
 }
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -59,6 +62,10 @@ const AppProvider = (props: IProps) => {
   const [theme, setTheme] = useState<string>("eric-light");
   const [appState, setAppState] = useState<IUserLogin | null>(null);
 
+  const [employeeService, setEmployeeService] = useState<IEmployee | null>(
+    null
+  );
+
   const [cart, setCart] = useState<ICart | Record<string, never>>({});
   const [service, setService] = useState<IService | null>(null);
 
@@ -73,17 +80,20 @@ const AppProvider = (props: IProps) => {
   );
   const [orderItems, setOrderItems] = useState<IBookingItem | null>(null);
   const [booking, setBooking] = useState<IBookingST>({
-    bookingTime: '',
-    bookingnotes: '',
+    bookingTime: "",
+    bookingnotes: "",
+    categoryId: [],
     serviceIds: [],
     locationId: null,
     employeeId: null,
-    customerId: null,
+    customerName: appState?.user.fullName,
+    customerId: appState?.user.id || null,
+    bookingCount: appState?.user.bookingCount,
   });
 
   const [location, setLocation] = useState<IAllLocation | null>(null);
 
-  const [menu, setMenu] = useState<IMenu | null>(null);
+  const [cate, setCate] = useState<ICategoryBooking | null>(null);
   return (
     <AppContext.Provider
       value={{
@@ -107,9 +117,13 @@ const AppProvider = (props: IProps) => {
         setOrderItems,
         location,
         setLocation,
-        menu,
-        setMenu,
-        booking, setBooking
+        cate,
+        setCate,
+
+        booking,
+        setBooking,
+        employeeService,
+        setEmployeeService,
       }}
     >
       {props.children}

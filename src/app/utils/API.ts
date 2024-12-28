@@ -2,23 +2,11 @@ import axios from "@/app/utils/axios.customize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
-export const registerAPI = (
-    email: string,
-    username: string,
-    password: string,
-    fullName: string,
-    phone: string
-) => {
+export const registerAPI = (username:string, password: string,email: string,phone:string,fullName:string) => {
     const url = `/v1/register`;
-    //   const url =`\register`;
-    return axios.post<IBackendRes<IRegister>>(url, {
-        email,
-        username,
-        password,
-        fullName,
-        phone,
-    });
-};
+ //   const url =`\register`;
+     return axios.post<IBackendRes<IRegister>>(url, { username, password, email,phone, fullName});
+ }
 
 export const verifyCodeAPI = (email: string, code: string) => {
     const url = `/v1/password/verify-otp`;
@@ -42,7 +30,21 @@ export const getAccountAPI = () => {
     const url = `/api/v1/auth/account`;
     return axios.get<IBackendRes<IUserLogin>>(url);
 };
+export const getCategoryAPI = (id: number): Promise<IBackendRes<ICategoryBooking[]>> => {
+    const url = `/v1/service-categories/${id}`;
+    return axios.get(url);
+  };
 
+export const getlastestAPI = ()=>{
+    const url=`/v1/loc/latest`;
+    return axios.get<IBackendRes<ILast>>(url);
+}
+export const getEmployeeAPI = ()=>{
+    const url = `/v1/employees`;
+    return axios.get<IBackendRes<IEmployee>>(url);
+}
+  
+  
 export const getTopService = (ref: string) => {
     const url = `/api/v1/services/${ref}`;
     // console.log(">>check:",url);
@@ -66,11 +68,21 @@ export const getURLBaseBackend = () => {
     return backend;
 };
 
+export const getServiceAPI = ()=>{
+    const url = `/v1/services`;
+    return axios.get<IBackendRes<IService>>(url);
+
+}
+
 export const getServiceByIdAPI = (id: number) => {
     const url = `/v1/services/${id}`;
     return axios.get<IBackendRes<IService>>(url);
 };
 
+export const getServiceByCatalogy=(catelogyId:number)=>{
+    const url=`/v1/services/category/${catelogyId}`;
+    return axios.get<IBackendRes<IService[]>>(url)
+}
 export const getAllLocations = () => {
     const url = `/api/v1/location/geteinspa`;
     return axios.get<IBackendRes<ILocation>>(url);
@@ -119,23 +131,25 @@ export const processDataServiceMenu = (service: IService | null) => {
     });
 };
 
-export const currencyFormatter = (value: any) => {
-    const options = {
-        significantDigits: 2,
-        thousandsSeparator: ".",
-        decimalSeparator: ",",
-        symbol: "đ",
-    };
-
-    if (typeof value !== "number") value = 0.0;
-    value = value.toFixed(options.significantDigits);
-
-    const [currency, decimal] = value.split(".");
-    return `${currency.replace(
-        /\B(?=(\d{3})+(?!\d))/g,
-        options.thousandsSeparator
-    )} ${options.symbol}`;
-};
+export const currencyFormatter = (value: number | string): string => {
+    // Ensure the value is a number
+    const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+    // Check if the parsed value is a valid number
+    if (isNaN(numericValue)) {
+      return '$0.00';
+    }
+  
+    // Format the number as USD
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(numericValue);
+  };
+  
+  
 
 export const getProfileAPI = () => {
     const url = `/v1/profile`;
@@ -160,12 +174,12 @@ export const getBookingHistoryAPI = () => {
 };
 
 export const updateUserAPI = (
-    userId: string,
-    username: string,
-    phone: string
+    id:number,
+    phone: string,
+    fullName: string
 ) => {
-    const url = `/api/v1/user/edituser`;
-    return axios.patch<IBackendRes<IUserLogin>>(url, { userId, username, phone });
+    const url = `/v1/users/${id}`;
+    return axios.patch<IBackendRes<IUserLogin>>(url, {phone, fullName });
 };
 
 export const updateUserPasswordAPI = (
@@ -209,11 +223,11 @@ export const DisplayPerMenuItemAPI = (id: string) => {
 };
 
 export const SaveExpoPushTokenAPI = (data: any) => {
-    const url = `/api/v1/save_token`;
+    const url = `/v1/notification/save_token`;
     return axios.post<IBackendRes<IUserLogin>>(url, { ...data });
 };
 
-export const NotificationPushAPI = (userId: string) => {
-    const url = `/api/v1/send-booking-notification`;
-    return axios.post<IBackendRes<INotification[]>>(url, { userId });
-};
+export const NotificationPushAPI=(userId:number)=>{
+    const url=`/v1/notification/pushNotification`;
+    return axios.post<IBackendRes<INotification[]>>(url,{userId})
+}

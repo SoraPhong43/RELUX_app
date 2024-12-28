@@ -1,93 +1,92 @@
 import HeaderHome from "@/components/home/header.home";
-import { useEffect, useState } from "react";
-import {
-    Alert,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
-    Image,
-    StyleSheet
-} from "react-native";
-import Toast from "react-native-root-toast";
-
-import SelectSpa from "@/components/InfoBooking/select.spa";
-import CmSelectMulti from "@/components/CmSelect/CmSelectMulti";
-import DropDownFacility from "@/components/InfoBooking/choose.time";
-import { router, useNavigation } from "expo-router";
-import moment, { duration } from "moment";
+import { ScrollView, Text, TextInput, View, StyleSheet } from "react-native";
 import { APP_COLOR } from "@/app/utils/constant";
-import { currencyFormatter, getEmployeeFreeTimeSpa, getEmployeeSpa, getProfileAPI, placeBookingAPI } from "@/app/utils/API";
-import { getCateServiceBookingAPI, getLocationSpa } from "@/app/utils/API";
-import CmSelect from "@/components/CmSelect/CmSelect";
-import imgLocation from "@/assets/spaHome1.jpg";
-import imgStaff from "@/assets/icons/face.png";
 import { useCurrentApp } from "@/context/app.context";
 import ShareInput from "@/components/input/share.input";
+
 const Step3 = () => {
-    const {
-        booking, setBooking,
-    } = useCurrentApp();
+  const { booking, setBooking, appState } = useCurrentApp();
 
-    const setNote = (note: string) => {
-        setBooking((prevState) => {
-            return {
-                ...prevState,
-                bookingnotes: note,
-            };
-        });
+  const setNote = (note: string) => {
+    setBooking((prevState) => {
+      return {
+        ...prevState,
+        bookingnotes: note,
+      };
+    });
+  };
 
-    };
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Display User Name */}
+        <View style={styles.inputWrapper}>
+          <ShareInput
+            title="Name"
+            editable={false}
+            value={appState?.user.fullName}
+          />
+        </View>
 
-
-
-    return (
-        <View style={{ flex: 1 }}>
-            <ScrollView style={{ flex: 1 }}>
-                <View style={{ flex: 1, paddingHorizontal: 20, marginBottom: 20 }} >
-                    <ShareInput
-                        title="Name"
-                        editable={false}
-                        value={booking?.customerName}
-                    />
-                </View>
-                <View
-                    style={{
-                        justifyContent: "flex-start",
-                        flex: 1, paddingHorizontal: 20
-                    }}
-                >
-                    <Text style={{ fontSize: 18, fontWeight: "500", marginBottom: 8 }}>Note</Text>
-                    <TextInput
-                        numberOfLines={3}
-                        value={booking.bookingnotes}
-                        onChangeText={(text) => setNote(text)}
-                        style={{
-                            backgroundColor: APP_COLOR.vienInput,
-                            padding: 20,
-                            borderRadius: 10,
-                            borderColor: "white",
-                            borderWidth: 1,
-                            textAlignVertical: "top",
-                        }}
-                        placeholder="write note here"
-                    />
-                </View>
-            </ScrollView>
-
-        </View >
-    );
+        {/* Note Section */}
+        <View style={styles.noteWrapper}>
+          <Text style={styles.label}>Note</Text>
+          <TextInput
+            numberOfLines={3}
+            value={booking.bookingnotes}
+            onChangeText={(text) => setNote(text)}
+            style={styles.textInput}
+            placeholder="Write your notes here..."
+            placeholderTextColor="#666" // Màu placeholder đậm hơn
+          />
+        </View>
+      </ScrollView>
+    </View>
+  );
 };
+
 const styles = StyleSheet.create({
-
-    label: {
-        fontSize: 18,
-        fontWeight: "500",
-        marginBottom: 8,
-        color: 'Purple',
-    },
-
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF", // Set màu nền trắng
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: "#FFFFFF", // Đảm bảo ScrollView cũng có màu nền trắng
+  },
+  inputWrapper: {
+    marginBottom: 20,
+  },
+  noteWrapper: {
+    marginBottom: 20,
+    paddingVertical: 15,
+    backgroundColor: "white",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: APP_COLOR.primary,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  textInput: {
+    backgroundColor: APP_COLOR.lightGray,
+    padding: 15,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: APP_COLOR.primary,
+    color: "#333",
+    textAlignVertical: "top",
+    minHeight: 100,
+  },
 });
 
 export default Step3;

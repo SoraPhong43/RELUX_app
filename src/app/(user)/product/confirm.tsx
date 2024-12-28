@@ -56,7 +56,7 @@ const ConfirmService = () => {
     const bookingTime = `${selectedDate?.format("YYYY-MM-DD")} ${selectedTime}`;
 
     const bookingData = {
-      name: appState?.user.username || "Guest",
+      name: appState?.user.fullName || "Guest",
       email: appState?.user.email || "",
       phone: appState?.user.phone || "",
       bookingTime: moment(bookingTime, "YYYY-MM-DD h:mm A").format(
@@ -66,7 +66,7 @@ const ConfirmService = () => {
       serviceId: Number(service?.id) || 0,
       serviceName: service?.name || "",
       locationId: selectedLocation?.id || 0,
-      userId: appState?.user.userId ? Number(appState.user.userId) : undefined,
+      userId: appState?.user.id ? Number(appState.user.id) : undefined,
       employeeId: Number(selectedEmployee?.id) || 0,
       status: "Pending",
       totalAmount: cart?.[service!.id]?.sum || 0,
@@ -130,7 +130,7 @@ const ConfirmService = () => {
         <Text style={styles.cardTitle}>Thông Tin Khách Hàng</Text>
         <View style={styles.cardContent}>
           <Text style={styles.label}>Họ tên</Text>
-          <Text style={styles.value}>{appState?.user.username}</Text>
+          <Text style={styles.value}>{appState?.user.fullName}</Text>
           <Text style={styles.label}>Email</Text>
           <Text style={styles.value}>{appState?.user.email}</Text>
           <Text style={styles.label}>Số điện thoại</Text>

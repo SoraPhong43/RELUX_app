@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Button, SafeAreaView, Platform } from "react-native";
+import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useCurrentApp } from "@/context/app.context";
 import { NotificationPushAPI, SaveExpoPushTokenAPI } from "@/app/utils/API";
@@ -15,76 +15,97 @@ Notifications.setNotificationHandler({
 const DisplayNotification = () => {
   const { appState } = useCurrentApp();
   const [message, setMessage] = useState("");
-  const [notification, setNotification] = useState<INotification[]>([]);
-  const [hasNotified, setHasNotified] = useState(false);
+  const [notifiedBookings, setNotifiedBookings] = useState(new Set()); // Tracks notified bookingIds
 
   useEffect(() => {
-    // Yêu cầu quyền nhận thông báo và lấy Expo Push Token
     const requestNotificationPermission = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          console.log("Permission for notifications not granted");
+          return;
+        }
 
-      if (status !== "granted") {
-        console.log("Permission for notifications not granted");
-        return;
+        const token = await Notifications.getExpoPushTokenAsync({
+          projectId: "edbf22f8-3887-4518-bec4-37d655dda1b6", // Correct projectId
+        });
+
+        console.log("Expo Push Token:", token.data);
+
+        const data = {
+          userId: appState?.user.id,
+          pushToken: token.data,
+        };
+
+        await SaveExpoPushTokenAPI(data);
+      } catch (error) {
+        console.error("Error requesting notification permission:", error);
       }
-
-      const token = await Notifications.getExpoPushTokenAsync({
-        projectId: "edbf22f8-3887-4518-bec4-37d655dda1b6", // Đảm bảo bạn sử dụng đúng projectId từ app.json
-      });
-
-      console.log("Expo Push Token:", token.data);
-
-      const data = {
-        userId: appState?.user.userId, // userId lấy từ app context
-        pushToken: token.data,
-      };
-
-      // Lưu token vào backend của bạn
-      await SaveExpoPushTokenAPI(data);
     };
 
     requestNotificationPermission();
 
-    // Lắng nghe các thông báo push đã nhận
     const notificationListener = Notifications.addNotificationReceivedListener(
       (notification) => {
         console.log("Notification received:", notification);
         setMessage(
           notification.request.content.body || "Bạn có thông báo mới!"
-        ); // Hiển thị thông báo trong state
+        );
       }
     );
 
     return () => {
-      notificationListener.remove(); // Cleanup the listener when component unmounts
+      notificationListener.remove();
     };
   }, [appState]);
 
   useEffect(() => {
-    // Polling: Gọi API mỗi 5 giây (có thể thay đổi tùy theo yêu cầu)
     const intervalId = setInterval(async () => {
-      if (appState?.user.userId) {
+      if (appState?.user.id) {
         try {
-          const res = await NotificationPushAPI(appState.user.userId);
-          console.log("Notification response:", res.data);
+          const res = await NotificationPushAPI(appState.user.id);
+          // console.log("Response from backend:", res); // Logs the full response from backend
 
-          // Kiểm tra dữ liệu trả về từ backend và cập nhật message
           if (Array.isArray(res.data) && res.data.length > 0) {
-            const booking = res.data[0];
-            const serviceName = booking.serviceName;
-            const bookingTime = new Date(booking.bookingTime);
-            setNotification(res.data);
-            const notificationMessage = `Bạn có lịch hẹn "${serviceName}" vào lúc ${bookingTime.toLocaleString()}`;
-            setMessage(notificationMessage);
-            console.log("Before scheduling notification");
+            res.data.forEach((booking) => {
+              const { bookingId, serviceName, bookingTime } = booking;
 
-            // Chỉ gửi thông báo nếu chưa gửi trước đó
-            if (!hasNotified) {
-              scheduleNotificationHandle(serviceName, bookingTime);
-              setHasNotified(true);
-              console.log("After scheduling notification");
-            }
+              if (!notifiedBookings.has(bookingId)) {
+                // Parse and convert bookingTime to local time
+                const utcTime = new Date(bookingTime); // Assume `bookingTime` is in UTC
+                console.log("Parsed UTC time:", utcTime);
+
+                const localTime = new Intl.DateTimeFormat("en-US", {
+                  timeZone: "Asia/Ho_Chi_Minh", // Convert to the correct local time zone
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true, // Display time in 12-hour format
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }).format(utcTime);
+
+                console.log(
+                  "Converted Local Time (Asia/Ho_Chi_Minh):",
+                  localTime
+                );
+
+                const notificationMessage = `Bạn có lịch hẹn "${serviceName}" vào lúc ${localTime}`;
+                console.log("Notification Message:", notificationMessage);
+
+                setMessage(notificationMessage);
+
+                scheduleNotificationHandle(serviceName, utcTime);
+
+                setNotifiedBookings((prev) => {
+                  const updated = new Set(prev);
+                  updated.add(bookingId);
+                  return updated;
+                });
+              }
+            });
           } else {
+            // console.log("No bookings found within the next 2 hours.");
             setMessage("Không có lịch hẹn nào trong 2 giờ tới.");
           }
         } catch (error) {
@@ -94,9 +115,8 @@ const DisplayNotification = () => {
       }
     }, 5000);
 
-    // Cleanup: Dừng polling khi component unmounts
     return () => clearInterval(intervalId);
-  }, [appState, hasNotified]);
+  }, [appState, notifiedBookings]);
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -108,38 +128,33 @@ const DisplayNotification = () => {
       });
     }
   }, []);
+
   const scheduleNotificationHandle = (
     serviceName: string,
-    bookingTime: Date
+    bookingTime: Date // Pass a Date object
   ) => {
-    // Hàm này có thể gọi Expo Push Notification API
-    // Gửi thông báo đến device khi lịch hẹn đã được lấy
+    // Convert UTC to local time for display in notifications
+    const localTime = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Ho_Chi_Minh", // Ensure we're using the correct time zone
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // Display time in 12-hour format
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(bookingTime);
+
     Notifications.scheduleNotificationAsync({
       content: {
         title: "You have an appointment",
-        body: `Your booking for "${serviceName}" is coming up at ${bookingTime.toLocaleString()}`,
-        data: { userName: "Phong" },
+        body: `Your booking for "${serviceName}" is coming up at ${localTime}`,
+        data: { serviceName, bookingTime },
       },
-      trigger: null,
+      trigger: null, // Can add a custom trigger if necessary
     });
   };
-  return (
-    // <SafeAreaView style={{ flex: 1 }}>
-    //   <View
-    //     style={{
-    //       alignContent: "center",
-    //       justifyContent: "center",
-    //       paddingTop: 50,
-    //     }}
-    //   >
-    //     {/* <Button
-    //       title="Schedule Notification"
-    //       onPress={scheduleNotificationHandle}
-    //     /> */}
-    //   </View>
-    // </SafeAreaView>
-    <></>
-  );
+
+  return null;
 };
 
 export default DisplayNotification;

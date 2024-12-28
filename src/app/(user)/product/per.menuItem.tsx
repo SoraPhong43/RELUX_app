@@ -1,282 +1,209 @@
-import {
-  currencyFormatter,
-  DisplayPerMenuItemAPI,
-  getURLBaseBackend,
-} from "@/app/utils/API";
-import { formatDuration } from "@/app/utils/format.duration";
-import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { Image, ScrollView, Text, View, Pressable } from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { APP_COLOR } from "@/app/utils/constant";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { getServiceByIdAPI } from "@/app/utils/API";
 import { useCurrentApp } from "@/context/app.context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Platform,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 
 const PerMenuItem = () => {
-  const { id } = useLocalSearchParams();
-  const [menuItem, setMenuItem] = useState<IMenuItem | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [quality, setQuality] = useState<number>(0);
-  const { cart, setCart } = useCurrentApp();
+  const { serviceId } = useLocalSearchParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const { appState, service, setService } = useCurrentApp();
+
+  const servicePer = Number(serviceId as string);
+  console.log(appState?.user.bookingCount);
   useEffect(() => {
-    const fetchPerMenuItem = async () => {
-      setLoading(true);
+    const fetchServiceById = async () => {
       try {
-        const res = await DisplayPerMenuItemAPI(id as string);
-        if (res.data) {
-          setMenuItem(res.data);
-          // Kiểm tra xem dịch vụ có trong giỏ hàng không, nếu có, đồng bộ số lượng
-          if (cart[res.data.id]) {
-            setQuality(cart[res.data.id].quantity); // Cập nhật số lượng giỏ hàng
-          }
+        setIsLoading(true);
+        setError(null);
+        const res = await getServiceByIdAPI(servicePer);
+
+        if (res && res.data) {
+          setService(res.data);
+          console.log("Service data:", res.data);
         } else {
-          console.error("Error loading menu item");
+          throw new Error("Invalid data format");
         }
       } catch (error) {
-        console.error("Error fetching data: ", error);
+        console.error("Error fetching service data:", error);
+        setError("Unable to fetch service data. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
-      setLoading(false);
     };
-    fetchPerMenuItem();
-  }, [id, cart]); // Đảm bảo khi cart thay đổi sẽ cập nhật lại số lượng
-  const saveCartToStorage = async (newCart: Record<string, any>) => {
-    try {
-      // Kiểm tra và lưu giỏ hàng vào AsyncStorage
-      if (newCart) {
-        await AsyncStorage.setItem("cart", JSON.stringify(newCart));
-      } else {
-        console.error("Giỏ hàng không hợp lệ: ", newCart);
-      }
-    } catch (error) {
-      console.error("Error saving cart to AsyncStorage:", error);
-    }
-  };
 
-  const handleQualityChange = (action: "PLUS" | "MINS") => {
-    setQuality((prevQuality) => {
-      let newQuality = prevQuality;
+    fetchServiceById();
+  }, [servicePer]);
 
-      // Cập nhật số lượng dựa vào hành động
-      if (action === "PLUS") {
-        newQuality = prevQuality + 1;
-      } else if (action === "MINS" && prevQuality > 0) {
-        newQuality = prevQuality - 1;
-      }
-
-      if (menuItem) {
-        const newCart: Record<string, any> = { ...cart };
-
-        // Nếu món này chưa có trong giỏ hàng, khởi tạo
-        if (!newCart[menuItem.id]) {
-          newCart[menuItem.id] = {
-            sum: 0,
-            quantity: 0,
-            items: {},
-          };
-        }
-
-        // Cập nhật số lượng và tính lại tổng giá trị cho món này
-        newCart[menuItem.id].quantity = newQuality;
-        newCart[menuItem.id].sum =
-          newCart[menuItem.id].quantity * menuItem.price;
-
-        // Cập nhật lại giỏ hàng trong context
-        setCart(newCart);
-
-        // Lưu giỏ hàng vào AsyncStorage
-        saveCartToStorage(newCart);
-      }
-
-      return newQuality;
+  const handleBooking = () => {
+    router.navigate({
+      pathname: "/(tabs)/booking",
+      params: {
+        serviceId: service?.id,
+        categoryId: service?.categoryId,
+      },
     });
   };
 
-  const getSum = () => {
-    let totalSum = 0;
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#007bff" />
+        <Text style={styles.loadingText}>Loading service data...</Text>
+      </SafeAreaView>
+    );
+  }
 
-    // Tính tổng giá trị của các món trong giỏ hàng
-    for (const key in cart) {
-      if (cart[key]) {
-        totalSum += cart[key].sum; // Cộng tổng giá trị của món
-      }
-    }
-
-    return totalSum;
-  };
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView>
-        {menuItem && (
-          <>
-            {/* Make sure to concatenate the full image URL */}
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        {service ? (
+          <View>
+            {/* Hình ảnh */}
             <Image
-              style={{ height: 280, width: "100%" }}
-              source={{
-                uri: `${getURLBaseBackend()}/images/menuItem/${menuItem.image}`, // Dynamically append image path
-              }}
+              source={{ uri: service.imageDescription }}
+              style={styles.image}
             />
-            <Text style={{ fontSize: 20, fontWeight: 600, padding: 10 }}>
-              {menuItem.name}
+
+            {/* Thông tin cơ bản */}
+            <Text style={styles.serviceTitle}>{service.name}</Text>
+            <Text style={styles.servicePrice}>Price: ${service.price}</Text>
+            <Text style={styles.serviceDescription}>
+              {service.descriptionShort}
             </Text>
-            <Text style={{ fontSize: 15, padding: 5, fontWeight: 500 }}>
-              Description:
+            <Text style={styles.serviceDescription}>
+              {service.description2}
             </Text>
-            <Text> {menuItem.description}</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 15, padding: 5, fontWeight: 500 }}>
-                Price:
-              </Text>
-              <Text>{currencyFormatter(menuItem.price)}</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 15, padding: 5, fontWeight: 500 }}>
-                Duration:
-              </Text>
-              <Text>{formatDuration(menuItem.duration)}</Text>
-            </View>
 
-            {/* Quantity controls */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+            {/* Phần khuyến mãi */}
+            {appState?.user?.bookingCount && appState.user.bookingCount > 3 ? (
+              service.promotion ? (
+                <View>
+                  <Text style={styles.promotionTitle}>Promotion Details</Text>
+                  <Text style={styles.promotionText}>
+                    Discount: {service.promotion.discountPercentage}%
+                  </Text>
+                  <Text style={styles.promotionText}>
+                    Start Date:{" "}
+                    {new Date(service.promotion.startDate).toLocaleDateString()}
+                  </Text>
+                  <Text style={styles.promotionText}>
+                    End Date:{" "}
+                    {new Date(service.promotion.endDate).toLocaleDateString()}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.noPromotion}>No promotion available.</Text>
+              )
+            ) : (
+              <View />
+            )}
+
+            {/* Nút Booking */}
+            <TouchableOpacity
+              style={styles.bookingButton}
+              onPress={handleBooking}
             >
-              {quality === 0 ? null : ( // Ẩn nút trừ khi quality = 0
-                <Pressable
-                  onPress={() => handleQualityChange("MINS")}
-                  style={({ pressed }) => ({
-                    opacity: pressed ? 0.5 : 1,
-                    marginRight: 10,
-                  })}
-                >
-                  <AntDesign
-                    name="minussquare"
-                    size={24}
-                    color={APP_COLOR.vang}
-                  />
-                </Pressable>
-              )}
-
-              {/* Giữ vị trí của số lượng cố định */}
-              <Text style={{ fontSize: 18, paddingHorizontal: 10 }}>
-                {quality}
-              </Text>
-
-              {quality === 1 ? null : ( // Ẩn nút cộng khi quality = 1
-                <Pressable
-                  onPress={() => handleQualityChange("PLUS")}
-                  style={({ pressed }) => ({
-                    opacity: pressed ? 0.5 : 1,
-                    marginLeft: 10,
-                  })}
-                >
-                  <AntDesign
-                    name="plussquare"
-                    size={24}
-                    color={APP_COLOR.vang}
-                  />
-                </Pressable>
-              )}
-            </View>
-          </>
+              <Text style={styles.bookingButtonText}>Book Now</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Text style={styles.errorText}>Service not found</Text>
         )}
       </ScrollView>
-      {getSum() === 0 ? (
-        <></>
-      ) : (
-        <View
-          style={{
-            width: "100%",
-            backgroundColor: "white",
-            zIndex: 11,
-            position: "absolute",
-            bottom: 0,
-            flexDirection: "row",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flex: 1,
-              borderTopWidth: 1,
-              borderTopColor: APP_COLOR.GRAY,
-            }}
-          >
-            <View style={{ paddingVertical: 10, paddingHorizontal: 30 }}>
-              <View
-                style={{
-                  position: "absolute",
-                  left: 60,
-                  top: 4,
-                  width: 16,
-                  height: 16,
-                  borderRadius: 16 / 2,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: APP_COLOR.vang,
-                }}
-              >
-                <Text style={{ color: "white", fontSize: 9 }}>
-                  {menuItem &&
-                    cart &&
-                    cart[menuItem?.id] &&
-                    cart[menuItem?.id]["quantity"] && (
-                      <Text>{cart[menuItem?.id]["quantity"]}</Text>
-                    )}
-                </Text>
-              </View>
-              <Pressable onPress={() => alert("cart")}>
-                <FontAwesome name="book" size={24} color="black" />
-              </Pressable>
-            </View>
-            <View style={{ paddingRight: 10 }}>
-              <Text
-                style={{
-                  color: APP_COLOR.vang,
-                  fontSize: 18,
-                }}
-              >
-                {currencyFormatter(getSum())}
-              </Text>
-            </View>
-          </View>
-          <View
-            style={{
-              width: 110,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: APP_COLOR.vang,
-            }}
-          >
-            <Text
-            //   style={{ color: "white", textAlign: "center" }}
-            //   onPress={() => router.navigate("/product/booking")}
-            >
-              Make an apoinment now
-            </Text>
-          </View>
-        </View>
-      )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default PerMenuItem;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+    paddingTop: Platform.OS === "android" ? 25 : 0,
+  },
+  content: {
+    padding: 20,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 10,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+  },
+  image: {
+    height: 200,
+    width: "100%",
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  serviceTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  servicePrice: {
+    fontSize: 18,
+    color: "#007bff",
+    marginBottom: 10,
+  },
+  serviceDescription: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 5,
+  },
+  promotionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginTop: 20,
+  },
+  promotionText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 5,
+  },
+  noPromotion: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  bookingButton: {
+    backgroundColor: "#007bff",
+    borderRadius: 10,
+    paddingVertical: 15,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  bookingButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});
