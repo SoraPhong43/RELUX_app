@@ -9,6 +9,7 @@ console.log(">>check backend", backend)
 
 const instance = axios.create({
     baseURL: backend,
+    timeout: 3 * 1000
 });
 
 instance.interceptors.request.use(async function (config) {

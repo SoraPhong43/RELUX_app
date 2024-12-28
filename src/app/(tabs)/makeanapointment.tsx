@@ -18,14 +18,14 @@ const BookingHistory = () => {
   const [loading, setLoading] = useState(false);
 
   const formatDateTime = (dateTime: any) => {
-    return moment(dateTime).format("HH:mm DD/MM/YYYY");
+    // Cộng thêm 7 giờ để chuyển sang múi giờ Việt Nam
+    return moment(dateTime).utcOffset(0).format("HH:mm DD/MM/YYYY");
   };
 
   const fetchBookingHistory = async () => {
     setLoading(true);
     try {
       const res = await placeBookingByUserAPI(appState?.user.id);
-      console.log("Booking History:", res);
       setBookingHistory(res?.data || []); // Đặt giá trị mặc định nếu res.data là undefined
     } catch (error) {
       console.error("Failed to fetch booking history:", error);
@@ -46,19 +46,19 @@ const BookingHistory = () => {
         <ActivityIndicator size="large" color={APP_COLOR.primary} />
       ) : bookingHistory.length === 0 ? (
         <View style={styles.noHistoryContainer}>
-          <Text style={styles.noHistoryText}>Không có lịch sử dịch vụ</Text>
+          <Text style={styles.noHistoryText}>No service history</Text>
         </View>
       ) : (
         bookingHistory.map((item, index) => (
           <View key={index} style={styles.bookingCard}>
             <View style={styles.rowContainer}>
-              <Text style={styles.label}>Dịch vụ:</Text>
+              <Text style={styles.label}>Service:</Text>
               <Text style={styles.serviceName}>
                 {item.services?.[0]?.name || "Không xác định"}
               </Text>
             </View>
             <View style={styles.rowContainer}>
-              <Text style={styles.label}>Thời gian đặt lịch:</Text>
+              <Text style={styles.label}>Time Set Calendar:</Text>
               <Text style={styles.bookingTime}>
                 {formatDateTime(item.bookingTime)}
               </Text>
@@ -73,7 +73,7 @@ const BookingHistory = () => {
 const styles = StyleSheet.create({
   scrollView: {
     padding: 15,
-    backgroundColor: APP_COLOR.lightGray, // Nền của danh sách
+    backgroundColor: "#F0F0F0", // Nền của danh sách
   },
   bookingCard: {
     backgroundColor: "white",

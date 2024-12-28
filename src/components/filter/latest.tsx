@@ -1,5 +1,6 @@
 import { getlastestAPI } from "@/app/utils/API";
 import { APP_COLOR } from "@/app/utils/constant";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -7,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -60,17 +62,28 @@ const Latest = () => {
         showsHorizontalScrollIndicator={false} // Ẩn thanh cuộn ngang
         keyExtractor={(item) => item.ServiceID}
         renderItem={({ item }) => (
-          <View style={styles.cardHorizontal}>
-            <Image
-              source={{ uri: item.ImageDescription }}
-              style={styles.imageHorizontal}
-            />
-            <View style={styles.infoContainerHorizontal}>
-              <Text style={styles.name}>{item.Name}</Text>
-              <Text style={styles.price}>${item.Price}</Text>
-              <Text style={styles.description}>{item.DescriptionShort}</Text>
+          <TouchableOpacity
+            activeOpacity={1} // Disable the overlay effect
+            style={styles.itemConteiner}
+            onPress={() => {
+              router.navigate({
+                pathname: "/product/per.menuItem",
+                params: { serviceId: item.ServiceID },
+              });
+            }}
+          >
+            <View style={styles.cardHorizontal}>
+              <Image
+                source={{ uri: item.ImageDescription }}
+                style={styles.imageHorizontal}
+              />
+              <View style={styles.infoContainerHorizontal}>
+                <Text style={styles.name}>{item.Name}</Text>
+                <Text style={styles.price}>${item.Price}</Text>
+                <Text style={styles.description}>{item.DescriptionShort}</Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -90,6 +103,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     color: APP_COLOR.primary,
+  },
+  itemConteiner: {
+    overflow: "hidden",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    backgroundColor: "#fff", // Card background color
   },
   cardHorizontal: {
     flexDirection: "column",

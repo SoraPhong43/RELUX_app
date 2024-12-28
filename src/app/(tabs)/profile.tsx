@@ -34,15 +34,19 @@ const AccountPage = () => {
           paddingTop: insets.top,
           paddingHorizontal: 20,
           paddingBottom: 20,
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           flexDirection: "row",
           gap: 20,
           alignItems: "center",
         }}
       >
         <Image
-          style={{ height: 60, width: 60 }}
-          source={{ uri: `${baseImage}/${appState?.user?.avatar}` }}
+          style={{ height: 80, width: 80 }}
+          source={
+            appState?.user.avatar
+              ? { uri: appState.user.avatar }
+              : require("../../assets/booking/bookingHollow.png")
+          }
         />
         <View>
           <Text style={{ color: "white", fontSize: 20 }}>
@@ -71,7 +75,7 @@ const AccountPage = () => {
           }}
         >
           <Feather name="user-check" size={20} color="green" />
-          <Text>Cập nhật thông tin</Text>
+          <Text>Your profile</Text>
         </View>
 
         <MaterialIcons name="navigate-next" size={24} color="grey" />
@@ -97,13 +101,14 @@ const AccountPage = () => {
           }}
         >
           <MaterialIcons name="password" size={20} color="green" />
-          <Text>Thay đổi mật khẩu</Text>
+          <Text>Change your password</Text>
         </View>
 
         <MaterialIcons name="navigate-next" size={24} color="grey" />
       </Pressable>
 
       <Pressable
+        onPress={() => router.navigate("/(user)/account/language")}
         style={{
           paddingVertical: 15,
           paddingHorizontal: 10,
@@ -122,7 +127,7 @@ const AccountPage = () => {
           }}
         >
           <MaterialIcons name="language" size={20} color="green" />
-          <Text>Ngôn ngữ</Text>
+          <Text>Language</Text>
         </View>
 
         <MaterialIcons name="navigate-next" size={24} color="grey" />
@@ -147,7 +152,7 @@ const AccountPage = () => {
           }}
         >
           <MaterialIcons name="info-outline" size={20} color="green" />
-          <Text>Về ứng dụng</Text>
+          <Text>About me</Text>
         </View>
 
         <MaterialIcons name="navigate-next" size={24} color="grey" />
@@ -167,7 +172,7 @@ const AccountPage = () => {
             opacity: pressed === true ? 0.5 : 1,
             padding: 10,
             marginHorizontal: 10,
-            backgroundColor: APP_COLOR.vang,
+            backgroundColor: APP_COLOR.primary,
             borderRadius: 3,
           })}
         >
@@ -177,7 +182,7 @@ const AccountPage = () => {
               color: "white",
             }}
           >
-            Đăng Xuất
+            Logout
           </Text>
         </Pressable>
       </View>

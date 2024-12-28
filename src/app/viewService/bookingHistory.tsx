@@ -18,7 +18,7 @@ const BookingHistory = () => {
   const [loading, setLoading] = useState(false);
 
   const formatDateTime = (dateTime: any) => {
-    return moment(dateTime).format("HH:mm DD/MM/YYYY");
+    return moment(dateTime).utcOffset(7).format("HH:mm DD/MM/YYYY");
   };
 
   const fetchBookingHistory = async () => {
@@ -59,9 +59,7 @@ const BookingHistory = () => {
             </View>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontWeight: "bold" }}>Thời gian đặt lịch: </Text>
-              <Text style={styles.bookingTime}>
-                {formatDateTime(item.bookingTime)}
-              </Text>
+              <Text style={styles.bookingTime}>{item.bookingTime}</Text>
             </View>
           </View>
         ))
