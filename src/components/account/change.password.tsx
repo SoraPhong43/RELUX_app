@@ -127,7 +127,7 @@ const ChangePassword = () => {
                       color: isValid && dirty ? "white" : "grey",
                     }}
                   >
-                    Lưu thay đổi
+                    Save changes
                   </Text>
                 </Pressable>
               </View>

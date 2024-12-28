@@ -318,10 +318,7 @@ const Step1 = () => {
       setIsLoading(false);
     }
   };
-  const adjustTime = (time: string) => {
-    if (!time) return "--";
-    return moment.utc(time).format("DD/MM/YYYY HH:mm");
-  };
+
   const handleDateChange = (selected: OptionItem) => {
     setDateService(selected.value as string);
     const timeStart = selected.startTime?.split(":")[0];
@@ -340,14 +337,23 @@ const Step1 = () => {
 
   const getTime = (start: number, end: number, selected: OptionItem) => {
     const timeList: OptionItem[] = [];
-    for (let i = start; i <= end; i++) {
-      timeList.push({
-        value: `${i}:00`,
-        label: `${i}:00`,
-      });
+
+    // Loop through hours and generate 15-minute intervals
+    for (let hour = start; hour <= end; hour++) {
+      for (let minutes = 0; minutes < 60; minutes += 15) {
+        const formattedTime = `${String(hour).padStart(2, "0")}:${String(
+          minutes
+        ).padStart(2, "0")}`;
+        timeList.push({
+          value: formattedTime,
+          label: formattedTime,
+        });
+      }
     }
+
     setTimeRangeService(timeList);
   };
+
   const setDateTime = (date: string, time: string) => {
     const dateTimeString = `${date}T${time}:00`;
     const dateTime = new Date(dateTimeString + "Z");

@@ -48,6 +48,7 @@ const Booking = () => {
 
   const handleBooking = async () => {
     try {
+      console.log(booking);
       const res = await placeBookingAPI(booking);
       if (res && res.data) {
         Toast.show("Success Booking!", {
@@ -58,6 +59,9 @@ const Booking = () => {
         handleClearBooking();
         router.replace("/(tabs)/makeanapointment");
       } else {
+        console.log("loi");
+        alert("Cannot same time");
+        router.replace("/(tabs)/booking");
         Toast.show("Unexpected error occurred", {
           duration: Toast.durations.LONG,
           textColor: "red",

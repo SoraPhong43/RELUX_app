@@ -100,7 +100,7 @@ const TabLayout = () => {
               fontWeight: "bold",
             },
             headerStyle: {
-              backgroundColor: APP_COLOR.lightGray,
+              backgroundColor: "#f0f0f0",
             },
           }}
         />

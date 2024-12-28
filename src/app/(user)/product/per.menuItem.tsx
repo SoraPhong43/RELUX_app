@@ -12,11 +12,14 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
+import ContentLoader, { Rect } from "react-content-loader/native";
+const { height: sHeight, width: sWidth } = Dimensions.get("window");
 
 const PerMenuItem = () => {
   const { serviceId } = useLocalSearchParams();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { appState, service, setService } = useCurrentApp();
 
@@ -39,7 +42,9 @@ const PerMenuItem = () => {
         console.error("Error fetching service data:", error);
         setError("Unable to fetch service data. Please try again later.");
       } finally {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 200);
       }
     };
 
@@ -56,81 +61,100 @@ const PerMenuItem = () => {
     });
   };
 
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#007bff" />
-        <Text style={styles.loadingText}>Loading service data...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        {service ? (
-          <View>
-            {/* Hình ảnh */}
-            <Image
-              source={{ uri: service.imageDescription }}
-              style={styles.image}
-            />
+    <View style={{ flex: 1 }}>
+      {isLoading === false ? (
+        <SafeAreaView style={styles.container}>
+          <ScrollView contentContainerStyle={styles.content}>
+            {service ? (
+              <View>
+                {/* Hình ảnh */}
+                <Image
+                  source={{ uri: service.imageDescription }}
+                  style={styles.image}
+                />
 
-            {/* Thông tin cơ bản */}
-            <Text style={styles.serviceTitle}>{service.name}</Text>
-            <Text style={styles.servicePrice}>Price: ${service.price}</Text>
-            <Text style={styles.serviceDescription}>
-              {service.descriptionShort}
-            </Text>
-            <Text style={styles.serviceDescription}>
-              {service.description2}
-            </Text>
+                {/* Thông tin cơ bản */}
+                <Text style={styles.serviceTitle}>{service.name}</Text>
+                <Text style={styles.servicePrice}>Price: ${service.price}</Text>
+                <Text style={styles.serviceDescription}>
+                  {service.descriptionShort}
+                </Text>
+                <Text style={styles.serviceDescription}>
+                  {service.description2}
+                </Text>
 
-            {/* Phần khuyến mãi */}
-            {appState?.user?.bookingCount && appState.user.bookingCount > 3 ? (
-              service.promotion ? (
-                <View>
-                  <Text style={styles.promotionTitle}>Promotion Details</Text>
-                  <Text style={styles.promotionText}>
-                    Discount: {service.promotion.discountPercentage}%
-                  </Text>
-                  <Text style={styles.promotionText}>
-                    Start Date:{" "}
-                    {new Date(service.promotion.startDate).toLocaleDateString()}
-                  </Text>
-                  <Text style={styles.promotionText}>
-                    End Date:{" "}
-                    {new Date(service.promotion.endDate).toLocaleDateString()}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.noPromotion}>No promotion available.</Text>
-              )
+                {/* Phần khuyến mãi */}
+                {appState?.user?.bookingCount &&
+                appState.user.bookingCount > 3 ? (
+                  service.promotion ? (
+                    <View>
+                      <Text style={styles.promotionTitle}>
+                        Promotion Details
+                      </Text>
+                      <Text style={styles.promotionText}>
+                        Discount: {service.promotion.discountPercentage}%
+                      </Text>
+                      <Text style={styles.promotionText}>
+                        Start Date:{" "}
+                        {new Date(
+                          service.promotion.startDate
+                        ).toLocaleDateString()}
+                      </Text>
+                      <Text style={styles.promotionText}>
+                        End Date:{" "}
+                        {new Date(
+                          service.promotion.endDate
+                        ).toLocaleDateString()}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.noPromotion}>
+                      No promotion available.
+                    </Text>
+                  )
+                ) : (
+                  <View />
+                )}
+
+                {/* Nút Booking */}
+                <TouchableOpacity
+                  style={styles.bookingButton}
+                  onPress={handleBooking}
+                >
+                  <Text style={styles.bookingButtonText}>Book Now</Text>
+                </TouchableOpacity>
+              </View>
             ) : (
-              <View />
+              <Text style={styles.errorText}>Service not found</Text>
             )}
+          </ScrollView>
+        </SafeAreaView>
+      ) : (
+        <ContentLoader
+          speed={1}
+          width={420}
+          height={1500}
+          backgroundColor="#f3f3f3"
+          foregroundColor="#ecebeb"
+          style={{ width: "100%" }}
+        >
+          {/* Image Skeleton */}
+          <Rect x="10" y="40" rx="10" ry="10" width="390" height="200" />
 
-            {/* Nút Booking */}
-            <TouchableOpacity
-              style={styles.bookingButton}
-              onPress={handleBooking}
-            >
-              <Text style={styles.bookingButtonText}>Book Now</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <Text style={styles.errorText}>Service not found</Text>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          {/* Title Skeleton */}
+          <Rect x="40" y="260" rx="4" ry="4" width="140" height="30" />
+
+          <Rect x="40" y="300" rx="4" ry="4" width="20%" height="25" />
+
+          {/* Price Skeleton */}
+          <Rect x="40" y="345" rx="4" ry="4" width="80%" height="40" />
+
+          <Rect x="40" y="430" rx="10" ry="10" width="150" height="80" />
+          <Rect x="40" y="520" rx="10" ry="10" width="350" height="50" />
+        </ContentLoader>
+      )}
+    </View>
   );
 };
 

@@ -78,7 +78,8 @@ const LoginPage = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <Formik
         validationSchema={LoginSchema}
-        initialValues={{ username: "mrthinkj", password: "28122003" }}
+        // initialValues={{ username: "mrthinkj", password: "28122003" }}
+        initialValues={{ username: "", password: "" }}
         onSubmit={(values) => handleLogin(values.username, values.password)}
       >
         {({
@@ -98,7 +99,7 @@ const LoginPage = () => {
                   marginVertical: 30,
                 }}
               >
-                Đăng nhập
+                Login
               </Text>
             </View>
 
@@ -134,7 +135,7 @@ const LoginPage = () => {
             </View>
             <ShareButton
               loading={loading}
-              title="Đăng Nhập"
+              title="Login"
               onPress={handleSubmit as any}
               textStyle={{
                 textTransform: "uppercase",
@@ -164,7 +165,7 @@ const LoginPage = () => {
                   color: "black",
                 }}
               >
-                Chưa có tài khoản?
+                Don't have an account?
               </Text>
               <Link href={"/(auth)/signup"}>
                 <Text
@@ -178,7 +179,7 @@ const LoginPage = () => {
               </Link>
             </View>
 
-            <SocicalButton title="Đăng nhập với" />
+            <SocicalButton title="Sign in with" />
           </View>
         )}
       </Formik>

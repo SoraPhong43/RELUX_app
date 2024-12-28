@@ -32,10 +32,10 @@ export const SignUpSchema = Yup.object().shape({
 
 export const UpdateUserSchema = Yup.object().shape({
     phone: Yup.string()
-      .required("Số điện thoại không được để trống")
-      .matches(/^[0-9]+$/, "Số điện thoại phải là số")
-      .min(9, "Số điện thoại không hợp lệ")
-      .max(12, "Số điện thoại không hợp lệ"),
+      .required("Phone number cannot be blank")
+      .matches(/^[0-9]+$/, "Phone number must be a number")
+      .min(9, "Invalid phone number")
+      .max(11, "Invalid phone number"),
     fullName: Yup.string()
       .max(100, "Full Name is too long")
       .required("Full Name cannot be blank"),

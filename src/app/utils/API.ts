@@ -168,6 +168,12 @@ export const placeBookingByUserAPI = (idUser: any) => {
     return axios.get<IBackendRes<any>>(url);
 };
 
+export const uploadAvatarAPI = (username:string, file:FormData)=>{
+    const url=`/v1//users/avatar`;
+    return axios.post<IBackendRes<IUserLogin>>(url,{username,file});
+}
+
+
 export const getBookingHistoryAPI = () => {
     const url = `/api/v1/bookings/all`;
     return axios.get<IBackendRes<IBooking[]>>(url);

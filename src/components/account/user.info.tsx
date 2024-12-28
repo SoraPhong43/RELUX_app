@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import ShareInput from "../input/share.input";
@@ -15,24 +16,51 @@ import { UpdateUserSchema } from "@/app/utils/validate.schema";
 import { APP_COLOR } from "@/app/utils/constant";
 import Toast from "react-native-root-toast";
 import { updateUserAPI } from "@/app/utils/API";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import AvatarActionSheet from "../uploadModal/action.sheet";
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
-    paddingTop: 50,
+    paddingTop: 30,
+  },
+  avatarContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 75, // Bo tròn hình tròn
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    position: "relative", // Để đặt icon camera ở góc
+    overflow: "visible", // Cho phép hiển thị các phần tử vượt ra ngoài
+    borderWidth: 2,
+    borderColor: "#E0E0E0", // Màu viền
+  },
+
+  avatar: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 75, // Bo tròn hình tròn
+  },
+  cameraIconContainer: {
+    position: "absolute",
+    bottom: 10, // Đẩy xuống góc dưới
+    right: 10, // Đẩy sang phải
+    backgroundColor: "#fff", // Nền trắng
+    borderRadius: 20, // Bo tròn nền
+    padding: 5, // Tạo khoảng trống xung quanh icon
+    borderWidth: 1,
+    borderColor: "#E0E0E0", // Màu viền
+    zIndex: 10, // Đặt giá trị zIndex cao để hiện phía trên
+    elevation: 5, // Cho Android
   },
 });
 
 const UserInfo = () => {
   const { appState, setAppState } = useCurrentApp();
-
-  const backend =
-    Platform.OS === "android"
-      ? process.env.EXPO_PUBLIC_ANDROID_API_URL
-      : process.env.EXPO_PUBLIC_IOS_API_URL;
-
-  const baseImage = `${backend}/images/avatar`;
+  const [visible, setVisible] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
 
   const handleUpdateUser = async (
     fullName: string,
@@ -97,11 +125,33 @@ const UserInfo = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={{ alignItems: "center", gap: 5 }}>
-            <Image
-              style={{ height: 150, width: 150 }}
-              source={{ uri: `${baseImage}/${appState?.user.avatar}` }}
+            <View style={styles.avatarContainer}>
+              {/* Avatar */}
+              <Image
+                style={styles.avatar}
+                source={
+                  appState?.user.avatar
+                    ? { uri: appState?.user.avatar }
+                    : require("../../assets/booking/bookingHollow.png")
+                }
+              />
+              {/* Icon Camera */}
+              <TouchableOpacity
+                style={styles.cameraIconContainer}
+                onPress={() => setVisible(true)}
+              >
+                <AntDesign name="camerao" size={24} color={APP_COLOR.primary} />
+              </TouchableOpacity>
+            </View>
+            <AvatarActionSheet
+              visible={visible}
+              onClose={() => setVisible(false)}
+              onSetAvatar={(uri) => setAvatar(uri ?? null)} // Chuyển undefined thành null
             />
-            <Text>{appState?.user.username}</Text>
+
+            <Text style={{ alignItems: "center" }}>
+              {appState?.user.fullName}
+            </Text>
           </View>
           <Formik
             validationSchema={UpdateUserSchema}
@@ -110,7 +160,7 @@ const UserInfo = () => {
               fullName: appState?.user.fullName || "",
               email: appState?.user.email || "",
               phone: appState?.user.phone || "",
-              username: appState?.user.fullName || "",
+              username: appState?.user.username || "",
             }}
             onSubmit={(values, { setValues }) =>
               handleUpdateUser(values.fullName, values.phone, setValues)
@@ -147,7 +197,7 @@ const UserInfo = () => {
                   value={values.email}
                 />
                 <ShareInput
-                  title="Số điện thoại"
+                  title="Phone number"
                   onChangeText={handleChange("phone")}
                   onBlur={handleBlur("phone")}
                   value={values.phone}
@@ -160,7 +210,7 @@ const UserInfo = () => {
                   style={({ pressed }) => ({
                     opacity: pressed ? 0.5 : 1,
                     backgroundColor:
-                      isValid && dirty ? APP_COLOR.vang : APP_COLOR.darkGray,
+                      isValid && dirty ? APP_COLOR.primary : APP_COLOR.darkGray,
                     padding: 10,
                     marginTop: 10,
                     borderRadius: 3,
@@ -172,7 +222,7 @@ const UserInfo = () => {
                       color: isValid && dirty ? "white" : "grey",
                     }}
                   >
-                    Lưu thay đổi
+                    Save changes
                   </Text>
                 </Pressable>
               </View>

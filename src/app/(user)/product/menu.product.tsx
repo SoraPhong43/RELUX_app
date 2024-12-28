@@ -4,20 +4,22 @@ import { useEffect, useState } from "react";
 import {
   Text,
   View,
-  ActivityIndicator,
   StyleSheet,
   Image,
   Platform,
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
+import ContentLoader, { Rect } from "react-content-loader/native";
+const { height: sHeight, width: sWidth } = Dimensions.get("window");
 
 const MenuProduct = () => {
   const { categoryId } = useLocalSearchParams();
   const [categoryService, setCategoryService] = useState<IService[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
   const categoryIdNumber = Number(categoryId as string);
 
   useEffect(() => {
@@ -27,66 +29,82 @@ const MenuProduct = () => {
         if (Array.isArray(res.data)) {
           setCategoryService(res.data);
         } else {
-          setError("Menu data is not an array.");
+          console.log("loi cate");
         }
       } catch (error) {
-        setError("Failed to fetch menu data.");
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 200);
       }
     };
     fetchCateById();
   }, [categoryIdNumber]);
 
-  if (isLoading) {
-    return (
-      <SafeAreaView style={[styles.container, styles.center]}>
-        <ActivityIndicator size="large" color="#007bff" />
-        <Text>Loading...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaView style={[styles.container, styles.center]}>
-        <Text style={styles.errorText}>{error}</Text>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={categoryService}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(item, index) => `${item.ServiceID || index}`}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.itemContainer}
-            onPress={() =>
-              router.navigate({
-                pathname: "/product/per.menuItem",
-                params: { serviceId: item.id },
-              })
-            }
-          >
-            <Image source={{ uri: item.imageMain }} style={styles.image} />
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>
-                {currencyFormatter(item.price)}
-              </Text>
-              <Text style={styles.itemDescription}>
-                {item.descriptionShort}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.listContent}
-      />
-    </SafeAreaView>
+    <View style={{ flex: 1 }}>
+      {isLoading === false ? (
+        <SafeAreaView style={styles.container}>
+          <FlatList
+            data={categoryService}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item, index) => `${item.ServiceID || index}`}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.itemContainer}
+                onPress={() =>
+                  router.navigate({
+                    pathname: "/product/per.menuItem",
+                    params: { serviceId: item.id },
+                  })
+                }
+              >
+                <Image source={{ uri: item.imageMain }} style={styles.image} />
+                <View style={styles.textContainer}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemPrice}>
+                    {currencyFormatter(item.price)}
+                  </Text>
+                  <Text style={styles.itemDescription}>
+                    {item.descriptionShort}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.listContent}
+          />
+        </SafeAreaView>
+      ) : (
+        <ContentLoader
+          speed={1}
+          width={400}
+          height={500}
+          backgroundColor="#f3f3f3"
+          foregroundColor="#ecebeb"
+          style={{ width: 1000 }}
+        >
+          {/* Image1 Skeleton */}
+          <Rect x="10" y="40" rx="10" ry="10" width="380" height="110" />
+          <Rect x="20" y="60" rx="10" ry="10" width="75" height="75" />
+          <Rect x="100" y="60" rx="10" ry="10" width="150" height="15" />
+          <Rect x="100" y="80" rx="10" ry="10" width="100" height="15" />
+          <Rect x="100" y="105" rx="10" ry="10" width="280" height="30" />
+          {/* Image3 Skeleton */}
+          <Rect x="10" y="170" rx="10" ry="10" width="380" height="110" />
+          <Rect x="20" y="190" rx="10" ry="10" width="75" height="75" />
+          <Rect x="100" y="190" rx="10" ry="10" width="150" height="15" />
+          <Rect x="100" y="210" rx="10" ry="10" width="100" height="15" />
+          <Rect x="100" y="235" rx="10" ry="10" width="280" height="30" />
+          {/* Image3 Skeleton */}
+          <Rect x="10" y="300" rx="10" ry="10" width="380" height="110" />
+          <Rect x="20" y="320" rx="10" ry="10" width="75" height="75" />
+          <Rect x="100" y="320" rx="10" ry="10" width="150" height="15" />
+          <Rect x="100" y="340" rx="10" ry="10" width="100" height="15" />
+          <Rect x="100" y="365" rx="10" ry="10" width="280" height="30" />
+        </ContentLoader>
+      )}
+    </View>
   );
 };
 
