@@ -7,15 +7,17 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { currencyFormatter, getBookingHistoryAPI, placeBookingByUserAPI } from "../utils/API";
+import {
+  currencyFormatter,
+  getBookingHistoryAPI,
+  placeBookingByUserAPI,
+} from "../utils/API";
 import moment from "moment";
 import { APP_COLOR } from "../utils/constant";
 import { useCurrentApp } from "@/context/app.context";
 
 const UnusedServices = () => {
-  const {
-    appState,
-  } = useCurrentApp();
+  const { appState } = useCurrentApp();
   const [bookingHistory, setBookingHistory] = useState<IBooking[]>([]);
 
   const formatDateTime = (dateTime: any) => {
@@ -111,21 +113,21 @@ const UnusedServices = () => {
           <View key={index} style={styles.bookingCard}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Dịch vụ: </Text>
-              <Text style={styles.serviceName}>{item.serviceName}</Text>
+              {/* <Text style={styles.serviceName}>{item.services.[0].name}</Text> */}
             </View>
-            <View style={{ flexDirection: "row" }}>
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={{ fontWeight: "bold" }}>Thời gian đặt lịch: </Text>
               <Text style={styles.bookingTime}>
                 {formatDateTime(item.bookingTime)}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Số tiền phải trả: </Text>
-              <Text style={styles.totalAmount}>
+              {/* <Text style={styles.totalAmount}>
                 {currencyFormatter(Number(item.totalAmount))}
-              </Text>
+              </Text> */}
             </View>
-            <Text style={styles.status}>Tình trạng: {item.status}</Text>
+            {/* <Text style={styles.status}>Tình trạng: {item.status}</Text> */}
           </View>
         ))
       )}

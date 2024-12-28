@@ -12,27 +12,38 @@ export const LoginSchema = Yup.object().shape({
 });
 
 export const SignUpSchema = Yup.object().shape({
-    username: Yup.string()
-        .min(6, "Password must be at least 6 characters")
-        .max(50, "Too Long!")
-        .required("Username cannot be blank"),
     password: Yup.string()
-        .min(6, "Password must be at least 6 characters")
-        .max(50, "Too Long!")
-        .required("Password cannot be blank"),
+        .min(6, 'Password must be at least 6 characters')
+        .max(50, 'Too Long!')
+        .required('Password cannot be blank'),
     email: Yup.string()
-        .email("Invalid email format")
-        .required("Email cannot be blank"),
-    fullName: Yup.string().required("Name cannot be left blank"),
+        .email('Invalid email format')
+        .required('Email cannot be blank'),
+    username: Yup.string()
+        .required('Name cannot be left blank'),
     phone: Yup.string()
-        .min(10, "Password must be at least 10 characters")
-        .max(12, "Too Long!"),
+        .matches(/^\+?[0-9]{10,15}$/, 'Phone number must be valid')
+        .required('Phone number cannot be blank'),
+    fullName: Yup.string()
+        .max(100, 'Full Name is too long')
+        .required('Full Name cannot be blank'),
+
 });
 
 export const UpdateUserSchema = Yup.object().shape({
-    name: Yup.string().required("Họ tên không được để trống"),
-    phone: Yup.string().required("Số điện thoại không được để trống"),
-});
+    phone: Yup.string()
+      .required("Số điện thoại không được để trống")
+      .matches(/^[0-9]+$/, "Số điện thoại phải là số")
+      .min(9, "Số điện thoại không hợp lệ")
+      .max(12, "Số điện thoại không hợp lệ"),
+    fullName: Yup.string()
+      .max(100, "Full Name is too long")
+      .required("Full Name cannot be blank"),
+    username: Yup.string().required("Name cannot be left blank"),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email cannot be blank"),
+  });
 
 export const UpdateUserPasswordScheme = Yup.object().shape({
     currentPassword: Yup.string()
@@ -46,6 +57,9 @@ export const UpdateUserPasswordScheme = Yup.object().shape({
     confirmNewPassword: Yup.string()
         .default("confirm password cannot be blank")
         .oneOf([Yup.ref("newPassword")], "Passwords must match"),
+        fullName: Yup.string()
+        .max(100, 'Full Name is too long')
+        .required('Full Name cannot be blank'),
 });
 
 export const RequestPasswordSchema = Yup.object().shape({

@@ -16,14 +16,15 @@ declare global {
     interface IUserLogin {
         user: {
             email: string;
-            userId: string;
-            fullname?: string;
+            id: number;
+            fullName?: string;
             name?: string;
             username: string;
             role: string;
             phone: string;
             address: string;
             avatar: string;
+            bookingCount:number;
             [key: string]: any;
         };
         accessToken: string;
@@ -36,7 +37,7 @@ declare global {
         phone: string;
         fullName?: string;
         avatar?: string;
-        bookingCount?: string;
+        bookingCount: number;
     }
 
     interface ITopService {
@@ -49,16 +50,39 @@ declare global {
         discount: string;
         isNew: number;
     }
+    interface ILast {
+        ServiceID:string;
+        CategoryID:string;
+        Name:string;
+        Price:string;
+        DescriptionShort:string;
+        Description1:string;
+        ImageDescription:string
+    }
     interface IService {
         id: string;
         name: string;
-        description: string;
         price: string;
-        image: string;
-        rating: number;
+        descriptionShort:string;
+        description1:string
+        imageDescription: string;
+        description2:string;
+        imageMain:string;
+        duration: number;
         discount: string;
+        categoryId:string;
+        promotionId:string;
         menu: IMenu[];
+        category: ICategoryBooking;
+        promotion:Ipromotion;
         [key: string]: any;
+    }
+    interface Ipromotion{
+id:string;
+description:string;
+discountPercentage:string;
+startDate:string;
+endDate:string;
     }
     interface IMenu {
         menu: string;
@@ -127,6 +151,7 @@ declare global {
         specialtyType: string | null;
         status: string | null;
         hiredate: string | null;
+        avatar:string;
         locationId?: number;
         location?: ILocation | null;
         avatar?: string | null;
@@ -152,10 +177,12 @@ declare global {
         name?: string;
         bookingTime: string;
         bookingnotes: string;
+        categoryId:(number | string)[];
         serviceIds: (number | string)[];
         locationId: number | null;
         employeeId: number | null;
         customerId: number | null;
+        // bookingCount:number | null;
         [key: string]: any;
     }
     interface ICategoryBooking {
@@ -172,8 +199,9 @@ declare global {
         image?: string;
     }
     interface INotification {
-        serviceName: string;
-        bookingTime: string;
+        bookingId:string,
+        serviceName: string,
+        bookingTime: string 
     }
     interface OptionItem {
         value: string | number;
@@ -185,6 +213,10 @@ declare global {
         startTime: string;
         endTime: string;
     }
+    type ServiceOption = {
+        id: number;
+        name: string;
+      };
 }
 
 // cart:{

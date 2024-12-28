@@ -1,108 +1,113 @@
-import HeaderHome from "@/components/home/header.home";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
-    Image,
-    StyleSheet
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  Image,
+  StyleSheet,
 } from "react-native";
-import Toast from "react-native-root-toast";
-
-import SelectSpa from "@/components/InfoBooking/select.spa";
-import CmSelectMulti from "@/components/CmSelect/CmSelectMulti";
-import DropDownFacility from "@/components/InfoBooking/choose.time";
-import { router, useNavigation } from "expo-router";
-import moment, { duration } from "moment";
+import moment from "moment";
 import { APP_COLOR } from "@/app/utils/constant";
-import { currencyFormatter, getEmployeeFreeTimeSpa, getEmployeeSpa, getProfileAPI, placeBookingAPI } from "@/app/utils/API";
-import { getCateServiceBookingAPI, getLocationSpa } from "@/app/utils/API";
-import CmSelect from "@/components/CmSelect/CmSelect";
-import imgLocation from "@/assets/spaHome1.jpg";
-import imgStaff from "@/assets/icons/face.png";
+import { currencyFormatter } from "@/app/utils/API";
 import { useCurrentApp } from "@/context/app.context";
+
 const Step2 = () => {
-    const {
-        booking, setBooking,
-    } = useCurrentApp();
-    return (
-        <View style={{ flex: 1 }}>
-            <ScrollView style={{ flex: 1 }}>
-                <View style={{ flex: 1, paddingHorizontal: 40 }} >
-                    <View
-                        style={{
-                            padding: 10,
-                        }}
-                    >
-                        <Text style={styles.label}>{booking?.locationName}</Text>
-                        <Text style={{
-                            backgroundColor: "#ffffff",
-                            borderColor: APP_COLOR.darkGray,
-                            marginBottom: 5,
-                            fontSize: 14,
-                        }}>{booking?.bookingTime ? moment(booking?.bookingTime).format('DD/MM/YYYY HH:mm') : '--'}</Text>
-                    </View>
-                    <View
-                        style={{
-                            padding: 10,
-                        }}
-                    >
-                        <Text style={styles.label}>Location</Text>
-                        <Text style={{
-                            backgroundColor: "#ffffff",
-                            borderColor: APP_COLOR.darkGray,
-                            marginBottom: 5,
-                            fontSize: 14,
-                        }}>{booking?.locationName}</Text>
-                    </View>
-                    <View
-                        style={{
-                            padding: 10,
+  const { booking } = useCurrentApp();
 
-                        }}
-                    >
-                        <Text style={styles.label}>Employee</Text>
-                        <Text style={{
-                            backgroundColor: "#ffffff",
-                            borderColor: APP_COLOR.darkGray,
-                            marginBottom: 5,
-                            fontSize: 14,
-                        }}>{booking?.employeeName}</Text>
-                    </View>
-                </View>
-                <View
-                    style={{
-                        padding: 20,
-                    }}
-                >
-                    <View style={{
-                        paddingVertical: 20,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        borderColor: APP_COLOR.darkGray,
-                        borderTopWidth: 1,
-                    }}>
-                        <Text style={styles.label}>Total (After discount): </Text>
-                        <Text style={styles.label}>{booking?.price - booking?.discountPercentage * booking?.price}</Text>
-                    </View>
-                </View>
-            </ScrollView>
+  const adjustTime = (time: string) => {
+    if (!time) return "--";
+    return moment.utc(time).format("DD/MM/YYYY HH:mm");
+  };
 
-        </View >
-    );
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Booking Time */}
+        <View style={styles.infoBox}>
+          <Text style={styles.label}>Booking Time</Text>
+          <Text style={styles.value}>
+            {booking?.bookingTime ? adjustTime(booking?.bookingTime) : "--"}
+          </Text>
+        </View>
+
+        {/* Location */}
+        <View style={styles.infoBox}>
+          <Text style={styles.label}>Location</Text>
+          <Text style={styles.value}>{booking?.locationName || "--"}</Text>
+        </View>
+
+        {/* Employee */}
+        <View style={styles.infoBox}>
+          <Text style={styles.label}>Employee</Text>
+          <Text style={styles.value}>{booking?.employeeName || "--"}</Text>
+        </View>
+
+        {/* Total Price */}
+        <View style={styles.totalBox}>
+          <Text style={styles.totalLabel}>Total (After Discount):</Text>
+          <Text style={styles.totalValue}>
+            {currencyFormatter(
+              booking?.price -
+                booking?.price * (booking?.discountPercentage / 100)
+            )}
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
+  );
 };
+
 const styles = StyleSheet.create({
-
-    label: {
-        fontSize: 18,
-        fontWeight: "500",
-        marginBottom: 8,
-        color: 'Purple',
-    },
-
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+  },
+  infoBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: APP_COLOR.darkGray,
+    marginBottom: 5,
+  },
+  value: {
+    fontSize: 16,
+    color: "#333333",
+  },
+  totalBox: {
+    backgroundColor: APP_COLOR.primary,
+    borderRadius: 10,
+    padding: 20,
+    marginTop: 30,
+    alignItems: "center",
+  },
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+  totalValue: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginTop: 10,
+  },
 });
 
 export default Step2;

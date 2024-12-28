@@ -34,8 +34,7 @@ const DisplayLocation = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       const res = await getLocationSpa();
-      //  console.log("res", res);
-      // console.log("res data", res.data);
+      // console.log("res", res);
       if (res.data && Array.isArray(res.data)) {
         setLocation(res.data);
         //console.log(res.data);
@@ -57,20 +56,20 @@ const DisplayLocation = () => {
   //console.log("Base Image URL:", baseImage);
 
   return (
-    <View style={{ flex: 1, padding: 5 }}>
+    <View style={{ flex: 1, padding: 16, backgroundColor: "#f9f9f9" }}>
       <Text
         style={{
           fontSize: 20,
           fontWeight: "bold",
           marginBottom: 16,
-          color: APP_COLOR.vang,
+          color: APP_COLOR.primary,
         }}
       >
         List of Locations
       </Text>
       <FlatList
         data={location}
-        keyExtractor={(item) => item.locationID}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={{ gap: 10 }}
         horizontal
         showsVerticalScrollIndicator={false}
@@ -79,19 +78,24 @@ const DisplayLocation = () => {
           return (
             <View
               style={{
-                backgroundColor: "#ffffff",
-                borderWidth: 1,
-                borderColor: APP_COLOR.darkGray,
-                borderRadius: 15,
-                marginLeft: index === 0 ? 8 : 0,
-                marginBottom: 5,
+                backgroundColor: "#fff",
+                marginBottom: 12,
+                borderRadius: 8,
+                marginRight: 12,
+                // shadowColor: "#000",
+                // shadowOpacity: 0.1,
+                // shadowRadius: 5,
+                // elevation: 3,
+                // overflow: "hidden",
+                width: 230,
+                height: 210,
               }}
             >
               <Pressable
                 onPress={() =>
                   router.navigate({
                     pathname: "/product/locationid",
-                    params: { locationID: item.locationID },
+                    params: { locationID: item.id },
                   })
                 }
               >
@@ -119,7 +123,7 @@ const DisplayLocation = () => {
                       paddingLeft: 2,
                     }}
                   >
-                    {item.Address}
+                    {item.address}
                   </Text>
                 </View>
               </Pressable>

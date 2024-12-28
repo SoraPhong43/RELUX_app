@@ -1,163 +1,153 @@
-import {
-  currencyFormatter,
-  DisplayMenuItemByIdAPI,
-  getURLBaseBackend,
-} from "@/app/utils/API";
+import { currencyFormatter, getServiceByCatalogy } from "@/app/utils/API";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Text,
   View,
   ActivityIndicator,
-  ScrollView,
   StyleSheet,
   Image,
   Platform,
   SafeAreaView,
+  FlatList,
   TouchableOpacity,
 } from "react-native";
 
 const MenuProduct = () => {
-  const { menuId, menuName } = useLocalSearchParams(); // Lấy menuId từ tham số URL
-  const [menuItem, setMenuItem] = useState<IMenuItem[]>([]); // Cập nhật lại kiểu dữ liệu cho phù hợp với mảng
-  const [loading, setLoading] = useState<boolean>(true);
+  const { categoryId } = useLocalSearchParams();
+  const [categoryService, setCategoryService] = useState<IService[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const categoryIdNumber = Number(categoryId as string);
 
   useEffect(() => {
-    const fetchMenuItems = async () => {
-      setLoading(true);
+    const fetchCateById = async () => {
       try {
-        const res = await DisplayMenuItemByIdAPI(menuId as string); // API trả về danh sách món ăn (IMenuItem[])
-        if (res.data && Array.isArray(res.data)) {
-          console.log(">> check menu items:", res.data); // Kiểm tra dữ liệu trả về
-          setMenuItem(res.data); // Cập nhật state với danh sách dịch vụ
+        const res = await getServiceByCatalogy(categoryIdNumber);
+        if (Array.isArray(res.data)) {
+          setCategoryService(res.data);
         } else {
-          console.log("No menu items found");
+          setError("Menu data is not an array.");
         }
       } catch (error) {
+        setError("Failed to fetch menu data.");
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
-      setLoading(false);
     };
+    fetchCateById();
+  }, [categoryIdNumber]);
 
-    fetchMenuItems();
-  }, [menuId]);
+  if (isLoading) {
+    return (
+      <SafeAreaView style={[styles.container, styles.center]}>
+        <ActivityIndicator size="large" color="#007bff" />
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
-  const backend =
-    Platform.OS === "android"
-      ? process.env.EXPO_PUBLIC_ANDROID_API_URL
-      : process.env.EXPO_PUBLIC_IOS_API_URL;
+  if (error) {
+    return (
+      <SafeAreaView style={[styles.container, styles.center]}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
 
-  const baseImage = `${backend}/images/menuItem`;
-  //console.log("Base Image URL:", baseImage);
   return (
-    <View style={{ flex: 1 }}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-      ) : menuItem.length > 0 ? (
-        <SafeAreaView style={{ flex: 1 }}>
-          <View style={{ paddingTop: 30 }}>
-            <Text style={{ fontSize: 24, fontWeight: "bold", padding: 10 }}>
-              {menuName}
-            </Text>
-            {menuItem.map((item) => (
-              <TouchableOpacity
-                key={item.id} // Đảm bảo rằng mỗi phần tử trong danh sách có key
-                onPress={() =>
-                  router.push({
-                    pathname: "/product/per.menuItem", // Đường dẫn đến trang chi tiết
-                    params: { id: item.id }, // Truyền menuItemId qua query
-                  })
-                }
-              >
-                <View style={styles.menuItemCard}>
-                  <Image
-                    source={{
-                      uri: `${getURLBaseBackend()}/images/menuItem/${
-                        item?.image
-                      }`,
-                    }}
-                    style={styles.menuImage}
-                  />
-                  <View style={styles.menuInfo}>
-                    <Text style={styles.menuName}>{item.name}</Text>
-                    <Text numberOfLines={1} style={styles.menuDescription}>
-                      {item.description}
-                    </Text>
-                    <Text style={styles.menuPrice}>
-                      Giá: {currencyFormatter(item.price)}
-                    </Text>
-                    <Text style={styles.menuDuration}>
-                      Thời gian: {item.duration} phút
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </SafeAreaView>
-      ) : (
-        <Text style={styles.noItems}>Không tìm thấy dịch vụ.</Text>
-      )}
-    </View>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={categoryService}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item, index) => `${item.ServiceID || index}`}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.itemContainer}
+            onPress={() =>
+              router.navigate({
+                pathname: "/product/per.menuItem",
+                params: { serviceId: item.id },
+              })
+            }
+          >
+            <Image source={{ uri: item.imageMain }} style={styles.image} />
+            <View style={styles.textContainer}>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemPrice}>
+                {currencyFormatter(item.price)}
+              </Text>
+              <Text style={styles.itemDescription}>
+                {item.descriptionShort}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={styles.listContent}
+      />
+    </SafeAreaView>
   );
 };
 
+export default MenuProduct;
+
 const styles = StyleSheet.create({
-  loader: {
-    marginTop: 20,
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+    paddingTop: Platform.OS === "android" ? 25 : 0, // Bù cho status bar trên Android
   },
-  menuList: {
-    padding: 10,
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
   },
-  menuItemCard: {
-    //paddingTop: 10,
+  errorText: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+    paddingHorizontal: 20,
+  },
+  listContent: {
+    paddingVertical: 15,
+  },
+  itemContainer: {
     flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#fff",
-    marginBottom: 15,
     padding: 15,
-    borderRadius: 8,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
   },
-  menuImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
+  image: {
+    height: 90,
+    width: 90,
+    borderRadius: 10,
     marginRight: 15,
+    backgroundColor: "#e0e0e0",
   },
-  menuInfo: {
+  textContainer: {
     flex: 1,
-    justifyContent: "center",
   },
-  menuName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  menuDescription: {
-    fontSize: 14,
-    color: "#777",
-    marginBottom: 5,
-  },
-  menuPrice: {
+  itemName: {
     fontSize: 16,
-    color: "#333",
     fontWeight: "bold",
-    marginBottom: 5,
-  },
-  menuDuration: {
-    fontSize: 14,
     color: "#333",
   },
-  noItems: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#888",
+  itemPrice: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#007bff",
+    marginVertical: 5,
+  },
+  itemDescription: {
+    fontSize: 12,
+    color: "#666",
   },
 });
-
-export default MenuProduct;

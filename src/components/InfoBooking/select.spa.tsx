@@ -25,7 +25,7 @@ const SelectSpa = () => {
       try {
         setIsLoading(true);
         const res = await getAllLocations();
-        console.log("API Response:", res);
+        // console.log("API Response:", res);
         if (Array.isArray(res.data)) {
           setLocations(res.data as ILocation[]);
         }

@@ -53,14 +53,14 @@ const LoginPage = () => {
           backgroundColor: APP_COLOR.vang,
           opacity: 1,
         });
-        console.log("Response from login API:", res);
+        // console.log("Response from login API:", res);
         console.log(res.statusCode);
-        if (res.statusCode === 400) {
-          router.replace({
-            pathname: "/(auth)/verify",
-            params: { username: username, isLogin: 1 },
-          });
-        }
+        // if (res.statusCode === 400) {
+        //   router.replace({
+        //     pathname: "/(auth)/verify",
+        //     params: { username: username, isLogin: 1 },
+        //   });
+        // }
       }
     } catch (error) {
       setLoading(false); // Make sure to reset loading state on error

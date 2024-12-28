@@ -55,7 +55,7 @@ const idLocation = () => {
           />
           <View style={styles.header}>
             <Text style={styles.title}>{location?.locationName}</Text>
-            <Text style={styles.address}>{location?.Address}</Text>
+            <Text style={styles.address}>{location?.address}</Text>
           </View>
         </Animated.View>
 
@@ -67,7 +67,7 @@ const idLocation = () => {
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Address</Text>
-            <Text style={styles.sectionContent}>{location?.Address}</Text>
+            <Text style={styles.sectionContent}>{location?.address}</Text>
           </View>
         </Animated.View>
       </ScrollView>

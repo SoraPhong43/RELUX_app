@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
+    fontWeight: "bold", // Tùy chọn để làm chữ đậm
+    color: APP_COLOR.primary, // Đổi thành màu chủ đạo từ APP_COLOR
   },
   input: {
     backgroundColor: "#E8ECF4",
@@ -76,7 +78,10 @@ const ShareInput = (props: IProps) => {
           style={[
             styles.input,
 
-            { borderColor: isFocus ? APP_COLOR.vang : APP_COLOR.vienInput, padding: 20 },
+            {
+              borderColor: isFocus ? APP_COLOR.vang : APP_COLOR.vienInput,
+              padding: 20,
+            },
           ]}
           secureTextEntry={secureTextEntry && !isShowPassword}
         />

@@ -1,58 +1,121 @@
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Dimensions, StyleSheet } from "react-native";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import moment from "moment";
 import { APP_COLOR } from "../utils/constant";
-import unusedBookings from "../viewService/unusedService";
-import BookingHistory from "../viewService/bookingHistory";
+import { useCurrentApp } from "@/context/app.context";
+import { useFocusEffect } from "@react-navigation/native";
+import { placeBookingByUserAPI } from "../utils/API";
 
-// Import các file chứa nội dung từng tab
+const BookingHistory = () => {
+  const { appState } = useCurrentApp();
+  const [bookingHistory, setBookingHistory] = useState<IBooking[]>([]);
+  const [loading, setLoading] = useState(false);
 
-const MakeAnAppointment = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [refreshing, setRefresing] = React.useState(false);
-  const [routes] = useState([
-    { key: "history", title: "History" },
-    { key: "unused", title: "Tình trạng" },
-  ]);
+  const formatDateTime = (dateTime: any) => {
+    return moment(dateTime).format("HH:mm DD/MM/YYYY");
+  };
 
-  const renderScene = SceneMap({
-    history: BookingHistory, // Component cho tab Lịch Sử
-    unused: unusedBookings, // Component cho tab Chưa Sử Dụng
-  });
+  const fetchBookingHistory = async () => {
+    setLoading(true);
+    try {
+      const res = await placeBookingByUserAPI(appState?.user.id);
+      console.log("Booking History:", res);
+      setBookingHistory(res?.data || []); // Đặt giá trị mặc định nếu res.data là undefined
+    } catch (error) {
+      console.error("Failed to fetch booking history:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const onRefresh = React.useCallback(() => {
-    setRefresing(true);
-    setTimeout(() => {
-      setRefresing(false);
-    }, 2000);
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBookingHistory();
+    }, [])
+  );
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <TabView
-        navigationState={{ index: currentIndex, routes }}
-        renderScene={renderScene}
-        onIndexChange={setCurrentIndex}
-        initialLayout={{ width: Dimensions.get("window").width }}
-        renderTabBar={(props) => (
-          <TabBar
-            {...props}
-            indicatorStyle={{ backgroundColor: APP_COLOR.vang }}
-            style={styles.tabBar}
-            labelStyle={{ fontWeight: "bold" }}
-            activeColor={APP_COLOR.vang}
-            inactiveColor="gray"
-          />
-        )}
-      />
-    </SafeAreaView>
+    <ScrollView style={styles.scrollView}>
+      {loading ? (
+        <ActivityIndicator size="large" color={APP_COLOR.primary} />
+      ) : bookingHistory.length === 0 ? (
+        <View style={styles.noHistoryContainer}>
+          <Text style={styles.noHistoryText}>Không có lịch sử dịch vụ</Text>
+        </View>
+      ) : (
+        bookingHistory.map((item, index) => (
+          <View key={index} style={styles.bookingCard}>
+            <View style={styles.rowContainer}>
+              <Text style={styles.label}>Dịch vụ:</Text>
+              <Text style={styles.serviceName}>
+                {item.services?.[0]?.name || "Không xác định"}
+              </Text>
+            </View>
+            <View style={styles.rowContainer}>
+              <Text style={styles.label}>Thời gian đặt lịch:</Text>
+              <Text style={styles.bookingTime}>
+                {formatDateTime(item.bookingTime)}
+              </Text>
+            </View>
+          </View>
+        ))
+      )}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  tabBar: {
+  scrollView: {
+    padding: 15,
+    backgroundColor: APP_COLOR.lightGray, // Nền của danh sách
+  },
+  bookingCard: {
     backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  rowContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: APP_COLOR.primary,
+  },
+  serviceName: {
+    fontSize: 16,
+    color: APP_COLOR.textPrimary,
+    fontWeight: "500",
+  },
+  bookingTime: {
+    fontSize: 14,
+    color: APP_COLOR.textSecondary,
+  },
+  noHistoryContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  noHistoryText: {
+    fontSize: 16,
+    color: APP_COLOR.textSecondary,
   },
 });
 
-export default MakeAnAppointment;
+export default BookingHistory;

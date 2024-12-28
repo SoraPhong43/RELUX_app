@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   greeting: {
-    color: APP_COLOR.vang,
+    color: APP_COLOR.primary,
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
 // }
 const HeaderHome = () => {
   const { theme, appState } = useCurrentApp();
-  console.log("App State:", appState);
 
   return (
     <View style={styles.container}>
@@ -83,13 +82,13 @@ const HeaderHome = () => {
         <View style={styles.userName}>
           <Text style={styles.greeting}>Happy new days,</Text>
           <Text style={styles.name}>
-            {appState?.user?.username || "Tên không có sẵn"}
+            {appState?.user?.fullName || "Tên không có sẵn"}
           </Text>
         </View>
         <MaterialCommunityIcons
           name="bell-ring-outline"
           size={24}
-          color={APP_COLOR.vang}
+          color={APP_COLOR.primary}
           onPress={() =>
             router.navigate("/(user)/notification/display.notification")
           }

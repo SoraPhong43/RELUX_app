@@ -69,7 +69,7 @@ const RootLayout = () => {
             <Stack.Screen
               name="(user)/product/[id]"
               options={{ headerShown: false }}
-            // options={{ headerTitle: "Services" }}
+              // options={{ headerTitle: "Services" }}
             />
             <Stack.Screen
               name="(user)/product/create.modal"
@@ -90,23 +90,23 @@ const RootLayout = () => {
             <Stack.Screen
               name="(user)/product/booking"
               options={{ headerTitle: "Book apointment" }}
-            // options={{
-            //   headerShown: false,
-            // }}
+              // options={{
+              //   headerShown: false,
+              // }}
             />
             <Stack.Screen
               name="(user)/product/CpBooking"
               options={{ headerTitle: "Book apointment" }}
-            // options={{
-            //   headerShown: false,
-            // }}
+              // options={{
+              //   headerShown: false,
+              // }}
             />
             <Stack.Screen
               name="(user)/product/confirm"
               options={{ headerTitle: "Confirm infomation" }}
-            // options={{
-            //   headerShown: false,
-            // }}
+              // options={{
+              //   headerShown: false,
+              // }}
             />
             <Stack.Screen
               name="(user)/product/locationid"
@@ -135,6 +135,10 @@ const RootLayout = () => {
             />
             <Stack.Screen
               name="(user)/product/per.menuItem"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(user)/employee/per.employee"
               options={{ headerShown: false }}
             />
           </Stack>

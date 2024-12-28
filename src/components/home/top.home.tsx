@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -9,40 +10,59 @@ import {
   View,
 } from "react-native";
 import BannerHome from "./banner.home";
-import { useEffect, useState } from "react";
-import { DisplayMenuAPI } from "@/app/utils/API";
+import { getCateServiceBookingAPI } from "@/app/utils/API";
 import { useCurrentApp } from "@/context/app.context";
 import { router } from "expo-router";
 
-const styles = StyleSheet.create({});
-
-const data = [
-  {
-    key: 1,
-    name: "Spa & Massage",
-    source: require("@/assets/icons/spa&massage.png"),
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  { key: 2, name: "Sauna", source: require("@/assets/icons/sauna.png") },
-  { key: 3, name: "Face", source: require("@/assets/icons/face.png") },
-  {
-    key: 4,
-    name: "Reflexology",
-    source: require("@/assets/icons/Reflexology.png"),
+  scrollView: {
+    marginVertical: 15,
   },
-];
+  itemContainer: {
+    padding: 10,
+    margin: 5,
+    alignItems: "center",
+  },
+  itemImage: {
+    height: 35,
+    width: 35,
+  },
+  itemText: {
+    textAlign: "center",
+  },
+});
 
-const data1 = Array(10).fill(1);
+const imageMap: Record<string, any> = {
+  wellness: require("@/assets/category/category1.png"),
+  Relaxation: require("@/assets/category/category1.png"),
+  "Skin Care": require("@/assets/category/category1.png"),
+  Beauty: require("@/assets/category/category1.png"),
+  // "sauna": require("@/assets/icons/sauna.png"),
+  // "face": require("@/assets/icons/face.png"),
+  // "Reflexology": require("@/assets/icons/Reflexology.png"),
+};
 
 const TopListHome = () => {
-  const { menu, setMenu } = useCurrentApp();
+  const { cate, setCate } = useCurrentApp();
 
   useEffect(() => {
     const fetchMenu = async () => {
-      const res = await DisplayMenuAPI();
-      if (res.data) {
-        setMenu(res.data);
+      try {
+        const res = await getCateServiceBookingAPI();
+        if (Array.isArray(res.data)) {
+          setCate(res.data);
+        } else {
+          console.warn("Menu data is not an array");
+        }
+      } catch (error) {
+        console.error("Failed to fetch menu:", error);
       }
     };
+
     fetchMenu();
   }, []);
 
@@ -52,79 +72,47 @@ const TopListHome = () => {
       : process.env.EXPO_PUBLIC_IOS_API_URL;
 
   const baseImage = `${backend}/images/menu`;
+
   return (
-    <View>
+    <View style={styles.container}>
       <BannerHome />
-      {/* <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        directionalLockEnabled={true}
-        alwaysBounceVertical={false}
-        style={{ marginVertical: 15 }}
-      >
-        <FlatList
-          contentContainerStyle={{ alignSelf: "flex-start" }}
-          numColumns={Math.ceil(data.length)}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          data={data}
-          renderItem={({ item, index }) => {
-            return (
-              <View
-                style={{
-                  padding: 10,
-                  margin: 5,
-                  alignItems: "center",
-                }}
-              >
-                <Image source={item.source} style={{ height: 35, width: 35 }} />
-                <Text style={{ textAlign: "center" }}>{item.name}</Text>
-              </View>
-            );
-          }}
-        />
-      </ScrollView> */}
 
       <ScrollView
+        style={styles.scrollView}
         showsHorizontalScrollIndicator={false}
         directionalLockEnabled={true}
         alwaysBounceVertical={false}
-        style={{ marginVertical: 15 }}
       >
-        {/* Ensure that `menu` is an array */}
         <FlatList
-          horizontal={true}
+          horizontal
           contentContainerStyle={{ alignSelf: "flex-start" }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          data={Array.isArray(menu) ? menu : []} // Ensure menu is an array
-          renderItem={({ item }) => (
+          data={Array.isArray(cate) ? cate : []}
+          renderItem={({
+            item,
+          }: {
+            item: { id: number; name: string; typeService: string };
+          }) => (
             <TouchableOpacity
               onPress={() =>
                 router.navigate({
                   pathname: "/product/menu.product",
-                  params: { menuId: item.id, menuName: item.name },
+                  params: { categoryId: item.id },
                 })
               }
-              // Handle press event
-              style={{
-                padding: 10,
-                margin: 5,
-                alignItems: "center",
-              }}
+              style={styles.itemContainer}
             >
               <Image
-                source={{ uri: `${baseImage}/${item.image}` }} // API-based image URL
-                style={{
-                  height: 35,
-                  width: 35,
-                }}
+                source={imageMap[item.typeService]}
+                style={{ height: 35, width: 35 }}
               />
-              <Text style={{ textAlign: "center" }}>
-                {item.name || "No name"}
+              <Text style={styles.itemText}>
+                {item.typeService || "No name"}
               </Text>
             </TouchableOpacity>
           )}
+          keyExtractor={(item) => item.id.toString()}
         />
       </ScrollView>
     </View>
