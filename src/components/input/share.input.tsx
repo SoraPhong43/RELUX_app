@@ -79,7 +79,7 @@ const ShareInput = (props: IProps) => {
             styles.input,
 
             {
-              borderColor: isFocus ? APP_COLOR.vang : APP_COLOR.vienInput,
+              borderColor: isFocus ? APP_COLOR.primary : APP_COLOR.vienInput,
               padding: 20,
             },
           ]}

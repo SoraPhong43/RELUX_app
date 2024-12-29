@@ -36,7 +36,7 @@ const SignUpPage = () => {
         Toast.show("Registration successful!", {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
         router.replace("/(auth)/welcome");
@@ -162,7 +162,7 @@ const SignUpPage = () => {
                   borderRadius: 30,
                   marginHorizontal: 50,
                   paddingVertical: 10,
-                  backgroundColor: APP_COLOR.vang,
+                  backgroundColor: APP_COLOR.primary,
                 }}
                 pressStyle={{ alignSelf: "stretch" }}
               />
@@ -185,7 +185,7 @@ const SignUpPage = () => {
                 <Link href={"/(auth)/login"}>
                   <Text
                     style={{
-                      color: APP_COLOR.vang,
+                      color: APP_COLOR.primary,
                       textDecorationLine: "underline",
                     }}
                   >

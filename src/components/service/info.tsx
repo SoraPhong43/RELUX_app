@@ -24,7 +24,7 @@ const Info = (props: IProps) => {
           <View>
             <Text
               style={{
-                color: APP_COLOR.vang,
+                color: APP_COLOR.primary,
                 backgroundColor: "#F5F5DC",
                 padding: 0,
                 margin: 0,
@@ -88,7 +88,7 @@ const Info = (props: IProps) => {
             <View
               style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
             >
-              <AntDesign name="gift" size={14} color={APP_COLOR.vang} />
+              <AntDesign name="gift" size={14} color={APP_COLOR.primary} />
               <Text style={{ fontSize: 13 }}>
                 Giảm 20% cho lần đặt đầu tiên
               </Text>
@@ -96,7 +96,7 @@ const Info = (props: IProps) => {
             <View
               style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
             >
-              <AntDesign name="gift" size={14} color={APP_COLOR.vang} />
+              <AntDesign name="gift" size={14} color={APP_COLOR.primary} />
               <Text style={{ fontSize: 13 }}>
                 Giảm 20% cho liệu trình từ 200k
               </Text>

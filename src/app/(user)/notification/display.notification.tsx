@@ -103,7 +103,7 @@ const NotificationList = () => {
             <Entypo
               name="bookmark"
               size={30}
-              color={APP_COLOR.vang}
+              color={APP_COLOR.primary}
               style={styles.icon}
             />
             <View style={styles.textContainer}>

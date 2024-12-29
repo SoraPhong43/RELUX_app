@@ -223,7 +223,7 @@ const UpdateModalPage = () => {
                       flexDirection: "row",
                     }}
                   >
-                    <Text style={{ color: APP_COLOR.vang }}>
+                    <Text style={{ color: APP_COLOR.primary }}>
                       {currencyFormatter(item?.price)}
                     </Text>
                     <View
@@ -243,7 +243,7 @@ const UpdateModalPage = () => {
                         <AntDesign
                           name="minussquareo"
                           size={24}
-                          color={APP_COLOR.vang}
+                          color={APP_COLOR.primary}
                         />
                       </Pressable>
                       <Text
@@ -268,7 +268,7 @@ const UpdateModalPage = () => {
                           <AntDesign
                             name="plussquare"
                             size={24}
-                            color={APP_COLOR.vang}
+                            color={APP_COLOR.primary}
                           />
                         )}
                       </Pressable>

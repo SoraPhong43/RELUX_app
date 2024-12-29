@@ -95,7 +95,7 @@ const UserInfo = () => {
         Toast.show("Cập nhật thông tin user thành công!", {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
       } else {

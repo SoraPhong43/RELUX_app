@@ -25,7 +25,7 @@ const ChangePassword = () => {
     if (res.data) {
       Toast.show("update succes", {
         duration: Toast.durations.LONG,
-        textColor: APP_COLOR.vang,
+        textColor: APP_COLOR.primary,
         backgroundColor: "white",
         opacity: 1,
       });
@@ -36,7 +36,7 @@ const ChangePassword = () => {
       Toast.show(m, {
         duration: Toast.durations.LONG,
         textColor: "white",
-        backgroundColor: APP_COLOR.vang,
+        backgroundColor: APP_COLOR.primary,
         opacity: 1,
       });
     }
@@ -115,7 +115,7 @@ const ChangePassword = () => {
                   style={({ pressed }) => ({
                     opacity: pressed === true ? 0.5 : 1,
                     backgroundColor:
-                      isValid && dirty ? APP_COLOR.vang : APP_COLOR.darkGray,
+                      isValid && dirty ? APP_COLOR.primary : APP_COLOR.darkGray,
                     padding: 10,
                     marginTop: 10,
                     borderRadius: 3,

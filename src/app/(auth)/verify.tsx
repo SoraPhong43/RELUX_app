@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "600",
     marginVertical: 20,
-    color: APP_COLOR.vang,
+    color: APP_COLOR.primary,
   },
 });
 
@@ -43,7 +43,7 @@ const VerifyPage = () => {
         Toast.show("kich hoat tai khoan thanh cong", {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
         if (isLogin) {
@@ -53,7 +53,7 @@ const VerifyPage = () => {
         Toast.show(res.message as string, {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
       }
@@ -71,7 +71,7 @@ const VerifyPage = () => {
     Toast.show(res.message as string, {
       duration: Toast.durations.LONG,
       textColor: "white",
-      backgroundColor: APP_COLOR.vang,
+      backgroundColor: APP_COLOR.primary,
       opacity: 1,
     });
   };
@@ -91,14 +91,14 @@ const VerifyPage = () => {
             autoFocus
             inputCount={6}
             inputCellLength={1}
-            tintColor={APP_COLOR.vang}
+            tintColor={APP_COLOR.primary}
             textInputStyle={{
               borderWidth: 1,
               borderColor: APP_COLOR.vienInput,
               borderBottomWidth: 1,
               borderRadius: 5,
               //@ts-ignore:next-line
-              color: APP_COLOR.vang,
+              color: APP_COLOR.primary,
             }}
           />
         </View>
@@ -107,7 +107,7 @@ const VerifyPage = () => {
           <Text
             style={{
               textDecorationLine: "underline",
-              color: APP_COLOR.vang,
+              color: APP_COLOR.primary,
               paddingLeft: 5,
             }}
             onPress={handleResendCode}

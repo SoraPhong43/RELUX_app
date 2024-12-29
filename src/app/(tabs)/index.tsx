@@ -59,7 +59,7 @@ const HomeTab = () => {
     //       style={({ pressed }) => ({
     //         opacity: pressed === true ? 0.5 : 1,
     //         padding: 10,
-    //         backgroundColor: APP_COLOR.vang,
+    //         backgroundColor: APP_COLOR.primary,
     //         alignItems: "center",
     //         justifyContent: "center",
     //         borderRadius: 3,

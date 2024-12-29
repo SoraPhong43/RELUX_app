@@ -55,7 +55,7 @@ const StickyFooter = (props: IProps) => {
                   borderRadius: 16 / 2,
                   justifyContent: "center",
                   alignItems: "center",
-                  backgroundColor: APP_COLOR.vang,
+                  backgroundColor: APP_COLOR.primary,
                 }}
               >
                 <Text style={{ color: "white", fontSize: 9 }}>
@@ -74,7 +74,7 @@ const StickyFooter = (props: IProps) => {
             <View style={{ paddingRight: 10 }}>
               <Text
                 style={{
-                  color: APP_COLOR.vang,
+                  color: APP_COLOR.primary,
                   fontSize: 18,
                 }}
               >
@@ -93,7 +93,7 @@ const StickyFooter = (props: IProps) => {
               width: 110,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: APP_COLOR.vang,
+              backgroundColor: APP_COLOR.primary,
             }}
           >
             <Text

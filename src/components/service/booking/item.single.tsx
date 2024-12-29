@@ -41,7 +41,7 @@ const ItemSingle = (props: IProps) => {
           <Text>{menuItem?.description}</Text>
         </View>
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-          <Text style={{ color: APP_COLOR.vang }}>
+          <Text style={{ color: APP_COLOR.primary }}>
             {currencyFormatter(menuItem?.price)}
           </Text>
           <View
@@ -63,7 +63,7 @@ const ItemSingle = (props: IProps) => {
                   <AntDesign
                     name="minussquareo"
                     size={24}
-                    color={APP_COLOR.vang}
+                    color={APP_COLOR.primary}
                   />
                 </Pressable>
                 <Text
@@ -84,7 +84,11 @@ const ItemSingle = (props: IProps) => {
               onPress={() => handlePressItem(menuItem, "PLUS")}
             >
               {quantity !== 1 && (
-                <AntDesign name="plussquare" size={24} color={APP_COLOR.vang} />
+                <AntDesign
+                  name="plussquare"
+                  size={24}
+                  color={APP_COLOR.primary}
+                />
               )}
             </Pressable>
           </View>

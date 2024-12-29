@@ -30,7 +30,7 @@ const TabLayout = () => {
         <Entypo
           name="home"
           size={size}
-          color={focused ? APP_COLOR.vang : APP_COLOR.darkGray}
+          color={focused ? APP_COLOR.primary : APP_COLOR.darkGray}
         />
       );
     }
@@ -40,14 +40,14 @@ const TabLayout = () => {
         <FontAwesome5
           name="spa"
           size={size}
-          color={focused ? APP_COLOR.vang : APP_COLOR.darkGray}
+          color={focused ? APP_COLOR.primary : APP_COLOR.darkGray}
         />
       );
     }
 
     if (routeName == "favories") {
       return focused ? (
-        <AntDesign name="heart" size={size} color={APP_COLOR.vang} />
+        <AntDesign name="heart" size={size} color={APP_COLOR.primary} />
       ) : (
         <AntDesign name="hearto" size={size} color={APP_COLOR.darkGray} />
       );
@@ -58,7 +58,7 @@ const TabLayout = () => {
         <FontAwesome
           name="book"
           size={size}
-          color={focused ? APP_COLOR.vang : APP_COLOR.darkGray}
+          color={focused ? APP_COLOR.primary : APP_COLOR.darkGray}
         />
       );
     }
@@ -68,7 +68,7 @@ const TabLayout = () => {
         <Entypo
           name="user"
           size={size}
-          color={focused ? APP_COLOR.vang : APP_COLOR.darkGray}
+          color={focused ? APP_COLOR.primary : APP_COLOR.darkGray}
         />
       );
     }
@@ -84,7 +84,7 @@ const TabLayout = () => {
           },
           headerShown: false,
           tabBarLabelStyle: { paddingBottom: 3 },
-          tabBarActiveTintColor: APP_COLOR.vang,
+          tabBarActiveTintColor: APP_COLOR.primary,
         })}
       >
         <Tabs.Screen name="index" options={{ title: "Home" }} />

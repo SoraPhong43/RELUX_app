@@ -75,7 +75,7 @@ const CollectionHome = (props: IProps) => {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: APP_COLOR.vang,
+                color: APP_COLOR.primary,
               }}
             >
               {name}
@@ -160,7 +160,7 @@ const CollectionHome = (props: IProps) => {
                   >
                     <Text
                       style={{
-                        color: APP_COLOR.vang,
+                        color: APP_COLOR.primary,
                         fontWeight: 600,
                         paddingLeft: 5,
                       }}
