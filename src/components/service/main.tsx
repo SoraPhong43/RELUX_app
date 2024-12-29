@@ -144,7 +144,7 @@ const RMain = () => {
       color: interpolateColor(
         scrollY.value,
         [0, 100],
-        [APP_COLOR.vang, APP_COLOR.vang] // Arrow color range
+        [APP_COLOR.primary, APP_COLOR.primary] // Arrow color range
       ),
     };
   });
@@ -214,7 +214,7 @@ const RMain = () => {
                 justifyContent: "center",
                 borderBottomColor:
                   item.index === activeMenuIndex
-                    ? APP_COLOR.vang
+                    ? APP_COLOR.primary
                     : APP_COLOR.GRAY,
                 borderBottomWidth: 2,
               }}
@@ -222,7 +222,9 @@ const RMain = () => {
               <Text
                 style={{
                   color:
-                    item.index === activeMenuIndex ? APP_COLOR.vang : "black",
+                    item.index === activeMenuIndex
+                      ? APP_COLOR.primary
+                      : "black",
                   marginHorizontal: 5,
                 }}
               >
@@ -306,7 +308,7 @@ const styles = StyleSheet.create({
   menuItem: {
     fontSize: 16,
     fontWeight: "bold",
-    color: APP_COLOR.vang,
+    color: APP_COLOR.primary,
     marginHorizontal: 10,
   },
   header: {

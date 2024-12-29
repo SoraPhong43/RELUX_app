@@ -215,7 +215,7 @@ const CreateModalPage = () => {
                   {/* <Text>
                     {item.title} - {item.description}{" "}
                   </Text>
-                  <Text style={{ color: APP_COLOR.vang }}>
+                  <Text style={{ color: APP_COLOR.primary }}>
                     {currencyFormatter(item.additionalPrice)}
                   </Text> */}
                   <View
@@ -227,7 +227,7 @@ const CreateModalPage = () => {
                   >
                     <Text>{item.title}</Text>
                     <View>
-                      <Text style={{ color: APP_COLOR.vang }}>
+                      <Text style={{ color: APP_COLOR.primary }}>
                         {currencyFormatter(item.additionalPrice)}
                       </Text>
                     </View>
@@ -255,9 +255,9 @@ const CreateModalPage = () => {
                       padding: 2,
                       borderRadius: 2,
                       backgroundColor:
-                        index === selectedIndex ? APP_COLOR.vang : "white",
+                        index === selectedIndex ? APP_COLOR.primary : "white",
                       borderColor:
-                        index === selectedIndex ? APP_COLOR.vang : "grey",
+                        index === selectedIndex ? APP_COLOR.primary : "grey",
                       borderWidth: 1,
                     })}
                   >
@@ -282,7 +282,7 @@ const CreateModalPage = () => {
             style={({ pressed }) => ({
               opacity: pressed === true ? 0.5 : 1,
               padding: 10,
-              backgroundColor: APP_COLOR.vang,
+              backgroundColor: APP_COLOR.primary,
               borderRadius: 3,
             })}
           >

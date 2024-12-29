@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   selectedButton: {
-    backgroundColor: APP_COLOR.vang,
+    backgroundColor: APP_COLOR.primary,
   },
   selectedText: {
     color: "white",

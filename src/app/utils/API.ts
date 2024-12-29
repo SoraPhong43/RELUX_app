@@ -165,7 +165,7 @@ export const placeBookingAPI = (data: any) => {
 };
 export const placeBookingByUserAPI = (idUser: any) => {
     const url = `/v1/bookings/user/${idUser}`;
-    return axios.get<IBackendRes<any>>(url);
+    return axios.get<IBackendRes<IBookingHistory>>(url);
 };
 
 export const uploadAvatarAPI = (username:string, file:FormData)=>{

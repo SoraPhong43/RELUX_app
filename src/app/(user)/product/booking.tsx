@@ -266,14 +266,14 @@ const Booking = () => {
           <Pressable
             style={{
               borderWidth: 1,
-              borderColor: APP_COLOR.vang,
+              borderColor: APP_COLOR.primary,
               flex: 1,
               padding: 7,
             }}
           >
             <Text
               style={{
-                color: APP_COLOR.vang,
+                color: APP_COLOR.primary,
                 textAlign: "center",
               }}
             >
@@ -287,7 +287,7 @@ const Booking = () => {
             style={({ pressed }) => ({
               opacity: pressed === true ? 0.5 : 1,
               padding: 10,
-              backgroundColor: APP_COLOR.vang,
+              backgroundColor: APP_COLOR.primary,
               borderRadius: 3,
             })}
           >

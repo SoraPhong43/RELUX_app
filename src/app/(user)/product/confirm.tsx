@@ -80,7 +80,7 @@ const ConfirmService = () => {
       Toast.show("Đặt lịch thành công!", {
         duration: Toast.durations.LONG,
         textColor: "white",
-        backgroundColor: APP_COLOR.vang,
+        backgroundColor: APP_COLOR.primary,
         opacity: 1,
       });
       //clear data
@@ -98,7 +98,7 @@ const ConfirmService = () => {
       Toast.show(m, {
         duration: Toast.durations.LONG,
         textColor: "white",
-        backgroundColor: APP_COLOR.vang,
+        backgroundColor: APP_COLOR.primary,
         opacity: 1,
       });
     }
@@ -198,7 +198,7 @@ const ConfirmService = () => {
           opacity: pressed ? 0.7 : 1,
           paddingVertical: 12,
           paddingHorizontal: 20,
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           borderRadius: 30,
           elevation: 5,
           shadowColor: "#000",
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 22,
     fontWeight: "bold",
-    color: APP_COLOR.vang,
+    color: APP_COLOR.primary,
     marginBottom: 20,
     textAlign: "center",
   },
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: APP_COLOR.vang,
+    color: APP_COLOR.primary,
     marginBottom: 15,
   },
   cardContent: {
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   confirmButton: {
-    backgroundColor: APP_COLOR.vang,
+    backgroundColor: APP_COLOR.primary,
     borderRadius: 8,
     paddingVertical: 15,
     alignItems: "center",

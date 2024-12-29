@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 //             source={{ uri: `${baseImage}/${appState?.user.avatar}` }}
 //             />
 //           <View style={{ paddingLeft: 10 }}>
-//              <Text style={{ color: APP_COLOR.vang, fontSize: 20 }}>happy new day,</Text>
+//              <Text style={{ color: APP_COLOR.primary, fontSize: 20 }}>happy new day,</Text>
 //             <Text>{appState?.user.username || "Tên không có sẵn"}</Text>
 //         </View>
 //         </View>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 //             <Entypo
 //             name="location-pin"
 //             size={24}
-//              color={APP_COLOR.vang}
+//              color={APP_COLOR.primary}
 //               />
 //               <Text>Dia chi</Text>
 //             </View>
@@ -95,7 +95,7 @@ const HeaderHome = () => {
         />
       </View>
       {/* <View style={styles.location}>
-        <Entypo name="location-pin" size={20} color={APP_COLOR.vang} />
+        <Entypo name="location-pin" size={20} color={APP_COLOR.primary} />
         <Text>669 Hoàn Kiếm, Hà Nội</Text> */}
     </View>
   );

@@ -50,7 +50,7 @@ const LoginPage = () => {
         Toast.show(m, {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
         // console.log("Response from login API:", res);
@@ -68,7 +68,7 @@ const LoginPage = () => {
       Toast.show("An error occurred during login", {
         duration: Toast.durations.LONG,
         textColor: "white",
-        backgroundColor: APP_COLOR.vang,
+        backgroundColor: APP_COLOR.primary,
         opacity: 1,
       });
     }
@@ -127,7 +127,7 @@ const LoginPage = () => {
                 onPress={() => router.navigate("/(auth)/request.password")}
                 style={{
                   textAlign: "center",
-                  color: APP_COLOR.vang,
+                  color: APP_COLOR.primary,
                 }}
               >
                 Forgot password?
@@ -147,7 +147,7 @@ const LoginPage = () => {
                 borderRadius: 30,
                 marginHorizontal: 50,
                 paddingVertical: 10,
-                backgroundColor: APP_COLOR.vang,
+                backgroundColor: APP_COLOR.primary,
               }}
               pressStyle={{ alignSelf: "stretch" }}
             />
@@ -170,7 +170,7 @@ const LoginPage = () => {
               <Link href={"/(auth)/signup"}>
                 <Text
                   style={{
-                    color: APP_COLOR.vang,
+                    color: APP_COLOR.primary,
                     textDecorationLine: "underline",
                   }}
                 >

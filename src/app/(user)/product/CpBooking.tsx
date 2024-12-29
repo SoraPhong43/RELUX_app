@@ -54,7 +54,7 @@ const Booking = () => {
         Toast.show("Success Booking!", {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
         });
         handleClearBooking();
         router.replace("/(tabs)/makeanapointment");
@@ -65,7 +65,7 @@ const Booking = () => {
         Toast.show("Unexpected error occurred", {
           duration: Toast.durations.LONG,
           textColor: "red",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
         });
       }
     } catch (error) {
@@ -73,7 +73,7 @@ const Booking = () => {
       Toast.show("An error occurred during booking", {
         duration: Toast.durations.LONG,
         textColor: "red",
-        backgroundColor: APP_COLOR.vang,
+        backgroundColor: APP_COLOR.primary,
       });
     }
   };
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     padding: 10,
-    backgroundColor: APP_COLOR.vang,
+    backgroundColor: APP_COLOR.primary,
     marginHorizontal: 5,
     borderRadius: 5,
   },

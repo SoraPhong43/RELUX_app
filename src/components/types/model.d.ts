@@ -173,6 +173,16 @@ endDate:string;
         bookingnotes: string;
         services: IBookingST[];
     }
+    interface IBookingHistory{
+        id: number,
+        bookingTime: string,
+        bookingNotes: string | null,
+        endTime: string,
+        locationId: number,
+        employeeId: number,
+        customerId: number,
+        services:IService
+    }
     interface IBookingST {
         name?: string;
         bookingTime: string;

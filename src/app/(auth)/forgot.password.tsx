@@ -22,7 +22,7 @@ const ForgotPasswordPage = () => {
         Toast.show("Thay đổi mật khẩu thành công.", {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
         router.replace("/(auth)/login");
@@ -32,7 +32,7 @@ const ForgotPasswordPage = () => {
         Toast.show(m, {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.vang,
+          backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
       }
@@ -120,7 +120,7 @@ const ForgotPasswordPage = () => {
                 borderRadius: 30,
                 marginHorizontal: 50,
                 paddingVertical: 10,
-                backgroundColor: APP_COLOR.vang,
+                backgroundColor: APP_COLOR.primary,
               }}
               pressStyle={{ alignSelf: "stretch" }}
             />

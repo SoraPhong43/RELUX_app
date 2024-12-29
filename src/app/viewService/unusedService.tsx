@@ -74,7 +74,7 @@ const UnusedServices = () => {
           <Text
             style={{
               fontSize: 14,
-              color: APP_COLOR.vang,
+              color: APP_COLOR.primary,
               marginBottom: 20,
               textAlign: "center",
             }}
@@ -84,7 +84,7 @@ const UnusedServices = () => {
           {/* Nút hành động */}
           <TouchableOpacity
             style={{
-              backgroundColor: APP_COLOR.vang,
+              backgroundColor: APP_COLOR.primary,
               borderRadius: 8,
               paddingVertical: 12,
               paddingHorizontal: 25,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 16,
     fontWeight: "bold",
-    color: APP_COLOR.vang,
+    color: APP_COLOR.primary,
     marginVertical: 5,
   },
   status: {

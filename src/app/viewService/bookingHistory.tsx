@@ -43,7 +43,7 @@ const BookingHistory = () => {
   return (
     <ScrollView style={styles.scrollView}>
       {loading ? (
-        <ActivityIndicator size="large" color={APP_COLOR.vang} />
+        <ActivityIndicator size="large" color={APP_COLOR.primary} />
       ) : bookingHistory.length === 0 ? (
         <View style={styles.noHistoryContainer}>
           <Text style={styles.noHistoryText}>Không có lịch sử dịch vụ</Text>

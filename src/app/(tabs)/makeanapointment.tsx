@@ -14,11 +14,10 @@ import { placeBookingByUserAPI } from "../utils/API";
 
 const BookingHistory = () => {
   const { appState } = useCurrentApp();
-  const [bookingHistory, setBookingHistory] = useState<IBooking[]>([]);
+  const [bookingHistory, setBookingHistory] = useState<IBookingHistory[]>([]);
   const [loading, setLoading] = useState(false);
 
   const formatDateTime = (dateTime: any) => {
-    // Cộng thêm 7 giờ để chuyển sang múi giờ Việt Nam
     return moment(dateTime).utcOffset(0).format("HH:mm DD/MM/YYYY");
   };
 
@@ -26,9 +25,16 @@ const BookingHistory = () => {
     setLoading(true);
     try {
       const res = await placeBookingByUserAPI(appState?.user.id);
-      setBookingHistory(res?.data || []); // Đặt giá trị mặc định nếu res.data là undefined
+      console.log("API Response:", res?.data); // Log API response
+      if (Array.isArray(res?.data)) {
+        setBookingHistory(res.data as IBookingHistory[]);
+      } else {
+        console.error("Unexpected response format:", res?.data);
+        setBookingHistory([]);
+      }
     } catch (error) {
       console.error("Failed to fetch booking history:", error);
+      setBookingHistory([]);
     } finally {
       setLoading(false);
     }
@@ -54,13 +60,20 @@ const BookingHistory = () => {
             <View style={styles.rowContainer}>
               <Text style={styles.label}>Service:</Text>
               <Text style={styles.serviceName}>
-                {item.services?.[0]?.name || "Không xác định"}
+                {item.services?.[0]?.name || "Unknown Service"}
               </Text>
             </View>
+
             <View style={styles.rowContainer}>
               <Text style={styles.label}>Time Set Calendar:</Text>
               <Text style={styles.bookingTime}>
                 {formatDateTime(item.bookingTime)}
+              </Text>
+            </View>
+            <View style={styles.rowContainer}>
+              <Text style={styles.label}>End time:</Text>
+              <Text style={styles.bookingTime}>
+                {formatDateTime(item.endTime)}
               </Text>
             </View>
           </View>
