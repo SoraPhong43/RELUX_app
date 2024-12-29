@@ -39,6 +39,8 @@ interface AppContextType {
 
   employeeService: IEmployee | null;
   setEmployeeService: (v: any) => void;
+  bookingHistory: IBookingHistory[];
+  setBookingHistory: (v: any) => void;
 }
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -90,6 +92,7 @@ const AppProvider = (props: IProps) => {
     customerId: appState?.user.id || null,
     bookingCount: appState?.user.bookingCount,
   });
+  const [bookingHistory, setBookingHistory] = useState<IBookingHistory[]>([]);
 
   const [location, setLocation] = useState<IAllLocation | null>(null);
 
@@ -119,7 +122,8 @@ const AppProvider = (props: IProps) => {
         setLocation,
         cate,
         setCate,
-
+        bookingHistory,
+        setBookingHistory,
         booking,
         setBooking,
         employeeService,

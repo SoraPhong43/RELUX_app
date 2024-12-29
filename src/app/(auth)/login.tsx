@@ -97,6 +97,7 @@ const LoginPage = () => {
                   fontSize: 25,
                   fontWeight: 600,
                   marginVertical: 30,
+                  color: APP_COLOR.primary,
                 }}
               >
                 Login
@@ -174,7 +175,7 @@ const LoginPage = () => {
                     textDecorationLine: "underline",
                   }}
                 >
-                  Đăng ký.
+                  register
                 </Text>
               </Link>
             </View>

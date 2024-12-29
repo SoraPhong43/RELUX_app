@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useCurrentApp } from "@/context/app.context";
 import { NotificationPushAPI, SaveExpoPushTokenAPI } from "@/app/utils/API";
+import moment from "moment";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -64,39 +65,25 @@ const DisplayNotification = () => {
       if (appState?.user.id) {
         try {
           const res = await NotificationPushAPI(appState.user.id);
-          // console.log("Response from backend:", res); // Logs the full response from backend
 
           if (Array.isArray(res.data) && res.data.length > 0) {
             res.data.forEach((booking) => {
               const { bookingId, serviceName, bookingTime } = booking;
 
+              // Ensure we process each booking only once
               if (!notifiedBookings.has(bookingId)) {
-                // Parse and convert bookingTime to local time
-                const utcTime = new Date(bookingTime); // Assume `bookingTime` is in UTC
-                console.log("Parsed UTC time:", utcTime);
+                const utcTime = new Date(bookingTime); // Parse UTC time
+                if (isNaN(utcTime.getTime())) {
+                  console.warn("Invalid booking time:", bookingTime);
+                  return;
+                }
 
-                const localTime = new Intl.DateTimeFormat("en-US", {
-                  timeZone: "Asia/Ho_Chi_Minh", // Convert to the correct local time zone
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true, // Display time in 12-hour format
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }).format(utcTime);
+                console.log("New Booking Found:", bookingId);
 
-                console.log(
-                  "Converted Local Time (Asia/Ho_Chi_Minh):",
-                  localTime
-                );
-
-                const notificationMessage = `Bạn có lịch hẹn "${serviceName}" vào lúc ${localTime}`;
-                console.log("Notification Message:", notificationMessage);
-
-                setMessage(notificationMessage);
-
+                // Schedule notification
                 scheduleNotificationHandle(serviceName, utcTime);
 
+                // Update notifiedBookings to include the bookingId
                 setNotifiedBookings((prev) => {
                   const updated = new Set(prev);
                   updated.add(bookingId);
@@ -105,12 +92,9 @@ const DisplayNotification = () => {
               }
             });
           } else {
-            // console.log("No bookings found within the next 2 hours.");
-            setMessage("Không có lịch hẹn nào trong 2 giờ tới.");
           }
         } catch (error) {
-          console.error("Error fetching notification:", error);
-          setMessage("Không thể lấy thông tin lịch hẹn.");
+          console.error("Error fetching notifications:", error);
         }
       }
     }, 5000);
@@ -128,26 +112,22 @@ const DisplayNotification = () => {
       });
     }
   }, []);
+  const formatDateTime = (dateTime: any) => {
+    return moment(dateTime).utcOffset(0).format("HH:mm DD/MM/YYYY");
+  };
 
   const scheduleNotificationHandle = (
     serviceName: string,
     bookingTime: Date // Pass a Date object
   ) => {
     // Convert UTC to local time for display in notifications
-    const localTime = new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Ho_Chi_Minh", // Ensure we're using the correct time zone
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true, // Display time in 12-hour format
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(bookingTime);
 
     Notifications.scheduleNotificationAsync({
       content: {
         title: "You have an appointment",
-        body: `Your booking for "${serviceName}" is coming up at ${localTime}`,
+        body: `Your booking for "${serviceName}" is coming up at ${formatDateTime(
+          bookingTime
+        )}`,
         data: { serviceName, bookingTime },
       },
       trigger: null, // Can add a custom trigger if necessary
