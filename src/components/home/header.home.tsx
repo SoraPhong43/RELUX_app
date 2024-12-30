@@ -4,6 +4,7 @@ import { useCurrentApp } from "@/context/app.context";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import CloudWithSun from "../card/weather";
+import APIWeather from "../card/api.wrather";
 
 const styles = StyleSheet.create({
   container: {
@@ -65,6 +66,7 @@ const HeaderHome = () => {
         </View>
         <View style={{ alignItems: "center" }}>
           <CloudWithSun />
+          {/* <APIWeather /> */}
           <Text style={styles.clock}>{formatTime(currentTime)}</Text>
         </View>
       </View>

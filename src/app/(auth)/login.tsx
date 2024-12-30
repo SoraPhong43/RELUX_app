@@ -47,20 +47,14 @@ const LoginPage = () => {
       } else {
         const m = Array.isArray(res.message) ? res.message[0] : res.message;
 
-        Toast.show(m, {
+        alert("Cannot login");
+        Toast.show("Cannot login", {
           duration: Toast.durations.LONG,
           textColor: "white",
           backgroundColor: APP_COLOR.primary,
           opacity: 1,
         });
-        // console.log("Response from login API:", res);
         console.log(res.statusCode);
-        // if (res.statusCode === 400) {
-        //   router.replace({
-        //     pathname: "/(auth)/verify",
-        //     params: { username: username, isLogin: 1 },
-        //   });
-        // }
       }
     } catch (error) {
       setLoading(false); // Make sure to reset loading state on error

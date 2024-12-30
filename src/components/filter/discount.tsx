@@ -94,7 +94,7 @@ const ServiceDiscount = () => {
               </View>
               {item.promotion?.discountPercentage && (
                 <Text style={styles.discount}>
-                  {(item.promotion.discountPercentage as any) * 100}% OFF
+                  {item.promotion.discountPercentage}% OFF
                 </Text>
               )}
             </View>

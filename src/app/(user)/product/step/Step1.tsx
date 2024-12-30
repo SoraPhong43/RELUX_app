@@ -22,6 +22,7 @@ const Step1 = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [customerService, setCustomerService] = useState<IUser>();
   const { serviceId, categoryId } = useLocalSearchParams();
+  console.log(categoryId);
   const fetchCustomerService = async () => {
     try {
       setIsLoading(true);
@@ -643,7 +644,7 @@ const Step1 = () => {
                       }}
                     >
                       {/* <Pressable> */}
-                      <Image
+                      {/* <Image
                         style={{
                           height: 150,
                           width: "100%",
@@ -656,7 +657,7 @@ const Step1 = () => {
                             ? { uri: employeeData.avatar } // URL hợp lệ
                             : require("@/assets/icons/face.png") // Ảnh mặc định
                         }
-                      />
+                      /> */}
                       <View style={{ padding: 5 }}>
                         <Text style={{ fontWeight: 500, maxWidth: 200 }}>
                           {employeeData?.name}

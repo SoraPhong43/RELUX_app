@@ -13,13 +13,13 @@ const AccountPage = () => {
   const insets = useSafeAreaInsets();
 
   const handleLogOut = async () => {
-    Alert.alert("Đăng xuất", "Bạn có chắc muốn đăng xuất người dùng", [
+    Alert.alert("Logout", "Are you sure you want to log out the user?", [
       {
-        text: "hủy",
+        text: "cancel",
         style: "cancel",
       },
       {
-        text: "Xác nhận",
+        text: "Confirm",
         onPress: async () => {
           await AsyncStorage.removeItem("access_token");
           router.replace("/(auth)/welcome");

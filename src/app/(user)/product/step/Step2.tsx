@@ -50,7 +50,8 @@ const Step2 = () => {
           <Text style={styles.totalLabel}>Total (After Discount):</Text>
           <Text style={styles.totalValue}>
             {currencyFormatter(
-              booking?.price - booking?.price * booking?.discountPercentage
+              booking?.price -
+                (booking?.price * booking?.discountPercentage) / 100
             )}
           </Text>
         </View>
