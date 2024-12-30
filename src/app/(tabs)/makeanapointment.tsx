@@ -13,8 +13,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { placeBookingByUserAPI } from "../utils/API";
 
 const BookingHistory = () => {
-  const { appState } = useCurrentApp();
-  const [bookingHistory, setBookingHistory] = useState<IBookingHistory[]>([]);
+  const { appState, bookingHistory, setBookingHistory } = useCurrentApp();
+  // const [bookingHistory, setBookingHistory] = useState<IBookingHistory[]>([]);
   const [loading, setLoading] = useState(false);
 
   const formatDateTime = (dateTime: any) => {
@@ -22,19 +22,14 @@ const BookingHistory = () => {
   };
 
   const fetchBookingHistory = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await placeBookingByUserAPI(appState?.user.id);
-      console.log("API Response:", res?.data); // Log API response
       if (Array.isArray(res?.data)) {
         setBookingHistory(res.data as IBookingHistory[]);
-      } else {
-        console.error("Unexpected response format:", res?.data);
-        setBookingHistory([]);
       }
     } catch (error) {
-      console.error("Failed to fetch booking history:", error);
-      setBookingHistory([]);
+      console.error("Error fetching booking history", error);
     } finally {
       setLoading(false);
     }
@@ -45,7 +40,6 @@ const BookingHistory = () => {
       fetchBookingHistory();
     }, [])
   );
-
   return (
     <ScrollView style={styles.scrollView}>
       {loading ? (

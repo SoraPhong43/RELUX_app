@@ -109,10 +109,10 @@ const Step1 = () => {
       const res = await getServiceByCatalogy(categoryId);
 
       if (Array.isArray(res.data) && res.data.length > 0) {
-        setCategoryService(res.data as IService[]); // Cập nhật danh sách dịch vụ
+        setCategoryService(res.data as IService[]);
       } else {
+        setCategoryService([]); // Reset the list if no services exist
         console.warn("No services found for this category.");
-        setCategoryService([]); // Đảm bảo danh sách rỗng nếu không có dịch vụ
       }
     } catch (error) {
       console.error("Error fetching services:", error);
@@ -218,11 +218,11 @@ const Step1 = () => {
       if (Array.isArray(res.data) && res.data.length > 0) {
         setLocationService(res.data as IAllLocation[]);
       } else {
-        console.warn("No locations found or invalid response.");
-        setLocationService([]); // Đảm bảo danh sách rỗng nếu không có dữ liệu
+        setLocationService([]); // Reset the list if no locations exist
+        console.warn("No locations found.");
       }
     } catch (error) {
-      console.error("Error fetching getAllLocations:", error);
+      console.error("Error fetching locations:", error);
     } finally {
       setIsLoading(false);
     }
@@ -282,15 +282,14 @@ const Step1 = () => {
 
   const handleEmployeeChange = (selected: OptionItem) => {
     setEmployeeData(selected);
-    setBooking((prevState) => {
-      return {
-        ...prevState,
-        employeeId: selected.value as number,
-        employeeName: selected.label as string,
-      };
-    });
-    if (selected != null) {
-      fetchTimeService(selected);
+    setBooking((prevState) => ({
+      ...prevState,
+      employeeId: Number(selected.value), // Ensure it's a number
+      employeeName: selected.label,
+    }));
+
+    if (selected) {
+      fetchTimeService(selected); // Only fetch time slots when a valid employee is selected
     }
   };
 
@@ -309,22 +308,43 @@ const Step1 = () => {
       setIsLoading(true);
 
       const res = await getEmployeeFreeTimeSpa(employee.value as number);
+
       if (Array.isArray(res.data)) {
-        setDateTimeDService(res.data as IFreeTime[]);
+        const currentDateTime = new Date();
+
+        // Filter and remove duplicate dates
+        const filteredData = res.data.filter((item: IFreeTime) => {
+          const itemDate = new Date(item.date);
+          return itemDate >= currentDateTime;
+        });
+
+        const uniqueDates = Array.from(
+          new Map(filteredData.map((item) => [item.date, item])).values()
+        );
+
+        setDateTimeDService(uniqueDates);
       }
     } catch (error) {
-      console.error("Error fetching fetchEmployeeService:", error);
+      console.error("Error fetching time slots:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDateChange = (selected: OptionItem) => {
-    setDateService(selected.value as string);
-    const timeStart = selected.startTime?.split(":")[0];
-    const timeEnd = selected.endTime?.split(":")[0];
-    getTime(timeStart, timeEnd, selected);
+    setDateService(selected.value as string); // Save the selected date
+
+    const timeStart = selected.startTime; // Extract startTime from selected
+    const timeEnd = selected.endTime; // Extract endTime from selected
+    const selectedDate = selected.value as string; // Extract the date as a string
+
+    if (timeStart && timeEnd) {
+      getTime(timeStart, timeEnd, selectedDate); // Pass the date string
+    } else {
+      console.error("Invalid startTime or endTime in selected item");
+    }
   };
+
   const handleTimeChange = (selected: OptionItem) => {
     setTimeService(selected.value as string);
     setBooking((prevState) => {
@@ -334,21 +354,40 @@ const Step1 = () => {
       };
     });
   };
-
-  const getTime = (start: number, end: number, selected: OptionItem) => {
+  const getTime = (
+    startTime: string,
+    endTime: string,
+    selectedDate: string
+  ) => {
     const timeList: OptionItem[] = [];
+    const currentDate = new Date();
+    const isToday = selectedDate === moment(currentDate).format("YYYY-MM-DD");
 
-    // Loop through hours and generate 15-minute intervals
-    for (let hour = start; hour <= end; hour++) {
-      for (let minutes = 0; minutes < 60; minutes += 15) {
-        const formattedTime = `${String(hour).padStart(2, "0")}:${String(
-          minutes
-        ).padStart(2, "0")}`;
-        timeList.push({
-          value: formattedTime,
-          label: formattedTime,
-        });
+    // Parse startTime and endTime as moment objects
+    const start = moment(startTime, "HH:mm");
+    const end = moment(endTime, "HH:mm");
+
+    // Adjust end time to include the last 15-minute slot
+    end.add(15, "minutes");
+
+    while (start.isBefore(end)) {
+      const formattedTime = start.format("HH:mm");
+
+      // Skip past times if the date is today
+      if (isToday) {
+        const currentTime = moment();
+        if (start.isBefore(currentTime)) {
+          start.add(15, "minutes");
+          continue;
+        }
       }
+
+      timeList.push({
+        value: formattedTime,
+        label: formattedTime,
+      });
+
+      start.add(15, "minutes");
     }
 
     setTimeRangeService(timeList);
@@ -664,13 +703,24 @@ const Step1 = () => {
             />
             {dateService && (
               <View>
-                <CmSelect
+                {/* <CmSelect
                   label="Choose time"
                   data={timeRangeService || []}
                   value={timeService}
                   onChange={(value) => handleTimeChange(value)}
                   placeholder="Select an option"
-                />
+                /> */}
+                {isLoading ? (
+                  <Text>Loading...</Text>
+                ) : (
+                  <CmSelect
+                    label="Choose time"
+                    data={timeRangeService || []}
+                    value={timeService}
+                    onChange={(value) => handleTimeChange(value)}
+                    placeholder="Select an option"
+                  />
+                )}
               </View>
             )}
           </View>
