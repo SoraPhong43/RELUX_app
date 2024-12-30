@@ -106,7 +106,7 @@ const DisplayLocation = () => {
                   borderTopLeftRadius: 15,
                   borderTopRightRadius: 15,
                 }}
-                source={{ uri: `${baseImage}/${item.image}` }}
+                source={require("../../assets/banner/location.png")}
               />
               <View style={{ padding: 5 }}>
                 <Text style={{ fontWeight: 500, maxWidth: 200 }}>

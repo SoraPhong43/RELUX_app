@@ -59,11 +59,7 @@ const CurrentService = () => {
   }
 
   if (uniqueServices.length === 0) {
-    return (
-      <View style={styles.centeredView}>
-        <Text>No services available.</Text>
-      </View>
-    );
+    return <></>;
   }
 
   return (

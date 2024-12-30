@@ -85,7 +85,7 @@ const ForgotPasswordPage = () => {
                   marginVertical: 30,
                 }}
               >
-                Thay đổi mật khẩu
+                Change your password
               </Text>
             </View>
 

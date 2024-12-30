@@ -46,6 +46,7 @@ const RootLayout = () => {
     <RootSiblingParent>
       <AppProvider>
         {/* <SafeAreaView  style={styles.container} > */}
+
         <ThemeProvider value={navTheme}>
           <DisplayNotification />
           <Stack
