@@ -7,6 +7,7 @@ declare global {
         statusCode: number | string;
         bookingId?: number;
         data?: T;
+        
     }
 
     interface IRegister {
@@ -39,7 +40,10 @@ declare global {
         avatar?: string;
         bookingCount: number;
     }
-
+    interface IForgot{
+          isSuccess: boolean,
+    resetPasswordToken: string
+    }
     interface ITopService {
         id: string;
         name: string;
@@ -216,6 +220,8 @@ endDate:string;
     interface OptionItem {
         value: string | number;
         label: string;
+        startTime?: string; // Thời gian bắt đầu (tùy chọn)
+  endTime?: string;
         [key: string]: any;
     }
     interface IFreeTime {
@@ -227,6 +233,11 @@ endDate:string;
         id: number;
         name: string;
       };
+      interface BookedSlot {
+        date: string;
+        startTime: string;
+        endTime: string;
+      }
 }
 
 // cart:{

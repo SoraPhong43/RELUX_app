@@ -11,14 +11,27 @@ import ShareInput from "@/components/input/share.input";
 
 const ForgotPasswordPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const { email } = useLocalSearchParams();
+  const { email, resetPasswordToken } = useLocalSearchParams();
 
-  const handleForgotPassword = async (code: string, password: string) => {
+  const handleForgotPassword = async (password: string) => {
     try {
+      console.log("chay api");
       setLoading(true);
-      const res = await forgotPasswordAPI(code, email as string, password);
+      console.log(email);
+      console.log(password);
+
+      console.log(resetPasswordToken);
+
+      const res = await forgotPasswordAPI({
+        email: email as string,
+        newPassword: password,
+        token: resetPasswordToken as string,
+      });
+      console.log(res);
+
       setLoading(false);
-      if (res.data) {
+      if (res.isSuccess) {
+        console.log("tc");
         Toast.show("Thay đổi mật khẩu thành công.", {
           duration: Toast.durations.LONG,
           textColor: "white",
@@ -27,9 +40,8 @@ const ForgotPasswordPage = () => {
         });
         router.replace("/(auth)/login");
       } else {
-        const m = Array.isArray(res.message) ? res.message[0] : res.message;
-
-        Toast.show(m, {
+        console.log("loi qmk");
+        Toast.show("lai loi", {
           duration: Toast.durations.LONG,
           textColor: "white",
           backgroundColor: APP_COLOR.primary,
@@ -45,13 +57,10 @@ const ForgotPasswordPage = () => {
       <Formik
         validationSchema={ForgotPasswordSchema}
         initialValues={{
-          code: "",
           password: "",
           confirmPassword: "",
         }}
-        onSubmit={(values) =>
-          handleForgotPassword(values.code, values.password)
-        }
+        onSubmit={(values) => handleForgotPassword(values.password)}
       >
         {({
           handleChange,
@@ -76,19 +85,12 @@ const ForgotPasswordPage = () => {
                   marginVertical: 30,
                 }}
               >
-                Thay đổi mật khẩu
+                Change your password
               </Text>
             </View>
+
             <ShareInput
-              title="Mã code xác thực"
-              onChangeText={handleChange("code")}
-              onBlur={handleBlur("code")}
-              value={values.code}
-              error={errors.code}
-              touched={touched.code}
-            />
-            <ShareInput
-              title="Mật khẩu mới"
+              title="Enter New password"
               secureTextEntry={true}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
@@ -97,7 +99,7 @@ const ForgotPasswordPage = () => {
               touched={touched.password}
             />
             <ShareInput
-              title="Xác nhận mật khẩu mới"
+              title="Confirm new password"
               secureTextEntry={true}
               onChangeText={handleChange("confirmPassword")}
               onBlur={handleBlur("confirmPassword")}
@@ -109,7 +111,7 @@ const ForgotPasswordPage = () => {
             <ShareButton
               loading={loading}
               title="Reset Password"
-              onPress={handleSubmit as any}
+              onPress={handleSubmit}
               textStyle={{
                 textTransform: "uppercase",
                 color: "#fff",

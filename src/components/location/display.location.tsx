@@ -91,42 +91,42 @@ const DisplayLocation = () => {
                 height: 210,
               }}
             >
-              <Pressable
+              {/* <Pressable
                 onPress={() =>
                   router.navigate({
                     pathname: "/product/locationid",
                     params: { locationID: item.id },
                   })
                 }
-              >
-                <Image
+              > */}
+              <Image
+                style={{
+                  height: 120,
+                  width: 230,
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 15,
+                }}
+                source={require("../../assets/banner/location.png")}
+              />
+              <View style={{ padding: 5 }}>
+                <Text style={{ fontWeight: 500, maxWidth: 200 }}>
+                  {item.locationName}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                   style={{
-                    height: 120,
-                    width: 230,
-                    borderTopLeftRadius: 15,
-                    borderTopRightRadius: 15,
+                    maxWidth: 220,
+                    fontWeight: 400,
+                    color: APP_COLOR.darkGray,
+                    paddingTop: 5,
+                    paddingLeft: 2,
                   }}
-                  source={{ uri: `${baseImage}/${item.image}` }}
-                />
-                <View style={{ padding: 5 }}>
-                  <Text style={{ fontWeight: 500, maxWidth: 200 }}>
-                    {item.locationName}
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={{
-                      maxWidth: 220,
-                      fontWeight: 400,
-                      color: APP_COLOR.darkGray,
-                      paddingTop: 5,
-                      paddingLeft: 2,
-                    }}
-                  >
-                    {item.address}
-                  </Text>
-                </View>
-              </Pressable>
+                >
+                  {item.address}
+                </Text>
+              </View>
+              {/* </Pressable> */}
               {/* <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {item.name}
             </Text>

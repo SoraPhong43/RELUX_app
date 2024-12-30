@@ -20,10 +20,16 @@ import { APP_COLOR } from "../utils/constant";
 import { router } from "expo-router";
 import Latest from "@/components/filter/latest";
 import EmployeeDisplay from "@/components/filter/employee";
+import ServiceDiscount from "@/components/filter/discount";
+import CurrentService from "@/components/filter/service.curent";
+import { useAnimatedStyle } from "react-native-reanimated";
 
 //const data = Array(10).fill(1);
 
 const HomeTab = () => {
+  const headerHeight = 60;
+  const imageHeight = 200;
+
   return (
     // <View style={{ flex: 1 }}>
     //   <CustomFlatList
@@ -48,6 +54,8 @@ const HomeTab = () => {
       <HeaderHome />
       <SearchHome />
       <TopListHome />
+      <ServiceDiscount />
+      <CurrentService />
       <Latest />
       <EmployeeDisplay />
       <DisplayLocation />

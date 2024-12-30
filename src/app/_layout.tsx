@@ -46,6 +46,7 @@ const RootLayout = () => {
     <RootSiblingParent>
       <AppProvider>
         {/* <SafeAreaView  style={styles.container} > */}
+
         <ThemeProvider value={navTheme}>
           <DisplayNotification />
           <Stack
@@ -168,6 +169,14 @@ const RootLayout = () => {
             <Stack.Screen
               name="(user)/employee/per.employee"
               options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(user)/account/about"
+              options={{
+                headerTitle: "About",
+                headerTitleAlign: "center",
+                headerTitleStyle: { fontWeight: "bold", fontSize: 18 },
+              }}
             />
           </Stack>
         </ThemeProvider>

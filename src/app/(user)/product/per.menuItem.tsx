@@ -86,7 +86,7 @@ const PerMenuItem = () => {
 
                 {/* Phần khuyến mãi */}
                 {appState?.user?.bookingCount &&
-                appState.user.bookingCount > 3 ? (
+                appState.user.bookingCount >= 3 ? (
                   service.promotion ? (
                     <View>
                       <Text style={styles.promotionTitle}>
@@ -114,7 +114,10 @@ const PerMenuItem = () => {
                     </Text>
                   )
                 ) : (
-                  <View />
+                  <Text style={styles.notEligible}>
+                    You are not eligible for promotions. Complete at least 3
+                    bookings to unlock promotions!
+                  </Text>
                 )}
 
                 {/* Nút Booking */}
@@ -229,5 +232,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  notEligible: {
+    fontSize: 14,
+    color: "#ff4d4f", // Màu đỏ nổi bật
+    textAlign: "center",
+    marginTop: 10,
   },
 });

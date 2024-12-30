@@ -50,7 +50,7 @@ const AccountPage = () => {
         />
         <View>
           <Text style={{ color: "white", fontSize: 20 }}>
-            {appState?.user?.username}
+            {appState?.user?.fullName}
           </Text>
         </View>
       </View>
@@ -107,7 +107,7 @@ const AccountPage = () => {
         <MaterialIcons name="navigate-next" size={24} color="grey" />
       </Pressable>
 
-      <Pressable
+      {/* <Pressable
         onPress={() => router.navigate("/(user)/account/language")}
         style={{
           paddingVertical: 15,
@@ -131,9 +131,10 @@ const AccountPage = () => {
         </View>
 
         <MaterialIcons name="navigate-next" size={24} color="grey" />
-      </Pressable>
+      </Pressable> */}
 
       <Pressable
+        onPress={() => router.navigate("/(user)/account/about")}
         style={{
           paddingVertical: 15,
           paddingHorizontal: 10,

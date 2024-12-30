@@ -104,9 +104,10 @@ const TopListHome = () => {
               style={styles.itemContainer}
             >
               <Image
-                source={imageMap[item.typeService]}
-                style={{ height: 35, width: 35 }}
+                source={require("../../assets/category/category1.png")}
+                style={{ width: 35, height: 35 }} // Thay đổi kích thước theo nhu cầu
               />
+
               <Text style={styles.itemText}>
                 {item.typeService || "No name"}
               </Text>
