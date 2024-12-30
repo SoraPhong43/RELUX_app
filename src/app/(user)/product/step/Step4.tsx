@@ -20,7 +20,9 @@ const Step4 = () => {
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.label}>Discount</Text>
-            <Text style={styles.value}>{booking?.discountPercentage}%</Text>
+            <Text style={styles.value}>
+              {booking?.discountPercentage * 100}%
+            </Text>
           </View>
         </View>
         <View style={[styles.card, styles.totalCard]}>
@@ -28,8 +30,7 @@ const Step4 = () => {
             <Text style={[styles.label, styles.totalLabel]}>Total</Text>
             <Text style={[styles.value, styles.totalValue]}>
               {currencyFormatter(
-                booking?.price -
-                  booking?.price * (booking?.discountPercentage / 100)
+                booking?.price - booking?.price * booking?.discountPercentage
               )}
             </Text>
           </View>

@@ -81,7 +81,7 @@ const AccountPage = () => {
         <MaterialIcons name="navigate-next" size={24} color="grey" />
       </Pressable>
 
-      <Pressable
+      {/* <Pressable
         onPress={() => router.navigate("/(user)/account/password")}
         style={{
           paddingVertical: 15,
@@ -105,7 +105,7 @@ const AccountPage = () => {
         </View>
 
         <MaterialIcons name="navigate-next" size={24} color="grey" />
-      </Pressable>
+      </Pressable> */}
 
       {/* <Pressable
         onPress={() => router.navigate("/(user)/account/language")}

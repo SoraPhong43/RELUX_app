@@ -26,7 +26,7 @@ const CurrentService = () => {
         if (Array.isArray(res?.data)) {
           setBookingHistory(res.data);
 
-          // Lọc danh sách dịch vụ để loại bỏ trùng lặp dựa trên `id`
+          // Lọc và sắp xếp danh sách dịch vụ
           const services = res.data
             .flatMap((item) =>
               Array.isArray(item.services) ? item.services : []
@@ -36,7 +36,13 @@ const CurrentService = () => {
                 unique.push(service);
               }
               return unique;
-            }, []);
+            }, [])
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            );
+
           setUniqueServices(services);
         } else {
           console.warn("Unexpected data format from API:", res?.data);

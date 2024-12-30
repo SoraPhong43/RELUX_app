@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
     // shadowRadius: 5,
     // elevation: 3,
     // overflow: "hidden",
-    width: 230,
-    height: 210,
+    width: 240,
+    height: 400,
   },
   avatar: {
     width: "100%",
-    height: 120,
+    height: 300,
     borderRadius: 20,
   },
   infoContainer: {

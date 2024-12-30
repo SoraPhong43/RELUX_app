@@ -45,13 +45,13 @@ const TabLayout = () => {
       );
     }
 
-    if (routeName == "favories") {
-      return focused ? (
-        <AntDesign name="heart" size={size} color={APP_COLOR.primary} />
-      ) : (
-        <AntDesign name="hearto" size={size} color={APP_COLOR.darkGray} />
-      );
-    }
+    // if (routeName == "favories") {
+    //   return focused ? (
+    //     <AntDesign name="heart" size={size} color={APP_COLOR.primary} />
+    //   ) : (
+    //     <AntDesign name="hearto" size={size} color={APP_COLOR.darkGray} />
+    //   );
+    // }
 
     if (routeName == "booking") {
       return (
@@ -105,7 +105,7 @@ const TabLayout = () => {
           }}
         />
 
-        <Tabs.Screen name="favories" options={{ title: "Favories" }} />
+        {/* <Tabs.Screen name="favories" options={{ title: "Favories" }} /> */}
         <Tabs.Screen name="booking" options={{ title: "Booking now" }} />
         {/* <Tabs.Screen
                 name="profile"
