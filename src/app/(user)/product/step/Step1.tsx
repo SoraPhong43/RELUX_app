@@ -571,33 +571,33 @@ const Step1 = () => {
                     marginBottom: 5,
                   }}
                 >
-                  <Pressable
+                  {/* <Pressable
                     onPress={() =>
                       router.navigate({
                         pathname: "/product/locationid",
                         params: { locationID: locationData?.id },
                       })
                     }
-                  >
-                    <View style={{ padding: 5 }}>
-                      <Text style={{ fontWeight: 500, maxWidth: 200 }}>
-                        {locationData?.locationName}
-                      </Text>
-                      <Text
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        style={{
-                          maxWidth: 220,
-                          fontWeight: 400,
-                          color: APP_COLOR.darkGray,
-                          paddingTop: 5,
-                          paddingLeft: 2,
-                        }}
-                      >
-                        {locationData?.address}
-                      </Text>
-                    </View>
-                  </Pressable>
+                  > */}
+                  <View style={{ padding: 5 }}>
+                    <Text style={{ fontWeight: 500, maxWidth: 200 }}>
+                      {locationData?.locationName}
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={{
+                        maxWidth: 220,
+                        fontWeight: 400,
+                        color: APP_COLOR.darkGray,
+                        paddingTop: 5,
+                        paddingLeft: 2,
+                      }}
+                    >
+                      {locationData?.address}
+                    </Text>
+                  </View>
+                  {/* </Pressable> */}
                 </View>
               </View>
             )}
@@ -642,49 +642,49 @@ const Step1 = () => {
                         marginBottom: 5,
                       }}
                     >
-                      <Pressable>
-                        <Image
+                      {/* <Pressable> */}
+                      <Image
+                        style={{
+                          height: 150,
+                          width: "100%",
+                          borderTopLeftRadius: 8,
+                          borderTopRightRadius: 8,
+                          resizeMode: "cover",
+                        }}
+                        source={
+                          employeeData?.avatar
+                            ? { uri: employeeData.avatar } // URL hợp lệ
+                            : require("@/assets/icons/face.png") // Ảnh mặc định
+                        }
+                      />
+                      <View style={{ padding: 5 }}>
+                        <Text style={{ fontWeight: 500, maxWidth: 200 }}>
+                          {employeeData?.name}
+                        </Text>
+                        <Text
                           style={{
-                            height: 150,
-                            width: "100%",
-                            borderTopLeftRadius: 8,
-                            borderTopRightRadius: 8,
-                            resizeMode: "cover",
+                            fontWeight: 400,
+                            maxWidth: 200,
+                            color: APP_COLOR.GRAY,
                           }}
-                          source={
-                            employeeData?.avatar
-                              ? { uri: employeeData.avatar } // URL hợp lệ
-                              : require("@/assets/icons/face.png") // Ảnh mặc định
-                          }
-                        />
-                        <View style={{ padding: 5 }}>
-                          <Text style={{ fontWeight: 500, maxWidth: 200 }}>
-                            {employeeData?.name}
-                          </Text>
-                          <Text
-                            style={{
-                              fontWeight: 400,
-                              maxWidth: 200,
-                              color: APP_COLOR.GRAY,
-                            }}
-                          >
-                            {employeeData?.phone}
-                          </Text>
-                          <Text
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
-                            style={{
-                              maxWidth: 220,
-                              fontWeight: 400,
-                              color: APP_COLOR.darkGray,
-                              paddingTop: 5,
-                              paddingLeft: 2,
-                            }}
-                          >
-                            {employeeData?.email}
-                          </Text>
-                        </View>
-                      </Pressable>
+                        >
+                          {employeeData?.phone}
+                        </Text>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={{
+                            maxWidth: 220,
+                            fontWeight: 400,
+                            color: APP_COLOR.darkGray,
+                            paddingTop: 5,
+                            paddingLeft: 2,
+                          }}
+                        >
+                          {employeeData?.email}
+                        </Text>
+                      </View>
+                      {/* </Pressable> */}
                     </View>
                   </View>
                 )}

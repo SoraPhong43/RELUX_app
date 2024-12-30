@@ -23,57 +23,80 @@ const styles = StyleSheet.create({
 const VerifyPage = () => {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const otpRef = useRef<OTPTextView>(null);
-  const [code, setCode] = useState<string>("");
+  const [otpCode, setOtpCode] = useState<string>("");
 
-  const { email, isLogin } = useLocalSearchParams();
+  const { email } = useLocalSearchParams();
 
-  //   console.log("check email:", email);
   const verifyCode = async () => {
-    if (code && code.length === 6) {
-      //call api
+    if (otpCode && otpCode.length === 6) {
       Keyboard.dismiss();
       setIsSubmit(true);
-      const res = await verifyCodeAPI(email as string, code);
-      setIsSubmit(false);
+      try {
+        console.log("Response from login API1:", otpCode, email);
 
-      // otpRef?.current?.clear();
-      if (res.data) {
-        //success
-        otpRef?.current?.clear();
-        Toast.show("kich hoat tai khoan thanh cong", {
+        const res = await verifyCodeAPI(otpCode, email as string);
+        setIsSubmit(false);
+        console.log("otp:", otpCode);
+        if (res?.isSuccess) {
+          otpRef?.current?.clear();
+          Toast.show("Verification successful!", {
+            duration: Toast.durations.SHORT,
+            textColor: "white",
+            backgroundColor: APP_COLOR.primary,
+            opacity: 1,
+          });
+          // Navigate to the reset password page
+          router.navigate({
+            pathname: "/(auth)/forgot.password",
+            params: {
+              resetPasswordToken: res.resetPasswordToken,
+              email: email,
+            },
+          });
+        } else {
+          Toast.show("Verification failed.", {
+            duration: Toast.durations.LONG,
+            textColor: "white",
+            backgroundColor: "red",
+            opacity: 1,
+          });
+        }
+      } catch (error) {
+        setIsSubmit(false);
+        Toast.show("An error occurred. Please try again.", {
           duration: Toast.durations.LONG,
           textColor: "white",
-          backgroundColor: APP_COLOR.primary,
-          opacity: 1,
-        });
-        if (isLogin) {
-          router.replace("/(tabs)");
-        } else router.replace("/(auth)/login");
-      } else {
-        Toast.show(res.message as string, {
-          duration: Toast.durations.LONG,
-          textColor: "white",
-          backgroundColor: APP_COLOR.primary,
+          backgroundColor: "red",
           opacity: 1,
         });
       }
     }
   };
+
   useEffect(() => {
-    verifyCode();
-  }, [code]);
+    if (otpCode.length === 6) {
+      verifyCode();
+    }
+  }, [otpCode]);
 
   const handleResendCode = async () => {
     otpRef?.current?.clear();
-    //resendAPI
-    const res = await resendCodeAPI(email as string);
-    const m = res.data ? "Resend code thanh cong" : res.message;
-    Toast.show(res.message as string, {
-      duration: Toast.durations.LONG,
-      textColor: "white",
-      backgroundColor: APP_COLOR.primary,
-      opacity: 1,
-    });
+    try {
+      const res = await resendCodeAPI(email as string);
+      Toast.show("Code resent successfully.", {
+        duration: Toast.durations.SHORT,
+        textColor: "white",
+        backgroundColor: APP_COLOR.primary,
+        opacity: 1,
+      });
+    } catch (error) {
+      Toast.show("Failed to resend code. Please try again.", {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: "red",
+        opacity: 1,
+      });
+    }
   };
 
   return (
@@ -86,8 +109,7 @@ const VerifyPage = () => {
         <View style={{ marginVertical: 20 }}>
           <OTPTextView
             ref={otpRef}
-            handleTextChange={setCode}
-            //  handleCellTextChange={handeCellTextChange}
+            handleTextChange={setOtpCode}
             autoFocus
             inputCount={6}
             inputCellLength={1}
@@ -103,7 +125,7 @@ const VerifyPage = () => {
           />
         </View>
         <View style={{ flexDirection: "row", marginVertical: 10 }}>
-          <Text>Không nhận được mã xác nhận,</Text>
+          <Text>Didn’t receive the code?</Text>
           <Text
             style={{
               textDecorationLine: "underline",
@@ -112,7 +134,7 @@ const VerifyPage = () => {
             }}
             onPress={handleResendCode}
           >
-            gửi lại
+            Resend Code
           </Text>
         </View>
       </View>

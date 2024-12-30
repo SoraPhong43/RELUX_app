@@ -76,5 +76,4 @@ export const ForgotPasswordSchema = Yup.object().shape({
     confirmPassword: Yup.string()
         .required("Confirm Password cannot be blank")
         .oneOf([Yup.ref("password")], "Password must match"),
-    code: Yup.string().required("Code cannot be blank"),
 });

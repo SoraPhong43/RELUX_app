@@ -5,6 +5,10 @@ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { APP_COLOR } from "@/app/utils/constant";
 import * as ImagePicker from "expo-image-picker";
+import { uploadAvatarAPI } from "@/app/utils/API";
+import Toast from "react-native-root-toast";
+import { Image } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AvatarActionSheetProps {
   visible: boolean;
@@ -17,30 +21,7 @@ const AvatarActionSheet: React.FC<AvatarActionSheetProps> = ({
   onClose,
   onSetAvatar,
 }) => {
-  const handleCamera = async () => {
-    // Request permission to access the camera
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (!permissionResult.granted) {
-      return;
-    }
-
-    // Open the camera
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      onSetAvatar(result.assets[0].uri); // Pass the captured image URI to the parent component
-    }
-
-    onClose();
-  };
-
   const handleGallery = async () => {
-    // Request permission to access media library
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -48,7 +29,6 @@ const AvatarActionSheet: React.FC<AvatarActionSheetProps> = ({
       return;
     }
 
-    // Open image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -56,16 +36,125 @@ const AvatarActionSheet: React.FC<AvatarActionSheetProps> = ({
       quality: 1,
     });
 
-    if (!result.canceled) {
-      onSetAvatar(result.assets[0].uri);
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      const formData = new FormData();
+      formData.append("avatar", {
+        uri: result.assets[0].uri,
+        name: "avatar.jpg",
+        type: "image/jpeg",
+      } as any);
+
+      try {
+        const response = await uploadAvatarAPI(formData);
+
+        if (response?.data) {
+          // API chỉ trả về `true`, nên bạn cần tạm thời hiển thị ảnh từ URI
+          onSetAvatar(result.assets[0].uri);
+          Toast.show("Avatar uploaded successfully!", {
+            duration: Toast.durations.LONG,
+            textColor: "white",
+            backgroundColor: "green",
+          });
+        } else {
+          throw new Error("Upload failed. Please try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        Toast.show("Upload failed. Please try again.", {
+          duration: Toast.durations.LONG,
+          textColor: "white",
+          backgroundColor: "red",
+        });
+      }
     }
 
     onClose();
   };
+  const handleCamera = async () => {
+    try {
+      // Yêu cầu quyền truy cập camera
+      const permissionResult =
+        await ImagePicker.requestCameraPermissionsAsync();
+
+      if (!permissionResult.granted) {
+        Toast.show("Camera access is required to take a photo.", {
+          duration: Toast.durations.LONG,
+          textColor: "white",
+          backgroundColor: "red",
+        });
+        return;
+      }
+
+      // Mở camera
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true, // Cho phép chỉnh sửa ảnh
+        aspect: [4, 3], // Tỷ lệ khung hình
+        quality: 1, // Chất lượng ảnh cao nhất
+      });
+
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        // Chuẩn bị dữ liệu để tải lên server
+        const formData = new FormData();
+        formData.append("avatar", {
+          uri: result.assets[0].uri, // Đường dẫn ảnh
+          name: "avatar.jpg", // Tên file
+          type: "image/jpeg", // MIME type
+        } as any);
+
+        // Gửi ảnh lên server
+        const response = await uploadAvatarAPI(formData);
+
+        if (response?.data) {
+          // Nếu API trả về thành công, cập nhật avatar trong giao diện
+          onSetAvatar(result.assets[0].uri); // Hiển thị ảnh mới
+          Toast.show("Avatar uploaded successfully!", {
+            duration: Toast.durations.LONG,
+            textColor: "white",
+            backgroundColor: "green",
+          });
+        } else {
+          throw new Error("Failed to upload avatar.");
+        }
+      } else {
+        console.log("Camera operation was cancelled.");
+      }
+    } catch (error: any) {
+      console.error("Error in handleCamera:", error);
+      Toast.show(error.message || "An error occurred while uploading.", {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: "red",
+      });
+    } finally {
+      // Đóng modal sau khi xử lý xong
+      onClose();
+    }
+  };
 
   const handleRemove = () => {
-    onSetAvatar(null);
-    onClose();
+    try {
+      // Đường dẫn đến ảnh mặc định
+      const defaultAvatarPath = require("../../assets/icon.png");
+
+      // Cập nhật avatar về ảnh mặc định
+      onSetAvatar(Image.resolveAssetSource(defaultAvatarPath)?.uri || null);
+
+      Toast.show("Avatar has been reset to the default image.", {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: "green",
+      });
+    } catch (error) {
+      console.error(error);
+      Toast.show("Failed to reset avatar. Please try again.", {
+        duration: Toast.durations.LONG,
+        textColor: "white",
+        backgroundColor: "red",
+      });
+    } finally {
+      // Đóng modal
+      onClose();
+    }
   };
 
   return (

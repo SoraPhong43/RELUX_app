@@ -8,9 +8,9 @@ export const registerAPI = (username:string, password: string,email: string,phon
      return axios.post<IBackendRes<IRegister>>(url, { username, password, email,phone, fullName});
  }
 
-export const verifyCodeAPI = (email: string, code: string) => {
+export const verifyCodeAPI = (otpCode: string, email: string) => {
     const url = `/v1/password/verify-otp`;
-    return axios.post<IBackendRes<IRegister>>(url, { email, code });
+    return axios.post<IForgot>(url, { otpCode, email });
 };
 
 export const resendCodeAPI = (email: string) => {
@@ -168,10 +168,14 @@ export const placeBookingByUserAPI = (idUser: any) => {
     return axios.get<IBackendRes<IBookingHistory>>(url);
 };
 
-export const uploadAvatarAPI = (username:string, file:FormData)=>{
-    const url=`/v1//users/avatar`;
-    return axios.post<IBackendRes<IUserLogin>>(url,{username,file});
-}
+export const uploadAvatarAPI = (formData: FormData) => {
+    const url = `/v1/users/avatar`; // Xóa ký tự dư "//"
+    return axios.post<IBackendRes<IUserLogin>>(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Đảm bảo API nhận được đúng Content-Type
+      },
+    });
+  };
 
 
 export const getBookingHistoryAPI = () => {
@@ -200,18 +204,15 @@ export const updateUserPasswordAPI = (
 };
 
 export const requestPasswordAPI = (email: string) => {
-    const url = `/api/v1/auth/retry-password`;
+    const url = `/v1/password/reset-request`;
     return axios.post<IBackendRes<IUserLogin>>(url, { email });
 };
 
-export const forgotPasswordAPI = (
-    code: string,
-    email: string,
-    password: string
-) => {
-    const url = `/api/v1/auth/forgot-password`;
-    return axios.post<IBackendRes<IUserLogin>>(url, { code, email, password });
+export const forgotPasswordAPI = ({ email, newPassword, token }: { email: string; newPassword: string; token: string }) => {
+    const url = `/v1/password/reset-password`;
+    return axios.post<IForgot>(url, { email, newPassword, token });
 };
+
 
 export const DisplayMenuAPI = () => {
     const url = `/api/v1/menu/allmenu`;
@@ -236,4 +237,8 @@ export const SaveExpoPushTokenAPI = (data: any) => {
 export const NotificationPushAPI=(userId:number)=>{
     const url=`/v1/notification/pushNotification`;
     return axios.post<IBackendRes<INotification[]>>(url,{userId})
+}
+export const DiscountListAPI=()=>{
+    const url=`/v1/services/promotion`;
+    return axios.get<IBackendRes<IService>>(url)
 }

@@ -13,21 +13,18 @@ const RequestPassword = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const handleRequestPassword = async (email: string) => {
     try {
+      console.log(email);
       setLoading(true);
-      console.log("Starting API request...");
       const res = await requestPasswordAPI(email);
-      console.log("Response from API:", res);
       setLoading(false);
-      if (res.data) {
+      if (res) {
         console.log("Routing to forgot.password screen...");
         router.replace({
-          pathname: "/(auth)/forgot.password",
+          pathname: "/(auth)/verify",
           params: { email },
         });
       } else {
-        const m = Array.isArray(res.message) ? res.message[0] : res.message;
-
-        Toast.show(m, {
+        Toast.show("khong co email nay", {
           duration: Toast.durations.LONG,
           textColor: "white",
           backgroundColor: APP_COLOR.primary,

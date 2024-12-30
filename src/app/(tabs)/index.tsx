@@ -20,6 +20,8 @@ import { APP_COLOR } from "../utils/constant";
 import { router } from "expo-router";
 import Latest from "@/components/filter/latest";
 import EmployeeDisplay from "@/components/filter/employee";
+import ServiceDiscount from "@/components/filter/discount";
+import CurrentService from "@/components/filter/service.curent";
 
 //const data = Array(10).fill(1);
 
@@ -48,6 +50,8 @@ const HomeTab = () => {
       <HeaderHome />
       <SearchHome />
       <TopListHome />
+      <ServiceDiscount />
+      <CurrentService />
       <Latest />
       <EmployeeDisplay />
       <DisplayLocation />

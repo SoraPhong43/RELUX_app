@@ -146,7 +146,17 @@ const UserInfo = () => {
             <AvatarActionSheet
               visible={visible}
               onClose={() => setVisible(false)}
-              onSetAvatar={(uri) => setAvatar(uri ?? null)} // Chuyển undefined thành null
+              onSetAvatar={(uri) => {
+                if (uri) {
+                  setAppState((prevState: typeof appState) => ({
+                    ...prevState,
+                    user: {
+                      ...prevState?.user,
+                      avatar: uri, // Cập nhật URI của avatar
+                    },
+                  }));
+                }
+              }}
             />
 
             <Text style={{ alignItems: "center" }}>

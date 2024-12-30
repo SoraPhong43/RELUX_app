@@ -169,6 +169,14 @@ const RootLayout = () => {
               name="(user)/employee/per.employee"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="(user)/account/about"
+              options={{
+                headerTitle: "About",
+                headerTitleAlign: "center",
+                headerTitleStyle: { fontWeight: "bold", fontSize: 18 },
+              }}
+            />
           </Stack>
         </ThemeProvider>
         {/* </SafeAreaView> */}
