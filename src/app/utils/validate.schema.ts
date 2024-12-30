@@ -27,6 +27,9 @@ export const SignUpSchema = Yup.object().shape({
     fullName: Yup.string()
         .max(100, 'Full Name is too long')
         .required('Full Name cannot be blank'),
+        confirmPassword: Yup.string()
+        .required("Confirm Password cannot be blank")
+        .oneOf([Yup.ref("password")], "Password must match"),
 
 });
 

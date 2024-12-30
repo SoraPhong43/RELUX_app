@@ -42,7 +42,8 @@ const SignUpPage = () => {
         router.replace("/(auth)/welcome");
       } else {
         const m = Array.isArray(res.message) ? res.message[0] : res.message;
-        Toast.show(m || "Registration failed!", {
+        alert("Registration failed!");
+        Toast.show("Registration failed!", {
           duration: Toast.durations.LONG,
           textColor: "white",
           backgroundColor: "red",
@@ -70,7 +71,8 @@ const SignUpPage = () => {
             password: "",
             email: "",
             phone: "",
-            fullName: "", // Đảm bảo tên trường phù hợp với backend
+            fullName: "",
+            confirmPassword: "",
           }}
           onSubmit={(values) =>
             handleSignUp(
@@ -147,7 +149,15 @@ const SignUpPage = () => {
                 error={errors.password}
                 touched={touched.password}
               />
-
+              <ShareInput
+                title="Confirm password"
+                secureTextEntry={true}
+                onChangeText={handleChange("confirmPassword")}
+                onBlur={handleBlur("confirmPassword")}
+                value={values.confirmPassword}
+                error={errors.confirmPassword}
+                touched={touched.confirmPassword}
+              />
               <View style={{ marginVertical: 10 }}></View>
               <ShareButton
                 title="Register"

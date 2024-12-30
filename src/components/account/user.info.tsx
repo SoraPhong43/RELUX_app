@@ -79,7 +79,7 @@ const UserInfo = () => {
         setAppState((prevState: typeof appState) => ({
           ...prevState,
           user: {
-            ...prevState,
+            ...prevState.user,
             fullName,
             phone,
           },
@@ -88,8 +88,9 @@ const UserInfo = () => {
         // Update form values
         setValues({
           fullName,
-          email: appState?.user.email,
+          email: appState?.user.email, // Giữ lại email hiện tại
           phone,
+          username: appState?.user.username, // Giữ lại username
         });
 
         Toast.show("Cập nhật thông tin user thành công!", {
@@ -168,9 +169,9 @@ const UserInfo = () => {
             enableReinitialize
             initialValues={{
               fullName: appState?.user.fullName || "",
-              email: appState?.user.email || "",
+              email: appState?.user.email,
               phone: appState?.user.phone || "",
-              username: appState?.user.username || "",
+              username: appState?.user.username,
             }}
             onSubmit={(values, { setValues }) =>
               handleUpdateUser(values.fullName, values.phone, setValues)
@@ -203,7 +204,6 @@ const UserInfo = () => {
                 <ShareInput
                   editable={false}
                   title="Email"
-                  keyboardType="email-address"
                   value={values.email}
                 />
                 <ShareInput

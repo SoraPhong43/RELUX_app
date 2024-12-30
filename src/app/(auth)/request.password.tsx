@@ -24,7 +24,8 @@ const RequestPassword = () => {
           params: { email },
         });
       } else {
-        Toast.show("khong co email nay", {
+        alert("Dont have this email");
+        Toast.show("Dont have this email", {
           duration: Toast.durations.LONG,
           textColor: "white",
           backgroundColor: APP_COLOR.primary,
