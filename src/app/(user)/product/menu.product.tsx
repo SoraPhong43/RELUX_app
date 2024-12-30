@@ -60,7 +60,10 @@ const MenuProduct = () => {
                   })
                 }
               >
-                <Image source={{ uri: item.imageMain }} style={styles.image} />
+                <Image
+                  source={{ uri: item.imageDescription }}
+                  style={styles.image}
+                />
                 <View style={styles.textContainer}>
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.itemPrice}>

@@ -49,29 +49,32 @@ const BookingHistory = () => {
           <Text style={styles.noHistoryText}>No service history</Text>
         </View>
       ) : (
-        bookingHistory.map((item, index) => (
-          <View key={index} style={styles.bookingCard}>
-            <View style={styles.rowContainer}>
-              <Text style={styles.label}>Service:</Text>
-              <Text style={styles.serviceName}>
-                {item.services?.[0]?.name || "Unknown Service"}
-              </Text>
-            </View>
+        bookingHistory
+          .slice()
+          .reverse()
+          .map((item, index) => (
+            <View key={index} style={styles.bookingCard}>
+              <View style={styles.rowContainer}>
+                <Text style={styles.label}>Service:</Text>
+                <Text style={styles.serviceName}>
+                  {item.services?.[0]?.name || "Unknown Service"}
+                </Text>
+              </View>
 
-            <View style={styles.rowContainer}>
-              <Text style={styles.label}>Time Set Calendar:</Text>
-              <Text style={styles.bookingTime}>
-                {formatDateTime(item.bookingTime)}
-              </Text>
+              <View style={styles.rowContainer}>
+                <Text style={styles.label}>Time Set Calendar:</Text>
+                <Text style={styles.bookingTime}>
+                  {formatDateTime(item.bookingTime)}
+                </Text>
+              </View>
+              <View style={styles.rowContainer}>
+                <Text style={styles.label}>End time:</Text>
+                <Text style={styles.bookingTime}>
+                  {formatDateTime(item.endTime)}
+                </Text>
+              </View>
             </View>
-            <View style={styles.rowContainer}>
-              <Text style={styles.label}>End time:</Text>
-              <Text style={styles.bookingTime}>
-                {formatDateTime(item.endTime)}
-              </Text>
-            </View>
-          </View>
-        ))
+          ))
       )}
     </ScrollView>
   );

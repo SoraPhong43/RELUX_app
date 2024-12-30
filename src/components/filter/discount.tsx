@@ -55,11 +55,7 @@ const ServiceDiscount = () => {
   }
 
   if (serDiscount.length === 0) {
-    return (
-      <View style={styles.centeredView}>
-        <Text>No discount services available.</Text>
-      </View>
-    );
+    return <></>;
   }
 
   return (
@@ -82,7 +78,7 @@ const ServiceDiscount = () => {
             }}
           >
             <Image
-              source={{ uri: item.imageMain }}
+              source={{ uri: item.imageDescription }}
               style={styles.image}
               resizeMode="cover"
             />
@@ -98,7 +94,7 @@ const ServiceDiscount = () => {
               </View>
               {item.promotion?.discountPercentage && (
                 <Text style={styles.discount}>
-                  {item.promotion.discountPercentage}% OFF
+                  {(item.promotion.discountPercentage as any) * 100}% OFF
                 </Text>
               )}
             </View>
