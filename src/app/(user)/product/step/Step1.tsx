@@ -22,7 +22,6 @@ const Step1 = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [customerService, setCustomerService] = useState<IUser>();
   const { serviceId, categoryId } = useLocalSearchParams();
-  console.log(categoryId);
   const fetchCustomerService = async () => {
     try {
       setIsLoading(true);
@@ -105,6 +104,7 @@ const Step1 = () => {
   }));
 
   const fetchCategoryService = async (categoryId: number) => {
+    console.log("checkkk", categoryId);
     try {
       setIsLoading(true);
       const res = await getServiceByCatalogy(categoryId);
@@ -155,7 +155,7 @@ const Step1 = () => {
 
     // Fetch thông tin chi tiết về dịch vụ
     fetchCategoryServiceById(selectedServiceId);
-    fetchLocationService();
+    fetchEmployeeService();
   };
 
   useEffect(() => {
@@ -191,7 +191,7 @@ const Step1 = () => {
               };
 
               // Gọi fetchLocationService sau khi cập nhật state
-              fetchLocationService();
+              fetchEmployeeService();
 
               return updatedBooking;
             });
@@ -203,73 +203,28 @@ const Step1 = () => {
     autoFillCategoryAndService();
   }, [categoryId, serviceId]);
 
-  //location
-  const [locationService, setLocationService] = useState<IAllLocation[]>([]);
-  const [locationData, setLocationData] = useState<OptionItem>();
-  const formattedLocationService = locationService.map((option) => ({
-    value: option.id,
-    label: option.address,
-    ...option,
-  }));
-  const fetchLocationService = async () => {
-    try {
-      setIsLoading(true);
-      const res = await getLocationSpa();
-
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        setLocationService(res.data as IAllLocation[]);
-      } else {
-        setLocationService([]); // Reset the list if no locations exist
-        console.warn("No locations found.");
-      }
-    } catch (error) {
-      console.error("Error fetching locations:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleLocationChange = (selected: OptionItem) => {
-    setLocationData(selected);
-    setBooking((prevState) => {
-      return {
-        ...prevState,
-        locationId: selected.value as number,
-        locationName: selected.label as string,
-      };
-    });
-    if (selected != null) {
-      fetchEmployeeService();
-    }
-  };
-  useEffect(() => {
-    if (booking.serviceIds?.length > 0) {
-      fetchLocationService();
-    }
-  }, [booking.serviceIds]);
-
   //employee
   const [employeeService, setEmployeeService] = useState<IEmployee[]>([]);
   const [employeeData, setEmployeeData] = useState<OptionItem>();
-  const formattedEmployeeService = employeeService.map((option) => ({
-    value: option.id,
-    label: option.name,
-    ...option,
-  }));
-  const fetchEmployeeService = async () => {
+  const formattedEmployeeService = employeeService.map(
+    (employee: IEmployee) => ({
+      value: employee.id,
+      label: employee.name,
+      ...employee,
+    })
+  );
+
+  const fetchEmployeeService = async (): Promise<void> => {
     try {
       setIsLoading(true);
       const res = await getEmployeeSpa();
       if (Array.isArray(res.data)) {
-        const formattedData = res.data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          avatar: item.avatar || null,
-          phone: item.phone || "N/A",
-          email: item.email || "N/A",
-          ...item,
-        }));
-        setEmployeeService(formattedData); // Lưu vào context
+        const formattedData: IEmployee[] = res.data.map(
+          (employee: IEmployee) => ({
+            ...employee,
+          })
+        );
+        setEmployeeService(formattedData);
       } else {
         console.warn("Unexpected response structure:", res.data);
         setEmployeeService([]);
@@ -282,17 +237,88 @@ const Step1 = () => {
   };
 
   const handleEmployeeChange = (selected: OptionItem) => {
-    setEmployeeData(selected);
-    setBooking((prevState) => ({
-      ...prevState,
-      employeeId: Number(selected.value), // Ensure it's a number
-      employeeName: selected.label,
-    }));
+    const selectedEmployee = employeeService.find(
+      (employee) => employee.id === Number(selected.value)
+    );
 
-    if (selected) {
-      fetchTimeService(selected); // Only fetch time slots when a valid employee is selected
+    if (selectedEmployee) {
+      setEmployeeData({
+        value: selectedEmployee.id,
+        label: selectedEmployee.name,
+        avatar: selectedEmployee.avatar,
+        phone: selectedEmployee.phone,
+        email: selectedEmployee.email,
+      });
+
+      setBooking((prevState) => ({
+        ...prevState,
+        employeeId: selectedEmployee.id,
+        employeeName: selectedEmployee.name,
+      }));
+
+      // Gọi fetchTimeService để lấy thời gian khả dụng
+      fetchTimeService(selectedEmployee.id);
+    } else {
+      console.warn("Selected employee not found.");
     }
   };
+
+  //location
+  const [locationService, setLocationService] = useState<IAllLocation[]>([]);
+  const [locationData, setLocationData] = useState<OptionItem>();
+  const formattedLocationService = locationService.map((option) => ({
+    value: option.id,
+    label: option.address,
+    ...option,
+  }));
+  const fetchLocationService = async (locationId: number) => {
+    if (!locationId || isNaN(locationId)) {
+      console.error("Invalid locationId:", locationId);
+      setLocationService([]);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      console.log("Fetching location for locationId:", locationId);
+      const res = await getLocationSpa(locationId); // Gọi API với locationId
+      if (res?.data) {
+        const formattedLocation = [
+          {
+            id: res.data.id,
+            locationName: res.data.locationName,
+            address: res.data.address,
+          },
+        ];
+        setLocationService(formattedLocation); // Chỉ lưu một location
+      } else {
+        // console.warn("No location found for this employee.");
+        setLocationService([]);
+      }
+    } catch (error) {
+      console.error("Error fetching location by employee:", error);
+      setLocationService([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLocationChange = (selected: OptionItem) => {
+    setLocationData(selected); // Lưu thông tin location đã chọn
+    setBooking((prevState) => ({
+      ...prevState,
+      locationId: selected.value as number,
+      locationName: selected.label as string,
+    }));
+
+    console.log("Selected Location ID:", selected.value); // Log để kiểm tra locationId
+  };
+
+  useEffect(() => {
+    if (booking.serviceIds?.length > 0 && booking.employeeId) {
+      fetchLocationService(booking.employeeId); // Truyền employeeId
+    }
+  }, [booking.serviceIds, booking.employeeId]);
 
   //time
   const [dateService, setDateService] = useState<string>("");
@@ -304,45 +330,51 @@ const Step1 = () => {
     label: option.date,
     ...option,
   }));
-  const fetchTimeService = async (employee: OptionItem) => {
+  const fetchTimeService = async (employeeId: number) => {
     try {
       setIsLoading(true);
+      console.log("Fetching time slots for employeeId:", employeeId);
 
-      const res = await getEmployeeFreeTimeSpa(employee.value as number);
+      const res = await getEmployeeFreeTimeSpa(employeeId);
 
       if (Array.isArray(res.data)) {
         const currentDateTime = new Date();
 
-        // Filter and remove duplicate dates
+        // Lọc và loại bỏ các thời gian đã qua
         const filteredData = res.data.filter((item: IFreeTime) => {
           const itemDate = new Date(item.date);
           return itemDate >= currentDateTime;
         });
 
+        // Loại bỏ các bản ghi trùng lặp theo `date`
         const uniqueDates = Array.from(
           new Map(filteredData.map((item) => [item.date, item])).values()
         );
 
         setDateTimeDService(uniqueDates);
+      } else {
+        console.warn("Unexpected response structure:", res.data);
+        setDateTimeDService([]);
       }
     } catch (error) {
       console.error("Error fetching time slots:", error);
+      setDateTimeDService([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDateChange = (selected: OptionItem) => {
-    setDateService(selected.value as string); // Save the selected date
+    setDateService(selected.value as string);
 
-    const timeStart = selected.startTime; // Extract startTime from selected
-    const timeEnd = selected.endTime; // Extract endTime from selected
-    const selectedDate = selected.value as string; // Extract the date as a string
+    const selectedDate = selected.value as string;
+    const timeStart = selected.startTime; // Lấy thời gian bắt đầu
+    const timeEnd = selected.endTime; // Lấy thời gian kết thúc
 
     if (timeStart && timeEnd) {
-      getTime(timeStart, timeEnd, selectedDate); // Pass the date string
+      getTime(timeStart, timeEnd, selectedDate);
     } else {
-      console.error("Invalid startTime or endTime in selected item");
+      console.error("Invalid startTime or endTime in selected date.");
     }
   };
 
@@ -364,17 +396,15 @@ const Step1 = () => {
     const currentDate = new Date();
     const isToday = selectedDate === moment(currentDate).format("YYYY-MM-DD");
 
-    // Parse startTime and endTime as moment objects
     const start = moment(startTime, "HH:mm");
     const end = moment(endTime, "HH:mm");
 
-    // Adjust end time to include the last 15-minute slot
+    // Bao gồm slot cuối cùng
     end.add(15, "minutes");
 
     while (start.isBefore(end)) {
       const formattedTime = start.format("HH:mm");
 
-      // Skip past times if the date is today
       if (isToday) {
         const currentTime = moment();
         if (start.isBefore(currentTime)) {
@@ -400,6 +430,28 @@ const Step1 = () => {
     const isoString = dateTime.toISOString();
     return isoString;
   };
+  useEffect(() => {
+    if (booking.employeeId) {
+      const matchedEmployee = employeeService.find(
+        (employee) => employee.id === booking.employeeId
+      );
+
+      if (matchedEmployee) {
+        setEmployeeData({
+          value: matchedEmployee.id,
+          label: matchedEmployee.name,
+          avatar: matchedEmployee.avatar,
+          phone: matchedEmployee.phone,
+          email: matchedEmployee.email,
+        });
+      } else {
+        console.log(
+          "No matching employee found for employeeId:",
+          booking.employeeId
+        );
+      }
+    }
+  }, [booking.employeeId, employeeService]);
 
   useEffect(() => {
     fetchCustomerService();
@@ -407,13 +459,12 @@ const Step1 = () => {
     fetchEmployeeService();
   }, []);
   useEffect(() => {
-    if (booking.serviceIds.length > 0) {
-      fetchLocationService();
+    if (booking.serviceIds.length > 0 && booking.employeeId) {
+      fetchLocationService(booking.employeeId); // Truyền employeeId
     } else {
-      // Nếu không có serviceId, reset danh sách location
-      setLocationService([]);
+      setLocationService([]); // Reset nếu không có serviceId
     }
-  }, [booking.serviceIds]);
+  }, [booking.serviceIds, booking.employeeId]);
 
   useEffect(() => {
     if (catenum) {
@@ -481,6 +532,20 @@ const Step1 = () => {
       setEmployeeData(undefined); // Reset nếu không có employeeId
     }
   }, [booking, locationService, employeeService]);
+  useEffect(() => {
+    if (booking.employeeId !== null) {
+      const selectedEmployee = employeeService.find(
+        (employee) => employee.id === booking.employeeId
+      );
+
+      if (selectedEmployee?.locationId) {
+        fetchLocationService(selectedEmployee.locationId);
+      } else {
+        console.log("No locationId found for this employee in useEffect.");
+        setLocationService([]);
+      }
+    }
+  }, [booking.employeeId]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -548,71 +613,6 @@ const Step1 = () => {
               padding: 10,
             }}
           >
-            <View>
-              <CmSelect
-                label="Select the location"
-                data={formattedLocationService}
-                value={booking.locationId}
-                onChange={(value) => handleLocationChange(value)}
-                placeholder="Select an option"
-              />
-            </View>
-            {booking.locationId !== null && (
-              <View
-                style={{
-                  paddingHorizontal: 20,
-                }}
-              >
-                <View
-                  style={{
-                    backgroundColor: "#ffffff",
-                    borderWidth: 1,
-                    borderColor: APP_COLOR.darkGray,
-                    borderRadius: 8,
-                    marginBottom: 5,
-                  }}
-                >
-                  {/* <Pressable
-                    onPress={() =>
-                      router.navigate({
-                        pathname: "/product/locationid",
-                        params: { locationID: locationData?.id },
-                      })
-                    }
-                  > */}
-                  <View style={{ padding: 5 }}>
-                    <Text style={{ fontWeight: 500, maxWidth: 200 }}>
-                      {locationData?.locationName}
-                    </Text>
-                    <Text
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                      style={{
-                        maxWidth: 220,
-                        fontWeight: 400,
-                        color: APP_COLOR.darkGray,
-                        paddingTop: 5,
-                        paddingLeft: 2,
-                      }}
-                    >
-                      {locationData?.address}
-                    </Text>
-                  </View>
-                  {/* </Pressable> */}
-                </View>
-              </View>
-            )}
-          </View>
-        )}
-
-        {booking.locationId !== null && (
-          <View
-            style={{
-              borderBottomColor: "#eee",
-              borderBottomWidth: 1,
-              padding: 10,
-            }}
-          >
             {isLoading ? (
               <Text>Loading...</Text>
             ) : (
@@ -644,7 +644,7 @@ const Step1 = () => {
                       }}
                     >
                       {/* <Pressable> */}
-                      {/* <Image
+                      <Image
                         style={{
                           height: 150,
                           width: "100%",
@@ -657,7 +657,7 @@ const Step1 = () => {
                             ? { uri: employeeData.avatar } // URL hợp lệ
                             : require("@/assets/icons/face.png") // Ảnh mặc định
                         }
-                      /> */}
+                      />
                       <View style={{ padding: 5 }}>
                         <Text style={{ fontWeight: 500, maxWidth: 200 }}>
                           {employeeData?.name}
@@ -689,6 +689,71 @@ const Step1 = () => {
                     </View>
                   </View>
                 )}
+              </View>
+            )}
+          </View>
+        )}
+
+        {booking.employeeId !== null && (
+          <View
+            style={{
+              borderBottomColor: "#eee",
+              borderBottomWidth: 1,
+              padding: 10,
+            }}
+          >
+            <View>
+              <CmSelect
+                label="Select the location"
+                data={formattedLocationService} // Danh sách location đã được lọc
+                value={booking.locationId}
+                onChange={(value) => handleLocationChange(value)} // Xử lý khi chọn location
+                placeholder="Select an option"
+              />
+            </View>
+            {booking.locationId !== null && (
+              <View
+                style={{
+                  paddingHorizontal: 20,
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#ffffff",
+                    borderWidth: 1,
+                    borderColor: APP_COLOR.darkGray,
+                    borderRadius: 8,
+                    marginBottom: 5,
+                  }}
+                >
+                  {/* <Pressable
+                  onPress={() =>
+                    router.navigate({
+                      pathname: "/product/locationid",
+                      params: { locationID: locationData?.id },
+                    })
+                  }
+                > */}
+                  <View style={{ padding: 5 }}>
+                    <Text style={{ fontWeight: 500, maxWidth: 200 }}>
+                      {locationData?.locationName}
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={{
+                        maxWidth: 220,
+                        fontWeight: 400,
+                        color: APP_COLOR.darkGray,
+                        paddingTop: 5,
+                        paddingLeft: 2,
+                      }}
+                    >
+                      {locationData?.address}
+                    </Text>
+                  </View>
+                  {/* </Pressable> */}
+                </View>
               </View>
             )}
           </View>

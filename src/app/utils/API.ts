@@ -88,8 +88,8 @@ export const getAllLocations = () => {
     return axios.get<IBackendRes<ILocation>>(url);
 };
 
-export const getLocationSpa = () => {
-    const url = `/v1/locations`;
+export const getLocationSpa = (locationId:number) => {
+    const url = `/v1/locations/${locationId}`;
     return axios.get<IBackendRes<IAllLocation>>(url);
 };
 
